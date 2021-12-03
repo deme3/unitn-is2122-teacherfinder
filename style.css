@@ -1,0 +1,133 @@
+body {
+    font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    background: url(./bg_pattern.png);
+}
+
+::selection {
+    background-color: #f1f0e0;
+}
+
+#logo {
+    text-align: center;
+    font-size: 24pt;
+    margin: 16px;
+    cursor: default;
+    user-select: none;
+}
+
+ul#nav {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 16px 8px;
+}
+
+ul#nav li {
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+}
+
+ul#nav li span {
+    border-bottom: 2px solid transparent;
+    transition: border 0.2s ease-in-out;
+}
+
+ul#nav li.current span {
+    border-bottom: 2px solid black;
+}
+
+#app {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.ad-info {
+    border: 2px solid black;
+    box-shadow: 5px 5px 0 #00000020;
+    margin: 16px 8px;
+    padding: 16px 24px;
+    transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+    background: white;
+}
+
+.ad-info:hover {
+    box-shadow: 2px 2px 0 #00000020;
+    transform: translate(2px, 2px);
+    cursor: pointer;
+}
+
+.ad-info .ad-title {
+    font-size: 16pt;
+}
+
+.ad-grading {
+    margin-top: 8px;
+}
+
+.star {
+    width: 8px;
+    height: 8px;
+    background: black;
+    border-radius: 100%;
+    display: inline-block;
+    margin: 0 4px;
+}
+
+.star:first-child {
+    margin-left: 0;
+}
+
+.ad-grading.star-1 .star:not(:first-child) {
+    display: none;
+}
+
+.ad-grading.star-2 .star:not(:first-child,:nth-child(2)) {
+    display: none;
+}
+
+.ad-grading.star-3 .star:not(:first-child,:nth-child(2),:nth-child(3)) {
+    display: none;
+}
+
+.ad-grading.star-4 .star:nth-child(4), .ad-grading .star-4 .star:last-child {
+    display: none;
+}
+
+header form {
+    display: flex;
+}
+
+header input {
+    margin: 0 4px;
+}
+
+input[type=text] {
+    padding: 8px;
+    border: 2px solid black;
+    box-shadow: 2px 2px 0 #00000020;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 11pt;
+    outline: none;
+    transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+}
+
+input[type=text]:focus {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #00000020;
+}
+
+input[type=submit] {
+    border: 2px solid black;
+    background: white;
+    box-shadow: 2px 2px 0 #00000020;
+    padding: 8px 16px;
+    transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+}
+
+input[type=submit]:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #00000020;
+    cursor: pointer;
+}
