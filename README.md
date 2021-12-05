@@ -1,4 +1,4 @@
-# unitn-teacherapp-frontend
+# unitn-is2122-frontend
 
 ## Project setup
 ```
