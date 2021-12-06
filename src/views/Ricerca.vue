@@ -3,9 +3,11 @@
     <SearchResult
       v-for="ad in ads"
       :key="ad.uuid"
+      :uuid="ad.uuid"
       :title="ad.title"
       :price="ad.price"
       :grading="ad.grading"
+      @offer-click="offerClick"
     />
   </div>
 </template>
@@ -26,6 +28,10 @@ export default {
       return this.price.toFixed(2);
     },
   },
-  methods: {},
+  methods: {
+    offerClick(uuid) {
+      console.log("Click of " + uuid);
+    },
+  },
 };
 </script>

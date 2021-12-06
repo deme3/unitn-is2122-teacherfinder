@@ -1,5 +1,5 @@
 <template>
-  <div class="sr-info">
+  <div class="sr-info" @click="onClick">
     <div class="sr-title">{{ title }}</div>
     <div class="sr-price">Prezzo: {{ prettyPrice }}€/ora</div>
     <div :class="gradingClass">
@@ -15,7 +15,7 @@
 <script>
 export default {
   name: "SearchResult",
-  props: { title: String, price: Number, grading: Number },
+  props: { title: String, price: Number, grading: Number, uuid: String },
   computed: {
     gradingClass: function () {
       return "sr-grading star-" + this.grading;
@@ -24,7 +24,11 @@ export default {
       return this.price.toFixed(2);
     },
   },
-  methods: {},
+  methods: {
+    onClick() {
+      this.$emit("offer-click", this.uuid);
+    },
+  },
 };
 </script>
 
