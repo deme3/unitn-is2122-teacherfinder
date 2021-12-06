@@ -26,6 +26,7 @@ export default {
 <style scoped>
 ul#nav {
   display: flex;
+  justify-content: space-between;
   list-style-type: none;
   padding: 0;
   margin: 16px 8px;
@@ -37,12 +38,18 @@ ul#nav li {
   cursor: pointer;
 }
 
-ul#nav li:only-child {
+ul#nav a {
+  text-decoration: none;
   border-bottom: 2px solid transparent;
   transition: border 0.2s ease-in-out;
 }
 
-ul#nav li.current:only-child {
+ul#nav a.router-link-exact-active {
   border-bottom: 2px solid black;
+}
+
+li a {
+  text-decoration: none;
+  color: inherit;
 }
 </style>
