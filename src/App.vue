@@ -1,7 +1,7 @@
 <template>
   <header>
     <div id="logo">TeacherFinder</div>
-    <Searchbar />
+    <Searchbar @search-offer="searchOffer" />
     <Navbar />
   </header>
   <router-view :ads="ads" />
@@ -21,6 +21,11 @@ export default {
     return {
       ads: [],
     };
+  },
+  methods: {
+    searchOffer(searchterms) {
+      console.log("Searching for:" + searchterms);
+    },
   },
   created() {
     this.ads = [
