@@ -35,7 +35,6 @@ ul#nav {
 ul#nav li {
   width: 100%;
   text-align: center;
-  cursor: pointer;
 }
 
 ul#nav a {

@@ -1,5 +1,5 @@
 <template>
   <div class="iscrizioni">
-    <h1>Pagina iscrizioni</h1>
+    <h1>Le mie iscrizioni</h1>
   </div>
 </template>
