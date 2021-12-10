@@ -91,7 +91,7 @@ body {
 }
 
 #app {
-  width: 80%;
+  width: clamp(320px, 90%, 1000px);
   margin: 0 auto;
 }
 </style>
