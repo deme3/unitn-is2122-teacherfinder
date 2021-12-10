@@ -64,4 +64,10 @@ input[type="submit"]:hover {
   box-shadow: 1px 1px 0 #00000020;
   cursor: pointer;
 }
+
+input[type="submit"]:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0 #00000020;
+  cursor: pointer;
+}
 </style>
