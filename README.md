@@ -1,4 +1,5 @@
 # unitn-is2122-frontend
+Lato front-end del progetto Ingegneria del Software, anno secondo del C.d.S. in Informatica all'Università di Trento.
 
 ## Project setup
 ```
@@ -19,6 +20,7 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Contributors
+* [Demetrio Battaglia](https://www.github.com/deme3)
+* [Riccardo Lussana](https://www.github.com/riklus)
+* [Francesca Mancini](https://www.github.com/framcesca)
