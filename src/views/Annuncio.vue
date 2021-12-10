@@ -72,8 +72,8 @@ button:active {
 }
 
 .richieste {
-  margin-top: 0.67em;
-  margin-bottom: 0.67em;
+  margin-top: 1.34em;
+  margin-bottom: 1.34em;
   display: flex;
   flex-direction: column;
   align-items: center;
