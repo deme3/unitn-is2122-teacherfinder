@@ -20,6 +20,7 @@ export default {
   },
   methods: {
     onSubmit() {
+      this.$router.push({ name: "Ricerca" });
       this.$emit("search-offer", this.searchterms);
     },
   },
