@@ -15,11 +15,18 @@ const routes = [
   },
   {
     path: "/annunci",
+    name: "Annunci",
     component: () => import("../views/Annunci.vue"),
   },
   {
     path: "/impostazioni",
+    name: "Impostazioni",
     component: () => import("../views/Impostazioni.vue"),
+  },
+  {
+    path: "/annuncio/:uuid",
+    name: "Annuncio",
+    component: () => import("../views/Annuncio.vue"),
   },
 ];
 
