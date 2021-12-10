@@ -11,17 +11,16 @@ const routes = [
   {
     path: "/iscrizioni",
     name: "Iscrizioni",
-    component: () =>
-      import("../views/Iscrizioni.vue"),
+    component: () => import("../views/Iscrizioni.vue"),
   },
   {
     path: "/annunci",
-    component: () => import("../views/Annunci.vue")
+    component: () => import("../views/Annunci.vue"),
   },
   {
     path: "/impostazioni",
-    component: () => import("../views/Impostazioni.vue")
-  }
+    component: () => import("../views/Impostazioni.vue"),
+  },
 ];
 
 const router = createRouter({
