@@ -113,6 +113,22 @@ body {
   cursor: pointer;
 }
 
+input[type="text"] {
+  padding: 8px;
+  border: 2px solid black;
+  box-shadow: 2px 2px 0 #00000020;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 11pt;
+  outline: none;
+  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+}
+
+input[type="text"]:focus {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #00000020;
+}
+
 button, input[type=submit] {
   border: 2px solid black;
   background: white;
