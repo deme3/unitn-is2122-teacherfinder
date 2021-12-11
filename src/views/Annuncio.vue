@@ -1,10 +1,10 @@
 <template>
   <div class="annuncio tf-box">
     <div class="container">
-      <h1>Annuncio {{ $route.params.uuid }}</h1>
+      <h1>{{ adInfo.title }}</h1>
       <div class="info">
         <div>
-          <p>Prezzo: 10€/ora</p>
+          <p>Prezzo: {{ adInfo.price.toFixed(2) }}€/ora</p>
           <p>Offline</p>
         </div>
         <div>
@@ -30,6 +30,7 @@
 <script>
 export default {
   created() {
+    this.adInfo = this.$root.ads.find(x => x.uuid == this.$route.params.uuid);
     this.$watch(
       () => this.$route.params,
       (toParams, previousParams) => {
