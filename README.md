@@ -6,17 +6,22 @@ Progetto d'esame Ingegneria del Software del secondo anno del C.d.S. di Informat
 npm install
 ```
 
-### Compiles and hot-reloads for development
+### Runs Express server with Vue Router support
+```
+npm run server
+```
+
+### Compiles and hot-reloads for development (Vue CLI)
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Compiles and minifies for production (Vue CLI)
 ```
 npm run build
 ```
 
-### Lints and fixes files
+### Lints and fixes files (Vue CLI)
 ```
 npm run lint
 ```
