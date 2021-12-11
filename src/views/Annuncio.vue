@@ -1,27 +1,27 @@
 <template>
   <div class="annuncio tf-box">
     <div class="container">
-      <h1>{{ adInfo.title }}</h1>
+      <div class="tutor-info">
+        <img class="propic" src="https://picsum.photos/100" />
+        <div class="tutor-nickname">NicknameProfessore</div>
+        <button>Vedi recensioni</button>
+      </div>
       <div class="info">
-        <div>
+        <h1>{{ adInfo.title }}</h1>
+        <div class="ad-info">
           <p>Prezzo: {{ adInfo.price.toFixed(2) }}€/ora</p>
           <p>Offline</p>
         </div>
-        <div>
-          <img class="propic" src="https://picsum.photos/100" />
-          <p>NicknameProfessore</p>
-          <button>Vedi recensioni</button>
+        <div class="ad-desc">
+          Descrizione dell'annuncio, sono un professore e insegno a tutti i miei
+          studenti cose interessanti. Tutti mi stimano perché sono chiaro e
+          conciso nelle mie lezioni, e rispondo sempre a tutte le domande ch emi
+          vengono poste.
         </div>
-      </div>
-      <p>
-        Descrizione dell'annuncio, sono un professore e insegno a tutti i miei
-        studenti cose interessanti. Tutti mi stimano perché sono chiaro e
-        conciso nelle mie lezioni, e rispondo sempre a tutte le domande ch emi
-        vengono poste.
-      </p>
-      <div class="richieste">
-        <button>Chatta con il tutor</button>
-        <button>Richiedi erogazione insegnamento</button>
+        <div class="richieste">
+          <button>Chatta con il tutor</button>
+          <button>Richiedi erogazione insegnamento</button>
+        </div>
       </div>
     </div>
   </div>
@@ -44,6 +44,52 @@ export default {
 </script>
 
 <style scoped>
+.tutor-nickname {
+  margin: 1em auto;
+  box-sizing: border-box;
+  word-wrap: break-word;
+}
+
+.annuncio.tf-box {
+  padding: 0;
+}
+
+.info, .tutor-info {
+  padding: 16px 24px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
+
+.container .tutor-info {
+  width: 30%;
+  box-sizing: border-box;
+  text-align: center;
+  border-right: 1px solid var(--border-unique-shadow);
+}
+
+.container .info {
+  width: 70%;
+  box-sizing: border-box;
+}
+
+.container .info h1 {
+  margin-bottom: 0;
+}
+
+.container .info .ad-info p {
+  margin: 0;
+}
+
+.container .info .ad-desc {
+  text-align: justify;
+  word-break: break-word;
+  margin: 1.34em auto;
+}
+
 .richieste {
   margin-top: 1.34em;
   margin-bottom: 1.34em;
@@ -53,22 +99,31 @@ export default {
   gap: 1em;
 }
 
-.info {
-  margin-top: 1.34em;
-  margin-bottom: 1.34em;
-  display: flex;
-  flex-direction: row;
-  align-items: top;
-  justify-content: space-around;
-  gap: 1em;
-}
+@media only screen and (max-width: 640px) {
+  .container {
+    flex-direction: column;
+  }
 
-.container {
-  margin: auto;
-}
+  .container .tutor-info {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-unique-shadow);
+  }
 
-.propic {
-  display: block;
-  margin: auto;
+  .container .tutor-info .propic {
+    float: left;
+  }
+
+  .container .tutor-info button {
+    clear: both;
+  }
+
+  .container .info {
+    width: 100%;
+  }
+
+  .container .info h1 {
+    margin-top: 0;
+  }
 }
 </style>
