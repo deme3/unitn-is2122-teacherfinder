@@ -1,5 +1,5 @@
 # unitn-is2122-teacherfinder
-Progetto Ingegneria del Software, anno secondo del C.d.S. in Informatica all'Università di Trento.
+Progetto d'esame Ingegneria del Software del secondo anno del C.d.S. di Informatica all'Università di Trento.
 
 ## Project setup
 ```
