@@ -1,5 +1,5 @@
 <template>
-  <div class="annuncio">
+  <div class="annuncio tf-box">
     <div class="container">
       <h1>Annuncio {{ $route.params.uuid }}</h1>
       <div class="info">
@@ -44,11 +44,7 @@ export default {
 
 <style scoped>
 .annuncio {
-  border: 2px solid black;
-  box-shadow: 5px 5px 0 #00000020;
-  margin: 16px 8px;
-  padding: 16px 24px;
-  background: white;
+  
 }
 
 button {

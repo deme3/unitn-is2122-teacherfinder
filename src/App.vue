@@ -94,4 +94,22 @@ body {
   width: clamp(320px, 90%, 1000px);
   margin: 0 auto;
 }
+
+.tf-box {
+  border: 2px solid black;
+  box-shadow: 5px 5px 0 #00000020;
+  margin: 16px 8px;
+  padding: 16px 24px;
+  background: white;
+}
+
+.tf-box.hoverable {
+  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.tf-box.hoverable:hover {
+  box-shadow: 2px 2px 0 #00000020;
+  transform: translate(2px, 2px);
+  cursor: pointer;
+}
 </style>
