@@ -26,6 +26,7 @@ export default {
   },
   methods: {
     onClick() {
+      this.$router.push({ name: "Annuncio", params: { uuid: this.uuid } });
       this.$emit("offer-click", this.uuid);
     },
   },

@@ -11,17 +11,23 @@ const routes = [
   {
     path: "/iscrizioni",
     name: "Iscrizioni",
-    component: () =>
-      import("../views/Iscrizioni.vue"),
+    component: () => import("../views/Iscrizioni.vue"),
   },
   {
     path: "/annunci",
-    component: () => import("../views/Annunci.vue")
+    name: "Annunci",
+    component: () => import("../views/Annunci.vue"),
   },
   {
     path: "/impostazioni",
-    component: () => import("../views/Impostazioni.vue")
-  }
+    name: "Impostazioni",
+    component: () => import("../views/Impostazioni.vue"),
+  },
+  {
+    path: "/annuncio/:uuid",
+    name: "Annuncio",
+    component: () => import("../views/Annuncio.vue"),
+  },
 ];
 
 const router = createRouter({
