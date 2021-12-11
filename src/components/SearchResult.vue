@@ -58,10 +58,10 @@ export default {
 }
 
 .star {
-  width: 8px;
-  height: 8px;
-  background: black;
-  border-radius: 100%;
+  width: 10px;
+  height: 10px;
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 6 6"><path d="M 3 0 L 2 2 L 0 2 L 1.5 3.5 L 0.5 6 L 3 4.5 L 5.5 6 L 4.5 3.5 L 6 2 L 4 2 L 3 0" fill="gold"></path></svg>');
+  background-size: cover;
   display: inline-block;
   margin: 0 4px;
 }
@@ -70,20 +70,11 @@ export default {
   margin-left: 0;
 }
 
-.sr-grading.star-1 .star:not(:first-child) {
-  display: none;
-}
-
-.sr-grading.star-2 .star:not(:first-child, :nth-child(2)) {
-  display: none;
-}
-
-.sr-grading.star-3 .star:not(:first-child, :nth-child(2), :nth-child(3)) {
-  display: none;
-}
-
+.sr-grading.star-1 .star:not(:first-child),
+.sr-grading.star-2 .star:not(:first-child, :nth-child(2)),
+.sr-grading.star-3 .star:not(:first-child, :nth-child(2), :nth-child(3)),
 .sr-grading.star-4 .star:nth-child(4),
 .sr-grading .star-4 .star:last-child {
-  display: none;
+  opacity: 0.2;
 }
 </style>
