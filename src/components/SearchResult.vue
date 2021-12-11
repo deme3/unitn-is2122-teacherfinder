@@ -35,16 +35,16 @@ export default {
 
 <style scoped>
 .sr-info {
-  border: 2px solid black;
-  box-shadow: 5px 5px 0 #00000020;
+  border: 2px solid var(--border-unique-color);
+  box-shadow: 5px 5px 0 var(--border-unique-shadow);
   margin: 16px 8px;
   padding: 16px 24px;
   transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
-  background: white;
+  background: var(--elements-bg-color);
 }
 
 .sr-info:hover {
-  box-shadow: 2px 2px 0 #00000020;
+  box-shadow: 2px 2px 0 var(--border-unique-shadow);
   transform: translate(2px, 2px);
   cursor: pointer;
 }

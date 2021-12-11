@@ -44,7 +44,7 @@ ul#nav a {
 }
 
 ul#nav a.router-link-exact-active {
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid var(--border-unique-color);
 }
 
 li a {

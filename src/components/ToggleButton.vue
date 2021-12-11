@@ -8,8 +8,8 @@
 
 <style scoped>
     .toggle-button {
-        border: 2px solid #000;
-        background: white;
+        border: 2px solid var(--border-unique-color);
+        background: var(--elements-bg-color);
         width: 32px;
         height: 16px;
         padding: 2px;
@@ -22,7 +22,7 @@
 
     .toggle-dot {
         position: absolute;
-        background: #000;
+        background: var(--border-unique-color);
         right: 16px;
         width: 16px;
         height: 16px;

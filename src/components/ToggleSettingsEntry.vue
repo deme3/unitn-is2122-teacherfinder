@@ -23,7 +23,7 @@
     }
 
     .toggle-settings-entry:not(:last-child) {
-        border-bottom: 2px solid black;
+        border-bottom: 2px solid var(--border-unique-color);
         margin-bottom: 1em;
         padding-bottom: 1em;
     }

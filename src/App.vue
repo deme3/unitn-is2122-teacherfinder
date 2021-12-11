@@ -72,14 +72,21 @@ export default {
 </script>
 
 <style>
+:root {
+  --bg-color: #f1f0e0;
+  --elements-bg-color: #ffffff;
+  --border-unique-color: #000000;
+  --border-unique-shadow: #00000020;
+}
+
 body {
   font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  background: #f1f0e0 url(assets/bg_pattern.png);
+  background: var(--bg-color) url(assets/bg_pattern.png);
 }
 
 ::selection {
-  background-color: #f1f0e0;
+  background-color: var(--bg-color);
 }
 
 #logo {
@@ -96,11 +103,11 @@ body {
 }
 
 .tf-box {
-  border: 2px solid black;
-  box-shadow: 5px 5px 0 #00000020;
+  border: 2px solid var(--border-unique-color);
+  box-shadow: 5px 5px 0 var(--border-unique-shadow);
   margin: 16px 8px;
   padding: 16px 24px;
-  background: white;
+  background: var(--elements-bg-color);
 }
 
 .tf-box.hoverable {
@@ -108,7 +115,7 @@ body {
 }
 
 .tf-box.hoverable:hover {
-  box-shadow: 2px 2px 0 #00000020;
+  box-shadow: 2px 2px 0 var(--border-unique-shadow);
   transform: translate(2px, 2px);
   cursor: pointer;
 }
@@ -121,8 +128,8 @@ textarea {
 
 input[type="text"], textarea {
   padding: 8px;
-  border: 2px solid black;
-  box-shadow: 2px 2px 0 #00000020;
+  border: 2px solid var(--border-unique-color);
+  box-shadow: 2px 2px 0 var(--border-unique-shadow);
   width: 100%;
   box-sizing: border-box;
   font-size: 11pt;
@@ -132,26 +139,26 @@ input[type="text"], textarea {
 
 input[type="text"]:focus, textarea:focus {
   transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 #00000020;
+  box-shadow: 1px 1px 0 var(--border-unique-shadow);
 }
 
 button, input[type=submit] {
   border: 2px solid black;
-  background: white;
-  box-shadow: 2px 2px 0 #00000020;
+  background: var(--elements-bg-color);
+  box-shadow: 2px 2px 0 var(--border-unique-shadow);
   padding: 8px 16px;
   transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 
 button:hover, input[type=submit]:hover {
   transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 #00000020;
+  box-shadow: 1px 1px 0 var(--border-unique-shadow);
   cursor: pointer;
 }
 
 button:active, input[type=submit]:active {
   transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0 #00000020;
+  box-shadow: 0px 0px 0 var(--border-unique-shadow);
   cursor: pointer;
 }
 
