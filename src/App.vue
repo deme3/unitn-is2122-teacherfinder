@@ -112,4 +112,24 @@ body {
   transform: translate(2px, 2px);
   cursor: pointer;
 }
+
+button, input[type=submit] {
+  border: 2px solid black;
+  background: white;
+  box-shadow: 2px 2px 0 #00000020;
+  padding: 8px 16px;
+  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
+}
+
+button:hover, input[type=submit]:hover {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 #00000020;
+  cursor: pointer;
+}
+
+button:active, input[type=submit]:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0px 0px 0 #00000020;
+  cursor: pointer;
+}
 </style>

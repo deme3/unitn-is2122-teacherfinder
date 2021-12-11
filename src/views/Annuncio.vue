@@ -43,30 +43,6 @@ export default {
 </script>
 
 <style scoped>
-.annuncio {
-  
-}
-
-button {
-  border: 2px solid black;
-  background: white;
-  box-shadow: 2px 2px 0 #00000020;
-  padding: 8px 16px;
-  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
-}
-
-button:hover {
-  transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 #00000020;
-  cursor: pointer;
-}
-
-button:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0px 0px 0 #00000020;
-  cursor: pointer;
-}
-
 .richieste {
   margin-top: 1.34em;
   margin-bottom: 1.34em;
