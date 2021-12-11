@@ -1,5 +1,5 @@
 <template>
-  <div class="sr-info" @click="onClick">
+  <div class="sr-info tf-box" @click="onClick">
     <div class="sr-title">{{ title }}</div>
     <div class="sr-price">Prezzo: {{ prettyPrice }}€/ora</div>
     <div :class="gradingClass">
@@ -35,12 +35,7 @@ export default {
 
 <style scoped>
 .sr-info {
-  border: 2px solid var(--border-unique-color);
-  box-shadow: 5px 5px 0 var(--border-unique-shadow);
-  margin: 16px 8px;
-  padding: 16px 24px;
   transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
-  background: var(--elements-bg-color);
 }
 
 .sr-info:hover {
