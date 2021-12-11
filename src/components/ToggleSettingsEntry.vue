@@ -21,6 +21,12 @@
     .toggle-settings-entry .toggle .toggle-button {
         margin: 0 auto;
     }
+
+    .toggle-settings-entry:not(:last-child) {
+        border-bottom: 2px solid black;
+        margin-bottom: 1em;
+        padding-bottom: 1em;
+    }
 </style>
 
 <script>
