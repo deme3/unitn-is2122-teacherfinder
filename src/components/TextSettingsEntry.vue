@@ -2,6 +2,7 @@
     <div class="text-settings-entry">
         <div class="description">{{ description }}</div>
         <textarea v-if="multiline" v-model="value" />
+        <input v-else-if="!multiline && password" type="password" v-model="value" />
         <input v-else type="text" v-model="value" />
     </div>
 </template>
@@ -23,7 +24,8 @@ export default {
     props: {
         "description": String,
         "default-value": String,
-        "multiline": Boolean
+        "multiline": Boolean,
+        "password": Boolean
     },
     data: function() {
         return {

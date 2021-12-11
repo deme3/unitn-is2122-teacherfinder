@@ -139,7 +139,7 @@ textarea {
   height: 8em;
 }
 
-input[type="text"], textarea {
+input[type="text"], input[type="password"], textarea {
   padding: 8px;
   border: 2px solid var(--border-unique-color);
   box-shadow: 2px 2px 0 var(--border-unique-shadow);
@@ -150,7 +150,7 @@ input[type="text"], textarea {
   transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 
-input[type="text"]:focus, textarea:focus {
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--border-unique-shadow);
 }

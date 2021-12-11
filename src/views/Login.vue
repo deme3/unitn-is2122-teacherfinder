@@ -1,8 +1,8 @@
 <template>
     <form method="post" class="tf-box" @submit.prevent="checkCredentials">
         <center>Login</center>
-        <TextSettingsEntry description="Username" />
-        <TextSettingsEntry description="Password" />
+        <TextSettingsEntry description="Username o E-mail" />
+        <TextSettingsEntry description="Password" password />
         <ToggleSettingsEntry description="Ricordami" />
         <input type="submit" value="Login" />
     </form>
