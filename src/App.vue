@@ -113,7 +113,13 @@ body {
   cursor: pointer;
 }
 
-input[type="text"] {
+textarea {
+  resize: none;
+  font-family: inherit;
+  height: 8em;
+}
+
+input[type="text"], textarea {
   padding: 8px;
   border: 2px solid black;
   box-shadow: 2px 2px 0 #00000020;
@@ -124,7 +130,7 @@ input[type="text"] {
   transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 
-input[type="text"]:focus {
+input[type="text"]:focus, textarea:focus {
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 #00000020;
 }
