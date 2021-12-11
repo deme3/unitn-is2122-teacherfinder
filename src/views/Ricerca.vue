@@ -20,14 +20,6 @@ export default {
   name: "Ricerca",
   components: { SearchResult },
   props: { ads: Array },
-  computed: {
-    gradingClass: function () {
-      return "ad-grading star-" + this.grading;
-    },
-    prettyPrice: function () {
-      return this.price.toFixed(2);
-    },
-  },
   methods: {
     offerClick(uuid) {
       console.log("Click of " + uuid);
