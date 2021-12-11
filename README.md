@@ -1,5 +1,5 @@
-# unitn-is2122-frontend
-Lato front-end del progetto Ingegneria del Software, anno secondo del C.d.S. in Informatica all'Università di Trento.
+# unitn-is2122-teacherfinder
+Progetto Ingegneria del Software, anno secondo del C.d.S. in Informatica all'Università di Trento.
 
 ## Project setup
 ```
