@@ -1,12 +1,18 @@
 <template>
     <form method="post" class="tf-box" @submit.prevent="checkCredentials">
-        <center>Login</center>
-        <TextSettingsEntry description="Username o E-mail" />
-        <TextSettingsEntry description="Password" password />
+        <div class="login-header">Login</div>
+        <TextSettingsEntry ref="username" description="Username o E-mail" />
+        <TextSettingsEntry ref="password" description="Password" password />
         <ToggleSettingsEntry description="Ricordami" />
         <input type="submit" value="Login" />
     </form>
 </template>
+
+<style scoped>
+.login-header {
+    text-align: center;
+}
+</style>
 
 <script>
 import TextSettingsEntry from '@/components/TextSettingsEntry.vue';
@@ -17,6 +23,8 @@ export default {
     methods: {
         checkCredentials() {
             // TO-DO : REST API fetch
+            console.log("Credentials: ", this.$refs.username.value, this.$refs.password.value);
+            document.cookie = "sessionToken=YES";
         }
     }
 }
