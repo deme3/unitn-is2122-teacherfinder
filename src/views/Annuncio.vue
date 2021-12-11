@@ -64,7 +64,6 @@ export default {
 }
 
 .container {
-  width: min(100%, 560px);
   margin: auto;
 }
 
