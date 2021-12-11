@@ -28,6 +28,11 @@ const routes = [
     name: "Annuncio",
     component: () => import("../views/Annuncio.vue"),
   },
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/Login.vue")
+  }
 ];
 
 const router = createRouter({

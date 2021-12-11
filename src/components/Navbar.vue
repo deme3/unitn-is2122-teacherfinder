@@ -4,13 +4,13 @@
       <li>
         <router-link to="/">Ricerca</router-link>
       </li>
-      <li>
+      <li v-if="this.$root.sessionToken !== ''">
         <router-link to="/iscrizioni">Le mie iscrizioni</router-link>
       </li>
-      <li>
+      <li v-if="this.$root.sessionToken !== ''">
         <router-link to="/annunci">I miei annunci</router-link>
       </li>
-      <li>
+      <li v-if="this.$root.sessionToken !== ''">
         <router-link to="/impostazioni">Impostazioni</router-link>
       </li>
     </ul>

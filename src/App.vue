@@ -1,6 +1,13 @@
 <template>
   <header>
-    <div id="logo">TeacherFinder</div>
+    <div id="logo">
+      <div id="logo-text">TeacherFinder</div>
+      <div id="user-info">
+        <div id="user-login" v-if="this.sessionToken === ''">
+          <button @click.prevent="this.$router.push({ name: 'Login' })">Login</button>
+        </div>
+      </div>
+    </div>
     <Searchbar @search-offer="searchOffer" />
     <Navbar />
   </header>
@@ -20,6 +27,7 @@ export default {
   data() {
     return {
       ads: [],
+      sessionToken: ""
     };
   },
   methods: {
@@ -92,9 +100,14 @@ body {
 #logo {
   text-align: center;
   font-size: 24pt;
-  margin: 16px;
+  margin: 16px 0;
   cursor: default;
   user-select: none;
+  display: flex;
+}
+
+#logo #logo-text {
+  width: 100%;
 }
 
 #app {
