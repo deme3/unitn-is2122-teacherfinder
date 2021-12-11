@@ -132,4 +132,13 @@ button:active, input[type=submit]:active {
   box-shadow: 0px 0px 0 #00000020;
   cursor: pointer;
 }
+
+.edit-icon {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 5.5 5.5"><path d="M 0 1 L 1 0 L 5 4 L 4 5 L 0 1 M 5.5 5.5 L 5.25 4.25 L 4.25 5.25 L 5.5 5.5" fill="black"></path></svg>');
+  background-size: cover;
+}
 </style>
