@@ -43,5 +43,6 @@ header input[type="text"] {
 
 header input[type="submit"] {
   margin-left: 4px;
+  font: var(--base-font);
 }
 </style>

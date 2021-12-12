@@ -115,9 +115,14 @@ defineExpose({
   }
 }
 
+:root {
+  --base-font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+}
+
 body {
-  font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  font: var(--base-font);
   background: var(--bg-color) var(--bg-uri);
   color: var(--font-color);
   background-attachment: fixed;
@@ -191,6 +196,7 @@ textarea:focus {
 
 button,
 input[type="submit"] {
+  font: var(--base-font);
   border: 2px solid var(--border-unique-color);
   color: var(--font-color);
   background: var(--elements-bg-color);
