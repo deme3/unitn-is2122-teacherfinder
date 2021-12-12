@@ -4,7 +4,9 @@
       <div id="logo-text">TeacherFinder</div>
       <div id="user-info">
         <div id="user-login" v-if="this.sessionToken === ''">
-          <button @click.prevent="this.$router.push({ name: 'Login' })">Login</button>
+          <button @click.prevent="this.$router.push({ name: 'Login' })">
+            Login
+          </button>
         </div>
       </div>
     </div>
@@ -27,7 +29,7 @@ export default {
   data() {
     return {
       ads: [],
-      sessionToken: ""
+      sessionToken: "",
     };
   },
   methods: {
@@ -75,11 +77,13 @@ export default {
         uuid: "92993293",
       },
     ];
-    let getCookie = function(name) {
-      var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    let getCookie = function (name) {
+      var match = document.cookie.match(
+        new RegExp("(^| )" + name + "=([^;]+)")
+      );
       if (match) return match[2];
       else return "";
-    }
+    };
     this.sessionToken = getCookie("sessionToken");
   },
 };
@@ -145,7 +149,9 @@ textarea {
   height: 8em;
 }
 
-input[type="text"], input[type="password"], textarea {
+input[type="text"],
+input[type="password"],
+textarea {
   padding: 8px;
   border: 2px solid var(--border-unique-color);
   box-shadow: 2px 2px 0 var(--border-unique-shadow);
@@ -156,12 +162,15 @@ input[type="text"], input[type="password"], textarea {
   transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+input[type="text"]:focus,
+input[type="password"]:focus,
+textarea:focus {
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--border-unique-shadow);
 }
 
-button, input[type=submit] {
+button,
+input[type="submit"] {
   border: 2px solid black;
   background: var(--elements-bg-color);
   box-shadow: 2px 2px 0 var(--border-unique-shadow);
@@ -169,13 +178,15 @@ button, input[type=submit] {
   transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 
-button:hover, input[type=submit]:hover {
+button:hover,
+input[type="submit"]:hover {
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--border-unique-shadow);
   cursor: pointer;
 }
 
-button:active, input[type=submit]:active {
+button:active,
+input[type="submit"]:active {
   transform: translate(2px, 2px);
   box-shadow: 0px 0px 0 var(--border-unique-shadow);
   cursor: pointer;
