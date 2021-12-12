@@ -7,7 +7,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "server": "node server/index.js"
+    "server": "node server/index.js",
+    "dev": "tmux new -s 'tf-dev' 'cd server && nodemon index.js ; read' \\; setw -g mouse on \\; split-window -h 'vue-cli-service serve --port 8081 ; read' \\; attach"
   },
   "dependencies": {
     "connect-history-api-fallback": "^1.6.0",
@@ -28,6 +29,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^7.0.0",
+    "nodemon": "^2.0.15",
     "prettier": "^2.2.1"
   }
 }

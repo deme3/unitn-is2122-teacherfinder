@@ -2,27 +2,34 @@
 Progetto d'esame Ingegneria del Software del secondo anno del C.d.S. di Informatica all'Università di Trento.
 
 ## Project setup
-```
+```bash
 npm install
 ```
 
-### Runs Express server with Vue Router support
+### Compiles and hot-reloads frontend (Vue CLI) and server (ExpressJS) for development
+```bash
+npm run dev
 ```
+
+### Runs Express server with Vue Router support (ExpressJS)
+```bash
 npm run server
 ```
 
-### Compiles and hot-reloads for development (Vue CLI)
-```
+  Note: You have to compile before launching the command
+
+### Compiles and hot-reloads for frontend only development (Vue CLI)
+```bash
 npm run serve
 ```
 
 ### Compiles and minifies for production (Vue CLI)
-```
+```bash
 npm run build
 ```
 
 ### Lints and fixes files (Vue CLI)
-```
+```bash
 npm run lint
 ```
 ## Contributors
