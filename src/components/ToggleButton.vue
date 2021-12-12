@@ -1,56 +1,55 @@
 <template>
-    <div class="toggle-button" @click="toggle">
-        <div class="toggle-dot-container">
-            <div :class="toggleDotClass"></div>
-        </div>
+  <div class="toggle-button" @click="toggle">
+    <div class="toggle-dot-container">
+      <div :class="toggleDotClass"></div>
     </div>
+  </div>
 </template>
 
 <style scoped>
-    .toggle-button {
-        border: 2px solid var(--border-unique-color);
-        background: var(--elements-bg-color);
-        width: 32px;
-        height: 16px;
-        padding: 2px;
-        cursor: pointer;
-    }
+.toggle-button {
+  border: 2px solid var(--border-unique-color);
+  background: var(--elements-bg-color);
+  width: 32px;
+  height: 16px;
+  padding: 2px;
+  cursor: pointer;
+}
 
-    .toggle-dot-container {
-        position: relative;
-    }
+.toggle-dot-container {
+  position: relative;
+}
 
-    .toggle-dot {
-        position: absolute;
-        background: var(--border-unique-color);
-        right: 16px;
-        width: 16px;
-        height: 16px;
-    }
+.toggle-dot {
+  position: absolute;
+  background: var(--border-unique-color);
+  right: 16px;
+  width: 16px;
+  height: 16px;
+}
 
-    .toggled.toggle-dot {
-        right: 0;
-    }
+.toggled.toggle-dot {
+  right: 0;
+}
 </style>
 
 <script>
 export default {
-    name: "ToggleButton",
-    data: function() {
-        return {
-            toggleStatus: false
-        }
+  name: "ToggleButton",
+  data: function () {
+    return {
+      toggleStatus: false,
+    };
+  },
+  methods: {
+    toggle: function () {
+      this.toggleStatus = !this.toggleStatus;
     },
-    methods: {
-        toggle: function() {
-            this.toggleStatus = !this.toggleStatus;
-        }
+  },
+  computed: {
+    toggleDotClass: function () {
+      return "toggle-dot" + (this.toggleStatus ? " toggled" : "");
     },
-    computed: {
-        toggleDotClass: function() {
-            return "toggle-dot"
-             + (this.toggleStatus ? " toggled" : "");
-        }
-    }
+  },
 };
 </script>

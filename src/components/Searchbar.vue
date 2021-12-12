@@ -32,11 +32,11 @@ header form {
   display: flex;
 }
 
-header input[type=text] {
+header input[type="text"] {
   margin-right: 4px;
 }
 
-header input[type=submit] {
+header input[type="submit"] {
   margin-left: 4px;
 }
 </style>

@@ -30,7 +30,7 @@
 <script>
 export default {
   created() {
-    this.adInfo = this.$root.ads.find(x => x.uuid == this.$route.params.uuid);
+    this.adInfo = this.$root.ads.find((x) => x.uuid == this.$route.params.uuid);
     this.$watch(
       () => this.$route.params,
       (toParams, previousParams) => {
@@ -54,7 +54,8 @@ export default {
   padding: 0;
 }
 
-.info, .tutor-info {
+.info,
+.tutor-info {
   padding: 16px 24px;
 }
 

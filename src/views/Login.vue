@@ -1,31 +1,35 @@
 <template>
-    <form method="post" class="tf-box" @submit.prevent="checkCredentials">
-        <div class="login-header">Login</div>
-        <TextSettingsEntry ref="username" description="Username o E-mail" />
-        <TextSettingsEntry ref="password" description="Password" password />
-        <ToggleSettingsEntry description="Ricordami" />
-        <input type="submit" value="Login" />
-    </form>
+  <form method="post" class="tf-box" @submit.prevent="checkCredentials">
+    <div class="login-header">Login</div>
+    <TextSettingsEntry ref="username" description="Username o E-mail" />
+    <TextSettingsEntry ref="password" description="Password" password />
+    <ToggleSettingsEntry description="Ricordami" />
+    <input type="submit" value="Login" />
+  </form>
 </template>
 
 <style scoped>
 .login-header {
-    text-align: center;
+  text-align: center;
 }
 </style>
 
 <script>
-import TextSettingsEntry from '@/components/TextSettingsEntry.vue';
-import ToggleSettingsEntry from '@/components/ToggleSettingsEntry.vue';
+import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
+import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
 export default {
-    name: "Login",
-    components: { TextSettingsEntry, ToggleSettingsEntry },
-    methods: {
-        checkCredentials() {
-            // TO-DO : REST API fetch
-            console.log("Credentials: ", this.$refs.username.value, this.$refs.password.value);
-            document.cookie = "sessionToken=YES";
-        }
-    }
-}
+  name: "Login",
+  components: { TextSettingsEntry, ToggleSettingsEntry },
+  methods: {
+    checkCredentials() {
+      // TO-DO : REST API fetch
+      console.log(
+        "Credentials: ",
+        this.$refs.username.value,
+        this.$refs.password.value
+      );
+      document.cookie = "sessionToken=YES";
+    },
+  },
+};
 </script>
