@@ -1,6 +1,6 @@
 <template>
   <div class="sr-info tf-box" @click="onClick">
-    <div class="sr-title">{{ title }}</div>
+    <div class="sr-title">{{ props.title }}</div>
     <div class="sr-price">Prezzo: {{ prettyPrice }}€/ora</div>
     <div :class="gradingClass">
       <div class="star"></div>
@@ -12,24 +12,31 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "SearchResult",
-  props: { title: String, price: Number, grading: Number, uuid: String },
-  computed: {
-    gradingClass: function () {
-      return "sr-grading star-" + this.grading;
-    },
-    prettyPrice: function () {
-      return this.price.toFixed(2);
-    },
-  },
-  methods: {
-    onClick() {
-      this.$router.push({ name: "Annuncio", params: { uuid: this.uuid } });
-      this.$emit("offer-click", this.uuid);
-    },
-  },
+<script setup>
+import { defineProps, defineEmits, computed } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const props = defineProps({
+  title: String,
+  price: Number,
+  grading: Number,
+  uuid: String,
+});
+
+const emit = defineEmits(["offer-click"]);
+
+const gradingClass = computed(() => {
+  return "sr-grading star-" + props.grading;
+});
+const prettyPrice = computed(() => {
+  return props.price.toFixed(2);
+});
+
+const onClick = () => {
+  router.push({ name: "Annuncio", params: { uuid: props.uuid } });
+  emit("offer-click", props.uuid);
 };
 </script>
 

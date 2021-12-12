@@ -43,17 +43,20 @@
 }
 </style>
 
-<script>
-export default {
-  name: "UserCard",
-  data: function () {
-    return {
-      pictureURL: "https://picsum.photos/100",
-      firstName: "Demetrio",
-      lastName: "Battaglia",
-      nickname: "deme3",
-      bio: "",
-    };
-  },
-};
+<script setup>
+import { defineExpose, ref } from "vue";
+
+const pictureURL = ref("https://picsum.photos/100");
+const firstName = ref("Demetrio");
+const lastName = ref("Battaglia");
+const nickname = ref("deme3");
+//const bio = ref("");
+
+defineExpose({
+  pictureURL: String,
+  firstName: String,
+  lastName: String,
+  nickname: String,
+  //  bio: String,
+});
 </script>

@@ -10,21 +10,24 @@
   </form>
 </template>
 
-<script>
-export default {
-  name: "SearchBar",
-  data() {
-    return {
-      searchterms: "",
-    };
-  },
-  methods: {
-    onSubmit() {
-      this.$router.push({ name: "Ricerca" });
-      this.$emit("search-offer", this.searchterms);
-    },
-  },
+<script setup>
+import { defineEmits, defineExpose, ref } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const emit = defineEmits(["search-offer"]);
+
+const searchterms = ref("");
+
+const onSubmit = () => {
+  router.push({ name: "Ricerca" });
+  emit("search-offer", searchterms.value);
 };
+
+defineExpose({
+  SearchBar: String,
+});
 </script>
 
 <style scoped>

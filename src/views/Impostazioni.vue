@@ -51,13 +51,8 @@
 }
 </style>
 
-<script>
+<script setup>
 import UserCard from "@/components/UserCard.vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
 import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
-
-export default {
-  name: "Impostazioni",
-  components: { UserCard, TextSettingsEntry, ToggleSettingsEntry },
-};
 </script>

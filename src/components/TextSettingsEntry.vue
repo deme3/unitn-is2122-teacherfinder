@@ -1,9 +1,9 @@
 <template>
   <div class="text-settings-entry">
-    <div class="description">{{ description }}</div>
-    <textarea v-if="multiline" v-model="value" />
-    <input v-else-if="!multiline && password" type="password" v-model="value" />
-    <input v-else type="text" v-model="value" />
+    <div class="description">{{ props.description }}</div>
+    <textarea v-if="multiline" v-model="model" />
+    <input v-else-if="!multiline && password" type="password" v-model="model" />
+    <input v-else type="text" v-model="model" />
   </div>
 </template>
 
@@ -18,19 +18,17 @@
 }
 </style>
 
-<script>
-export default {
-  name: "TextSettingsEntry",
-  props: {
-    description: String,
-    "default-value": String,
-    multiline: Boolean,
-    password: Boolean,
-  },
-  data: function () {
-    return {
-      value: this.defaultValue,
-    };
-  },
-};
+<script setup>
+import { defineProps, defineExpose, ref } from "vue";
+
+const props = defineProps({
+  description: String,
+  defaultValue: String,
+  multiline: Boolean,
+  password: Boolean,
+});
+
+const model = ref(props.defaultValue);
+
+defineExpose({ value: String });
 </script>

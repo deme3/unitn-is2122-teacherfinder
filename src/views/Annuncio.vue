@@ -27,20 +27,27 @@
   </div>
 </template>
 
-<script>
-export default {
-  created() {
-    this.adInfo = this.$root.ads.find((x) => x.uuid == this.$route.params.uuid);
-    this.$watch(
-      () => this.$route.params,
-      (toParams, previousParams) => {
-        console.log(toParams, previousParams);
-        // react to route changes...
-        // Qua ci va una REST request che chiede i dettagli dell'annuncio
-      }
-    );
-  },
+<script setup>
+import { watch } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
+
+let adInfo = {
+  title: "Caricamento...",
+  price: 0,
+  grading: 5,
+  uuid: "000",
 };
+
+watch(
+  () => route.params.id,
+  (toParams, previousParams) => {
+    console.log(toParams, previousParams);
+    // react to route changes...
+    // Qua ci va una REST request che chiede i dettagli dell'annuncio
+  }
+);
 </script>
 
 <style scoped>

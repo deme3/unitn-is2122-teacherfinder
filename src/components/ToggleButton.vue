@@ -6,6 +6,22 @@
   </div>
 </template>
 
+<script setup>
+import { computed, defineExpose, ref } from "vue";
+
+const toggleStatus = ref(false);
+
+const toggle = () => {
+  toggleStatus.value = !toggleStatus.value;
+};
+
+const toggleDotClass = computed(
+  () => "toggle-dot" + (toggleStatus.value ? " toggled" : "")
+);
+
+defineExpose({ toggleStatus: Boolean });
+</script>
+
 <style scoped>
 .toggle-button {
   border: 2px solid var(--border-unique-color);
@@ -34,24 +50,3 @@
   transition: right 0.05s ease-out;
 }
 </style>
-
-<script>
-export default {
-  name: "ToggleButton",
-  data: function () {
-    return {
-      toggleStatus: false,
-    };
-  },
-  methods: {
-    toggle: function () {
-      this.toggleStatus = !this.toggleStatus;
-    },
-  },
-  computed: {
-    toggleDotClass: function () {
-      return "toggle-dot" + (this.toggleStatus ? " toggled" : "");
-    },
-  },
-};
-</script>

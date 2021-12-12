@@ -1,6 +1,6 @@
 <template>
   <div class="toggle-settings-entry">
-    <div class="description">{{ description }}</div>
+    <div class="description">{{ props.description }}</div>
     <div class="toggle"><ToggleButton ref="togglebutton" /></div>
   </div>
 </template>
@@ -29,28 +29,22 @@
 }
 </style>
 
-<script>
-import { ref } from "@vue/runtime-core";
+<script setup>
 import ToggleButton from "@/components/ToggleButton.vue";
+import { defineProps, computed, ref, defineExpose } from "vue";
 
-export default {
-  name: "ToggleSettingsEntry",
-  computed: {
-    toggleStatus: function () {
-      if (this.togglebutton == null) return false;
-      return this.togglebutton.toggleStatus;
-    },
-  },
-  props: {
-    description: String,
-  },
-  components: { ToggleButton },
-  setup: function () {
-    const togglebutton = ref(null);
+const props = defineProps({
+  description: String,
+});
 
-    return {
-      togglebutton,
-    };
-  },
-};
+const togglebutton = ref(null);
+
+const toggleStatus = computed(() => {
+  if (togglebutton.value == null) return false;
+  return togglebutton.value.toggleStatus;
+});
+
+defineExpose({
+  toggleStatus: toggleStatus,
+});
 </script>

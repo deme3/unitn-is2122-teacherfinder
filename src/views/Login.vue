@@ -14,22 +14,16 @@
 }
 </style>
 
-<script>
+<script setup>
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
 import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
-export default {
-  name: "Login",
-  components: { TextSettingsEntry, ToggleSettingsEntry },
-  methods: {
-    checkCredentials() {
-      // TO-DO : REST API fetch
-      console.log(
-        "Credentials: ",
-        this.$refs.username.value,
-        this.$refs.password.value
-      );
-      document.cookie = "sessionToken=YES";
-    },
-  },
+const checkCredentials = () => {
+  // TO-DO : REST API fetch
+  console.log(
+    "Credentials: ",
+    this.$refs.username.value,
+    this.$refs.password.value
+  );
+  document.cookie = "sessionToken=YES";
 };
 </script>

@@ -26,12 +26,12 @@ const sessionToken = ref("");
 
 const searchOffer = async function (searchterms) {
   console.log("Searching for: " + searchterms);
-  this.ads = await fetch(
+  /* ads.value = await fetch(
     "http://localhost:8080/search?" +
       new URLSearchParams({
         keyword: searchterms,
       })
-  );
+  ); */
 };
 
 const getCookie = function (name) {

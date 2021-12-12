@@ -1,7 +1,7 @@
 <template>
   <div class="ricerca">
     <SearchResult
-      v-for="ad in ads"
+      v-for="ad in props.ads"
       :key="ad.uuid"
       :uuid="ad.uuid"
       :title="ad.title"
@@ -12,18 +12,15 @@
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import SearchResult from "@/components/SearchResult.vue";
+<script setup>
+import { defineProps } from "vue";
+import SearchResult from "@/components/SearchResult.vue"; // @ alias to src
 
-export default {
-  name: "Ricerca",
-  components: { SearchResult },
-  props: { ads: Array },
-  methods: {
-    offerClick(uuid) {
-      console.log("Click of " + uuid);
-    },
-  },
+const props = defineProps({
+  ads: Array,
+});
+
+const offerClick = (uuid) => {
+  console.log("Click of " + uuid);
 };
 </script>
