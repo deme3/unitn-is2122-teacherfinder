@@ -15,15 +15,16 @@
 </style>
 
 <script setup>
+import { ref } from "vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
 import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
+
+const username = ref(null);
+const password = ref(null);
+
 const checkCredentials = () => {
   // TO-DO : REST API fetch
-  console.log(
-    "Credentials: ",
-    this.$refs.username.value,
-    this.$refs.password.value
-  );
+  console.log("Credentials: ", username.value, password.value);
   document.cookie = "sessionToken=YES";
 };
 </script>
