@@ -26,10 +26,12 @@
   right: 16px;
   width: 16px;
   height: 16px;
+  transition: right 0.05s ease-out;
 }
 
 .toggled.toggle-dot {
   right: 0;
+  transition: right 0.05s ease-out;
 }
 </style>
 
