@@ -13,80 +13,79 @@
     <Searchbar @search-offer="searchOffer" />
     <Navbar />
   </header>
-  <router-view :ads="ads" />
+  <router-view :ads="this.ads" />
 </template>
 
-<script>
+<script setup>
 import Searchbar from "@/components/Searchbar.vue";
 import Navbar from "@/components/Navbar.vue";
+import { ref, defineExpose } from "vue";
 
-export default {
-  name: "App",
-  components: {
-    Navbar,
-    Searchbar,
-  },
-  data() {
-    return {
-      ads: [],
-      sessionToken: "",
-    };
-  },
-  methods: {
-    searchOffer(searchterms) {
-      console.log("Searching for:" + searchterms);
-    },
-  },
-  created() {
-    this.ads = [
-      { title: "Analisi I", price: 10.5, grading: 1, uuid: "4567876543" },
-      {
-        title: "Ingegneria del Software I",
-        price: 15.344,
-        grading: 5,
-        uuid: "56788675687",
-      },
-      {
-        title: "Ingegneria del Software I",
-        price: 803.22,
-        grading: 3,
-        uuid: "56768786756768",
-      },
-      {
-        title: "Ingegneria del Software I",
-        price: 2.34,
-        grading: 5,
-        uuid: "4382843",
-      },
-      {
-        title: "Ingegneria del Software I",
-        price: 12123.232,
-        grading: 2,
-        uuid: "43242",
-      },
-      {
-        title: "Ingegneria del Software I",
-        price: 232.32,
-        grading: 5,
-        uuid: "4535453453423",
-      },
-      {
-        title: "Ingegneria del Software I",
-        price: 3232.2,
-        grading: 1,
-        uuid: "92993293",
-      },
-    ];
-    let getCookie = function (name) {
-      var match = document.cookie.match(
-        new RegExp("(^| )" + name + "=([^;]+)")
-      );
-      if (match) return match[2];
-      else return "";
-    };
-    this.sessionToken = getCookie("sessionToken");
-  },
+const ads = ref([]);
+const sessionToken = ref("");
+
+const searchOffer = async function (searchterms) {
+  console.log("Searching for: " + searchterms);
+  this.ads = await fetch(
+    "http://localhost:8080/search?" +
+      new URLSearchParams({
+        keyword: searchterms,
+      })
+  );
 };
+
+const getCookie = function (name) {
+  var match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  if (match) return match[2];
+  else return "";
+};
+
+sessionToken.value = getCookie("sessionToken");
+
+ads.value = [
+  { title: "Analisi I", price: 10.5, grading: 1, uuid: "4567876543" },
+  {
+    title: "Ingegneria del Software I",
+    price: 15.344,
+    grading: 5,
+    uuid: "56788675687",
+  },
+  {
+    title: "Ingegneria del Software I",
+    price: 803.22,
+    grading: 3,
+    uuid: "56768786756768",
+  },
+  {
+    title: "Ingegneria del Software I",
+    price: 2.34,
+    grading: 5,
+    uuid: "4382843",
+  },
+  {
+    title: "Ingegneria del Software I",
+    price: 12123.232,
+    grading: 2,
+    uuid: "43242",
+  },
+  {
+    title: "Ingegneria del Software I",
+    price: 232.32,
+    grading: 5,
+    uuid: "4535453453423",
+  },
+  {
+    title: "Ingegneria del Software I",
+    price: 3232.2,
+    grading: 1,
+    uuid: "92993293",
+  },
+];
+
+defineExpose({
+  ads,
+  sessionToken,
+});
 </script>
 
 <style>
