@@ -37,6 +37,8 @@ header form {
 
 header input[type="text"] {
   margin-right: 4px;
+  color: var(--font-color);
+  background-color: var(--text-box-bg-color);
 }
 
 header input[type="submit"] {

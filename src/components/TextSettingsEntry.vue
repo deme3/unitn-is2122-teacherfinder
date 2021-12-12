@@ -12,6 +12,16 @@
   margin-bottom: 1.5em;
 }
 
+input {
+  color: var(--font-color);
+  background-color: var(--text-box-bg-color);
+}
+
+textarea {
+  color: var(--font-color);
+  background: var(--text-box-bg-color);
+}
+
 .description {
   font-weight: bold;
   margin: 0.5em 0;

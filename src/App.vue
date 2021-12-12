@@ -89,17 +89,37 @@ defineExpose({
 </script>
 
 <style>
-:root {
-  --bg-color: #f1f0e0;
-  --elements-bg-color: #ffffff;
-  --border-unique-color: #000000;
-  --border-unique-shadow: #00000020;
+@media (prefers-color-scheme: dark) {
+  /* Dark theme styles go here */
+  :root {
+    --bg-color: #141414;
+    --font-color: #d7dadc;
+    --text-box-bg-color: #242323;
+    --elements-bg-color: #2a2929;
+    --border-unique-color: #c6c6c6;
+    --border-unique-shadow: #00000020;
+    --bg-uri: url(assets/bg_pattern_dark.png);
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  /* Light theme styles go here */
+  :root {
+    --bg-color: #f1f0e0;
+    --font-color: #000000;
+    --text-box-bg-color: white;
+    --elements-bg-color: #ffffff;
+    --border-unique-color: #000000;
+    --border-unique-shadow: #00000020;
+    --bg-uri: url(assets/bg_pattern.png);
+  }
 }
 
 body {
   font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  background: var(--bg-color) url(assets/bg_pattern.png);
+  background: var(--bg-color) var(--bg-uri);
+  color: var(--font-color);
   background-attachment: fixed;
 }
 
@@ -171,15 +191,16 @@ textarea:focus {
 
 button,
 input[type="submit"] {
-  border: 2px solid black;
+  border: 2px solid var(--border-unique-color);
+  color: var(--font-color);
   background: var(--elements-bg-color);
   box-shadow: 2px 2px 0 var(--border-unique-shadow);
   padding: 8px 16px;
-  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
 }
 
 button:hover,
 input[type="submit"]:hover {
+  transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--border-unique-shadow);
   cursor: pointer;
