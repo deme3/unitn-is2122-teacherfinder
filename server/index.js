@@ -1,6 +1,10 @@
-const express = require("express");
-const path = require("path");
-const history = require('connect-history-api-fallback');
+import express from 'express';
+import mongoose from 'mongoose';
+import path from 'path';
+import history from 'connect-history-api-fallback';
+
+// Hack per __dirname in ES6
+const __dirname = decodeURIComponent(path.dirname(new URL(import.meta.url).pathname));
 
 // Inizializzo Express
 const app = express();
