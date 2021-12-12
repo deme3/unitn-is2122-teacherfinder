@@ -7,7 +7,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "server": "node index.js"
+    "server": "node server/index.js"
   },
   "dependencies": {
     "connect-history-api-fallback": "^1.6.0",

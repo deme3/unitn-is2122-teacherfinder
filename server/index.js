@@ -92,9 +92,9 @@ app.put("/api/settings/change/:settingId/to/:newValue", (req, res) => {
 
 // Permetto a Vue.js di gestire le path single-page con Vue Router
 app.use(history());
-app.use('/', express.static(path.join(__dirname, 'dist')));
+app.use('/', express.static(path.join(__dirname, '..', 'dist')));
 
 // Avvio il server
 app.listen(port, () => {
-    console.log(`Express server listening on port ${port}`)
+    console.log(`Express server listening: http://localhost:${port}/`)
 });
