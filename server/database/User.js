@@ -1,3 +1,4 @@
+const Advertisement = require("./Advertisement");
 const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     firstName: String,
@@ -5,8 +6,7 @@ const userSchema = new mongoose.Schema({
     nickname: String,
     biography: String,
     email: String,
-    password: String,
-    postedAds: [{ title: String }]
+    password: String
 });
 
 const User = mongoose.model("User", userSchema);
