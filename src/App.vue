@@ -100,6 +100,7 @@ body {
   font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   background: var(--bg-color) url(assets/bg_pattern.png);
+  background-attachment: fixed;
 }
 
 ::selection {
