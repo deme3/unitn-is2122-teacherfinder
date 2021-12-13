@@ -62,6 +62,15 @@ import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
 import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
 
 const logout = () => {
-  document.cookie = "";
-}
+  console.log("logout");
+  document.cookie =
+    "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  window.location.replace("/");
+};
+</script>
+
+<script>
+export default {
+  inheritAttrs: false,
+};
 </script>
