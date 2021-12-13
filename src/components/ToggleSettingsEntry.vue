@@ -8,6 +8,7 @@
 <style scoped>
 .toggle-settings-entry {
   display: flex;
+  justify-content: center;
 }
 
 .toggle-settings-entry .description {
@@ -20,6 +21,12 @@
 
 .toggle-settings-entry .toggle .toggle-button {
   margin: 0 auto;
+}
+
+.toggle {
+  margin-left: 1em;
+  margin-top: auto;
+  margin-bottom: auto;
 }
 
 .toggle-settings-entry:not(:last-child) {

@@ -149,7 +149,7 @@ body {
 }
 
 #app {
-  width: clamp(320px, 90%, 1000px);
+  width: clamp(300px, 99%, 600px);
   margin: 0 auto;
 }
 
