@@ -47,6 +47,7 @@
   display: flex;
   gap: 1em;
   justify-content: right;
+  flex-wrap: wrap;
 }
 
 .action-buttons button:first-child {

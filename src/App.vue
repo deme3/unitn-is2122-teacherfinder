@@ -157,6 +157,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-around;
+  gap: 40px;
 }
 
 #logo > div {
