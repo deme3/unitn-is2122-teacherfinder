@@ -1,16 +1,31 @@
 <template>
-  <form method="post" class="tf-box" @submit.prevent="checkCredentials">
-    <div class="login-header">Login</div>
-    <TextSettingsEntry ref="username" description="Username o E-mail" />
-    <TextSettingsEntry ref="password" description="Password" password />
-    <ToggleSettingsEntry description="Ricordami" />
-    <input type="submit" value="Login" />
-  </form>
+  <div class="tf-box">
+    <form method="post" @submit.prevent="checkCredentials">
+      <div class="login-header">Login</div>
+      <TextSettingsEntry ref="username" description="Username o E-mail" />
+      <TextSettingsEntry ref="password" description="Password" password />
+      <ToggleSettingsEntry description="Ricordami" />
+      <div class="input-wrapper">
+        <button
+          type="button"
+          @click.prevent="this.$router.push({ name: 'SignUp' })"
+        >
+          Registrati
+        </button>
+        <input type="submit" value="Login" />
+      </div>
+    </form>
+  </div>
 </template>
 
 <style scoped>
 .login-header {
   text-align: center;
+}
+
+.input-wrapper {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
 
