@@ -116,7 +116,14 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
 
 // Endpoint Annunci
 // ================
-app.get("/api/ads/list/:userId", async (req, res) => {});
+app.get("/api/ads/list/:userId", async (req, res) => {
+  if(typeof req.params.userId !== "undefined") {
+    let foundAds = await User.findUserAds(req.params.userId);
+    res.status(200).json(foundAds);
+  } else {
+    res.status(400).json({ missingParameters: [ "userId" ] });
+  }
+});
 
 app.get("/api/ads/search/:keyword", async (req, res) => {});
 
