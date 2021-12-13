@@ -4,7 +4,7 @@
       <div></div>
       <div id="logo-text">TeacherFinder</div>
       <div id="user-info">
-        <div id="user-login" v-if="this.sessionToken === '' && showLoginBtn">
+        <div id="user-login" v-if="sessionToken === '' && showLoginBtn">
           <button @click.prevent="this.$router.push({ name: 'Login' })">
             Login
           </button>
@@ -12,7 +12,7 @@
       </div>
     </div>
     <Searchbar @search-offer="searchOffer" />
-    <Navbar />
+    <Navbar v-if="sessionToken" />
   </header>
   <router-view :ads="this.ads" />
 </template>
