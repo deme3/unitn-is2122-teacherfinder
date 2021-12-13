@@ -182,7 +182,21 @@ app.post("/api/ads/createAd", async (req, res) => {
 
 // Endpoint Recensioni
 // ===================
-app.get("/api/reviews/getReviews/:adId", async (req, res) => {});
+app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
+  if(typeof req.params.adId !== "undefined") {
+    if(req.params.adId.length === 24) {
+      let reviews = await Review.find({ adId: req.params.adId }).exec();
+      if(reviews !== null)
+        res.status(200).json(reviews);
+      else
+        res.status(200).json({});
+    } else {
+      res.sendStatus(400);
+    }
+  } else {
+    res.status(400).json({ missingParameters: [ "adId" ]});
+  }
+});
 
 app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {});
 
