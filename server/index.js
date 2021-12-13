@@ -157,9 +157,11 @@ app.post("/api/ads/createAd", async (req, res) => {
   ];
 
   if(checkParameters(requiredParameters, req.body)) {
+    // Verifico di essere loggato ed ottengo il mio userId
     let currentUserId = await Session.getUserBySession(req.body.sessionToken, req.ip);
 
     if(currentUserId !== null) {
+      // Se sono loggato uso il mio ID per creare un annuncio
       let myNewAd = await Advertisement.create({
         authorId: currentUserId,
         title: req.body.title,
@@ -201,9 +203,11 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
 app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
   if(typeof req.params.userId !== "undefined") {
     if(req.params.userId.length === 24) {
+      // Trovo tutti gli annunci dell'utente
       let userAds = await User.findUserAds(req.params.userId);
       let reviews = [];
       
+      // Per ogni annuncio aggiungo alla lista tutte le recensioni
       for(let ad of userAds) {
         reviews.push(...await Review.find({ adId: ad._id }).exec());
       }
@@ -229,8 +233,10 @@ app.post("/api/reviews/postReview", async (req, res) => {
   ];
 
   if(checkParameters(requiredParameters, req.body)) {
+    // Verifico di essere un utente loggato e ottengo il mio userId
     let authorId = await Session.getUserBySession(req.body.sessionToken, req.ip);
     if(authorId !== null) {
+      // Se sono loggato creo la recensione con il mio ID
       let myNewReview = await Review.create({
         authorId,
         adId: req.body.adId,
