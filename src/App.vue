@@ -1,6 +1,7 @@
 <template>
   <header>
     <div id="logo">
+      <div></div>
       <div id="logo-text">TeacherFinder</div>
       <div id="user-info">
         <div id="user-login" v-if="this.sessionToken === ''">
@@ -136,12 +137,25 @@ body {
 }
 
 #logo {
-  text-align: center;
   font-size: 24pt;
   margin: 16px 0;
   cursor: default;
   user-select: none;
   display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+#logo > div {
+  flex: 1 0 0;
+}
+
+.flex > span:nth-child(2) {
+  text-align: center;
+}
+
+#user-login {
+  text-align: right;
 }
 
 #logo #logo-text {
