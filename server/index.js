@@ -5,6 +5,7 @@ const history = require("connect-history-api-fallback");
 const Database = require("./database/database.js");
 const User = require("./database/User.js");
 const Session = require("./database/Session.js");
+const Advertisement = require("./database/Advertisement.js");
 
 const MongoError = require("./database/MongoError.js");
 
@@ -121,7 +122,40 @@ app.get("/api/ads/search/:keyword", async (req, res) => {});
 
 app.get("/api/ads/getAdInfo/:id", async (req, res) => {});
 
-app.post("/api/ads/createAd", async (req, res) => {});
+app.post("/api/ads/createAd", async (req, res) => {
+  let requiredParameters = [
+    "sessionToken",
+    "title",
+    "description",
+    "price",
+    "type",
+    "lat",
+    "lon"
+  ];
+
+  if(checkParameters(requiredParameters, req.body)) {
+    let currentUserId = await Session.getUserBySession(req.body.sessionToken, req.ip);
+
+    if(currentUserId !== null) {
+      let myNewAd = await Advertisement.create({
+        authorId: currentUserId,
+        title: req.body.title,
+        description: req.body.description,
+        price: req.body.price,
+        type: req.body.type,
+        lat: req.body.lat,
+        lon: req.body.lon
+      });
+      res.status(200).json(myNewAd);
+    } else {
+      res.sendStatus(403);
+    }
+  } else {
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body)
+    })
+  }
+});
 
 // Endpoint Recensioni
 // ===================
