@@ -4,7 +4,7 @@
       <div></div>
       <div id="logo-text">TeacherFinder</div>
       <div id="user-info">
-        <div id="user-login" v-if="this.sessionToken === ''">
+        <div id="user-login" v-if="this.sessionToken === '' && showLoginBtn">
           <button @click.prevent="this.$router.push({ name: 'Login' })">
             Login
           </button>
@@ -20,7 +20,10 @@
 <script setup>
 import Searchbar from "@/components/Searchbar.vue";
 import Navbar from "@/components/Navbar.vue";
-import { ref, defineExpose } from "vue";
+import { ref, defineExpose, watch } from "vue";
+import { useRoute } from "vue-router";
+
+const route = useRoute();
 
 const ads = ref([]);
 const sessionToken = ref("");
@@ -42,6 +45,16 @@ const getCookie = function (name) {
 };
 
 sessionToken.value = getCookie("sessionToken");
+
+const showLoginBtn = ref(true);
+watch(
+  () => route.name,
+  (toParams, previousParams) => {
+    console.log(previousParams, toParams);
+    if (toParams == "Login") showLoginBtn.value = false;
+    else showLoginBtn.value = true;
+  }
+);
 
 ads.value = [
   { title: "Analisi I", price: 10.5, grading: 1, uuid: "4567876543" },
@@ -155,7 +168,8 @@ body {
 }
 
 #user-login {
-  text-align: right;
+  display: flex;
+  justify-content: right;
 }
 
 #logo #logo-text {
@@ -184,6 +198,10 @@ body {
   box-shadow: 2px 2px 0 var(--border-unique-shadow);
   transform: translate(2px, 2px);
   cursor: pointer;
+}
+
+.tf-box > :first-child {
+  margin-top: 0;
 }
 
 textarea {

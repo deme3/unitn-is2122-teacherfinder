@@ -85,10 +85,6 @@ watch(
   box-sizing: border-box;
 }
 
-.container .info h1 {
-  margin-bottom: 0;
-}
-
 .container .info .ad-info p {
   margin: 0;
 }
