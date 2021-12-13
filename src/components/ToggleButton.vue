@@ -24,7 +24,7 @@ defineExpose({ toggleStatus: Boolean });
 
 <style scoped>
 .toggle-button {
-  border: 2px solid var(--border-unique-color);
+  border: 2px solid var(--border-unique-strongcolor);
   background: var(--elements-bg-color);
   width: 32px;
   height: 16px;
@@ -38,7 +38,7 @@ defineExpose({ toggleStatus: Boolean });
 
 .toggle-dot {
   position: absolute;
-  background: var(--border-unique-color);
+  background: var(--border-unique-strongcolor);
   right: 16px;
   width: 16px;
   height: 16px;

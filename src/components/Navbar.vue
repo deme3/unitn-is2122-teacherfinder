@@ -40,7 +40,7 @@ ul#nav a {
 }
 
 ul#nav a.router-link-exact-active {
-  border-bottom: 2px solid var(--border-unique-color);
+  border-bottom: 2px solid var(--border-unique-strongcolor);
 }
 
 li a {

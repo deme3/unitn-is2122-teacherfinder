@@ -103,7 +103,8 @@ defineExpose({
     --font-color: #d7dadc;
     --text-box-bg-color: #242323;
     --elements-bg-color: #2a2929;
-    --border-unique-color: #c6c6c6;
+    --border-unique-color: #8a8a8a;
+    --border-unique-strongcolor: #c6c6c6;
     --border-unique-shadow: #00000020;
     --bg-uri: url(assets/bg_pattern_dark.png);
   }
@@ -116,7 +117,8 @@ defineExpose({
     --font-color: #000000;
     --text-box-bg-color: white;
     --elements-bg-color: #ffffff;
-    --border-unique-color: #000000;
+    --border-unique-color: #8a8a8a;
+    --border-unique-strongcolor: #000000;
     --border-unique-shadow: #00000020;
     --bg-uri: url(assets/bg_pattern.png);
   }
@@ -157,6 +159,7 @@ body {
   margin: 16px 8px;
   padding: 16px 24px;
   background: var(--elements-bg-color);
+  border-radius: 2px;
 }
 
 .tf-box.hoverable {
@@ -199,7 +202,7 @@ button,
 input[type="submit"] {
   -webkit-appearance: none;
   font: var(--base-font);
-  border: 2px solid var(--border-unique-color);
+  border: 2px solid var(--border-unique-strongcolor);
   color: var(--font-color);
   background: var(--elements-bg-color);
   box-shadow: 2px 2px 0 var(--border-unique-shadow);
@@ -248,5 +251,8 @@ input[type="search"],
 input[type="tel"],
 input[type="color"] {
   font-size: 16px;
+  border-color: var(--border-unique-strongcolor);
+  -webkit-appearance: none;
+  border-radius: 5px;
 }
 </style>
