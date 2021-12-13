@@ -217,6 +217,16 @@ input[type="submit"]:hover {
   cursor: pointer;
 }
 
+@media (pointer: coarse) {
+  button:hover,
+  input[type="submit"]:hover {
+    -webkit-transform: none;
+    -moz-transform: none;
+    -ms-transform: none;
+    transform: none;
+  }
+}
+
 button:active,
 input[type="submit"]:active {
   transition: box-shadow 0s, transform 0s;
