@@ -2,7 +2,8 @@ const express = require("express");
 const path = require("path");
 const history = require("connect-history-api-fallback");
 
-const Database = require("./database/database.js")
+const Database = require("./database/database.js");
+const User = require("./database/User.js");
 
 // Inizializzo Express
 const app = express();
@@ -28,9 +29,31 @@ app.get("/api", (req, res) => {
 
 // Endpoint Utente
 // ===============
-app.put("/api/user/register", (req, res) => {
+app.put("/api/user/register", async (req, res) => {
   // Registro le informazioni su questo utente
-  
+  // Nome, cognome, nickname, password, conferma password, e-mail
+  let requiredParameters = [
+    "firstName",
+    "lastName",
+    "nickname",
+    "password",
+    "email",
+    "biography"
+  ];
+
+  // TO-DO: Hashare la password
+  if(checkParameters(requiredParameters, req.body)) {
+    try {
+      await User.create(req.body);
+      res.status(200).json(req.body);
+    } catch {
+      res.sendStatus(500);
+    }
+  } else {
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body)
+    });
+  }
 });
 
 app.get("/api/user/login", (req, res) => {
