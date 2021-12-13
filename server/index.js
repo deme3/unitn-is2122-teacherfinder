@@ -46,8 +46,8 @@ app.put("/api/user/register", async (req, res) => {
     try {
       await User.create(req.body);
       res.status(200).json(req.body);
-    } catch {
-      res.sendStatus(500);
+    } catch(err) {
+      res.status(500).json(err);
     }
   } else {
     res.status(400).json({
