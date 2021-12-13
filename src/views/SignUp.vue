@@ -1,6 +1,6 @@
 <template>
   <div class="SignUp tf-box">
-    <h1>Registrazione</h1>
+    <div class="register-title">Registrati</div>
     <form method="post" @submit.prevent="undefined">
       <div class="register-header">
         <TextSettingsEntry ref="email" description="E-mail" />
@@ -17,6 +17,10 @@
 </template>
 
 <style scoped>
+.register-title {
+  text-align: center;
+}
+
 .register-header {
   border-bottom: 2px solid var(--border-unique-color);
   margin-bottom: 1em;

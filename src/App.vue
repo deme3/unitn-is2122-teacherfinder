@@ -200,10 +200,6 @@ body {
   cursor: pointer;
 }
 
-.tf-box > :first-child {
-  margin-top: 0;
-}
-
 textarea {
   resize: none;
   font-family: inherit;
