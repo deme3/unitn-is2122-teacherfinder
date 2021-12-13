@@ -216,7 +216,7 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
       res.sendStatus(400);
     }
   } else {
-    res.status(400).json({ missingParameters: [ "adId" ]});
+    res.status(400).json({ missingParameters: [ "userId" ]});
   }
 });
 
