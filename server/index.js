@@ -198,7 +198,27 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
   }
 });
 
-app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {});
+app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
+  if(typeof req.params.userId !== "undefined") {
+    if(req.params.userId.length === 24) {
+      let userAds = await User.findUserAds(req.params.userId);
+      let reviews = [];
+      
+      for(let ad of userAds) {
+        reviews.push(...await Review.find({ adId: ad._id }).exec());
+      }
+      
+      if(reviews !== null)
+        res.status(200).json(reviews);
+      else
+        res.status(200).json({});
+    } else {
+      res.sendStatus(400);
+    }
+  } else {
+    res.status(400).json({ missingParameters: [ "adId" ]});
+  }
+});
 
 app.post("/api/reviews/postReview", async (req, res) => {
   let requiredParameters = [
