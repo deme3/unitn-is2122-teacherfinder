@@ -1,6 +1,6 @@
 <template>
+  <h1>Impostazioni</h1>
   <div class="impostazioni tf-box">
-    <h1>Impostazioni</h1>
     <UserCard />
     <TextSettingsEntry description="Nickname" default-value="framcesca" />
     <TextSettingsEntry
@@ -31,6 +31,7 @@
       />
     </section>
     <section class="action-buttons">
+      <button @click="logout">Logout</button>
       <button>Annulla modifiche</button>
       <button>Salva</button>
     </section>
@@ -43,11 +44,15 @@
 }
 
 .action-buttons {
-  text-align: right;
+  display: flex;
 }
 
-.action-buttons button:not(:last-child) {
-  margin-right: 1em;
+.action-buttons button:not(:first-child) {
+  margin-left: 1em;
+}
+
+.action-buttons button:first-child {
+  margin-right: auto;
 }
 </style>
 
@@ -55,4 +60,8 @@
 import UserCard from "@/components/UserCard.vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
 import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
+
+const logout = () => {
+  document.cookie = "";
+}
 </script>
