@@ -1,5 +1,5 @@
 <template>
-  <div class="toggle-settings-entry">
+  <div class="toggle-settings-entry" @click="onClick">
     <div class="description">{{ props.description }}</div>
     <div class="toggle"><ToggleButton ref="togglebutton" /></div>
   </div>
@@ -13,6 +13,9 @@
 
 .toggle-settings-entry .description {
   width: 100%;
+  user-select: none;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;
 }
 
 .toggle-settings-entry .toggle {
@@ -50,6 +53,10 @@ const toggleStatus = computed(() => {
   if (togglebutton.value == null) return false;
   return togglebutton.value.toggleStatus;
 });
+
+const onClick = () => {
+  togglebutton.value.toggle();
+};
 
 defineExpose({
   toggleStatus: toggleStatus,

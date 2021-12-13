@@ -1,5 +1,5 @@
 <template>
-  <div class="toggle-button" @click="toggle">
+  <div class="toggle-button">
     <div class="toggle-dot-container">
       <div :class="toggleDotClass"></div>
     </div>
@@ -7,19 +7,22 @@
 </template>
 
 <script setup>
-import { computed, defineExpose, ref } from "vue";
+import { defineExpose, ref, watch } from "vue";
 
 const toggleStatus = ref(false);
+const toggleDotClass = ref(
+  "toggle-dot" + (toggleStatus.value ? " toggled" : "")
+);
 
 const toggle = () => {
   toggleStatus.value = !toggleStatus.value;
 };
 
-const toggleDotClass = computed(
-  () => "toggle-dot" + (toggleStatus.value ? " toggled" : "")
-);
+watch(toggleStatus, () => {
+  toggleDotClass.value = "toggle-dot" + (toggleStatus.value ? " toggled" : "");
+});
 
-defineExpose({ toggleStatus: Boolean });
+defineExpose({ toggleStatus: Boolean, toggle });
 </script>
 
 <style scoped>
