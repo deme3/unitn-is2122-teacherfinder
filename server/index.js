@@ -4,6 +4,9 @@ const history = require("connect-history-api-fallback");
 
 const Database = require("./database/database.js");
 const User = require("./database/User.js");
+const Session = require("./database/Session.js");
+
+const MongoError = require("./database/MongoError.js");
 
 // Inizializzo Express
 const app = express();
@@ -29,6 +32,8 @@ app.get("/api", (req, res) => {
 
 // Endpoint Utente
 // ===============
+
+// Trasmissione naive di credenziali senza sicurezza a scopo dimostrativo
 app.put("/api/user/register", async (req, res) => {
   // Registro le informazioni su questo utente
   // Nome, cognome, nickname, password, conferma password, e-mail
@@ -41,13 +46,22 @@ app.put("/api/user/register", async (req, res) => {
     "biography"
   ];
 
-  // TO-DO: Hashare la password
   if(checkParameters(requiredParameters, req.body)) {
     try {
+      // Inserisco l'utente nel database
       await User.create(req.body);
+
+      // Rimuovo la password dalla risposta
+      delete req.body.password;
       res.status(200).json(req.body);
     } catch(err) {
-      res.status(500).json(err);
+      if(err.code == MongoError.DUPLICATE_ENTRY.code) {
+        // Se l'errore è causato da un valore univoco duplicato invio la causa
+        res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
+      } else {
+        // Altrimenti invio solo Internal Server Error
+        res.sendStatus(500);
+      }
     }
   } else {
     res.status(400).json({
@@ -56,14 +70,33 @@ app.put("/api/user/register", async (req, res) => {
   }
 });
 
-app.get("/api/user/login", (req, res) => {
+app.get("/api/user/login", async (req, res) => {
   // Prendo l'IP dell'utente e lo registro assieme al token
+  let requiredFields = [ "nickname", "password" ];
 
+  if(checkParameters(requiredFields, req.body)) {
+    let myUser = await User
+      .findOne({ 
+        $or: [
+          { nickname: req.body.nickname, password: req.body.password }, // match per nickname
+          { email: req.body.nickname, password: req.body.password } // match per e-mail
+        ]
+      }).exec();
+    
+    if(myUser !== null) {
+      let mySession = await Session.create({ ipAddress: req.ip });
+      res.status(200).json(mySession);
+    } else {
+      res.status(200).json({});
+    }
+  } else {
+    res.sendStatus(500);
+  }
 });
 
 app.delete("/api/user/logout/:token", (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
-
+  
 });
 
 app.get("/api/user/checkToken/:token", (req, res) => {
