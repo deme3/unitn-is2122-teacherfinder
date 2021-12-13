@@ -3,6 +3,7 @@
     <div class="register-title">Registrati</div>
     <form method="post" @submit.prevent="undefined">
       <div class="register-header">
+        <TextSettingsEntry ref="nickname" description="Nickname" />
         <TextSettingsEntry ref="email" description="E-mail" />
         <TextSettingsEntry ref="password" description="Password" password />
         <TextSettingsEntry
