@@ -94,57 +94,66 @@ app.get("/api/user/login", async (req, res) => {
   }
 });
 
-app.delete("/api/user/logout/:token", (req, res) => {
+app.delete("/api/user/logout/:token", async (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
-  
+
+  if(typeof req.params.token !== "undefined") {
+    let deletedCount = await Session.deleteOne({ _id: req.params.token, ipAddress: req.ip }).exec();
+    res.status(200).json({ deletedCount });
+  } else {
+    res.status(400).json({ missingParameters: ["token"] });
+  }
 });
 
-app.get("/api/user/checkToken/:token", (req, res) => {
+app.get("/api/user/checkToken/:token", async (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
-
+  if(typeof req.params.token !== "undefined") {
+    let sessionExists = await Session.checkToken(req.params.token, req.ip);
+    res.status(200).json({ sessionExists });
+  }
 });
 
 // Endpoint Annunci
 // ================
-app.get("/api/ads/list/:userId", (req, res) => {});
+app.get("/api/ads/list/:userId", async (req, res) => {});
 
-app.get("/api/ads/search/:keyword", (req, res) => {});
+app.get("/api/ads/search/:keyword", async (req, res) => {});
 
-app.get("/api/ads/getAdInfo/:id", (req, res) => {});
+app.get("/api/ads/getAdInfo/:id", async (req, res) => {});
 
-app.post("/api/ads/createAd", (req, res) => {});
+app.post("/api/ads/createAd", async (req, res) => {});
 
 // Endpoint Recensioni
 // ===================
-app.get("/api/reviews/getReviews/:adId", (req, res) => {});
+app.get("/api/reviews/getReviews/:adId", async (req, res) => {});
 
-app.get("/api/reviews/getUserReviews/:userId", (req, res) => {});
+app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {});
 
-app.post("/api/reviews/postReview", (req, res) => {});
+app.post("/api/reviews/postReview", async (req, res) => {});
 
 // Endpoint Iscrizioni
 // ===================
-app.put("/api/subscriptions/acceptSubscription", (req, res) => {
+app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
   // tutor
 });
 
-app.put("/api/subscriptions/rejectSubscription", (req, res) => {
+app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
   // tutor
 });
 
-app.put("/api/subscriptions/cancelSubscription", (req, res) => {
+app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
   // studente
 });
 
-app.put("/api/subscriptions/paySubscription", (req, res) => {});
+app.put("/api/subscriptions/paySubscription", async (req, res) => {});
 
-app.get("/api/subscriptions/list/:userId", (req, res) => {});
+app.get("/api/subscriptions/list/:userId", async (req, res) => {});
 
 // Endpoint Impostazioni
 // =====================
-app.get("/api/settings/current", (req, res) => {});
+app.get("/api/settings/current", async (req, res) => {});
 
-app.put("/api/settings/change/:settingId/to/:newValue", (req, res) => {});
+app.put("/api/settings/change/:settingId/to/:newValue", async (req, res) => {});
 
 // Permetto a Vue.js di gestire le path single-page con Vue Router
 // Sul front-end compilato!

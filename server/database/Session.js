@@ -9,5 +9,9 @@ let sessionSchema = new mongoose.Schema({
   }
 });
 
+sessionSchema.statics.checkToken = async function(token, ipAddress) {
+  return await Session.exists({ _id: token, ipAddress });
+}
+
 let Session = mongoose.model("Session", sessionSchema);
 module.exports = Session;
