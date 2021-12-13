@@ -8,7 +8,20 @@ const Database = require("./database/database.js")
 const app = express();
 const port = 8080;
 
+// BodyParser per JSON
+app.use(express.json());
+
 // Definisco endpoint API lato server
+// Funzione che mi permette di verificare che tutti i parametri richiesti siano presenti
+const checkParameters =
+  (parameters, body) => parameters.every(
+    (parameter) => Object.keys(body).includes(parameter)
+  );
+
+// Funzione che mi permette di ottenere i parametri mancanti rispetto all'aspettativa dell'endpoint
+const getMissingParameters = 
+  (expectation, reality) => expectation.filter(x => !Object.keys(reality).includes(x));
+
 app.get("/api", (req, res) => {
   res.send({ works: true });
 });
@@ -17,7 +30,7 @@ app.get("/api", (req, res) => {
 // ===============
 app.put("/api/user/register", (req, res) => {
   // Registro le informazioni su questo utente
-
+  
 });
 
 app.get("/api/user/login", (req, res) => {
@@ -30,7 +43,7 @@ app.delete("/api/user/logout/:token", (req, res) => {
 
 });
 
-app.get("/api/user/checkToken", (req, res) => {
+app.get("/api/user/checkToken/:token", (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
 
 });
@@ -89,7 +102,6 @@ app.listen(port, async () => {
   await Database.readConfiguration();
 
   console.log(`Connessione a ${Database.mongoConfig.connectionString}...`);
-  let conn = await Database.connect();
-
+  await Database.connect();
   console.log("Connesso.");
 });
