@@ -127,7 +127,22 @@ app.get("/api/ads/list/:userId", async (req, res) => {
 
 app.get("/api/ads/search/:keyword", async (req, res) => {});
 
-app.get("/api/ads/getAdInfo/:id", async (req, res) => {});
+app.get("/api/ads/getAdInfo/:id", async (req, res) => {
+  if(typeof req.params.id !== "undefined") {
+    if(req.params.id.length === 24) {
+      let foundAd = await Advertisement.findById(req.params.id);
+      if(foundAd !== null) {
+        res.status(200).json(foundAd);
+      } else {
+        res.status(404).json({});
+      }
+    } else {
+      res.sendStatus(400);
+    }
+  } else {
+    res.status(400).json({ missingParameters: [ "id" ] });
+  }
+});
 
 app.post("/api/ads/createAd", async (req, res) => {
   let requiredParameters = [
