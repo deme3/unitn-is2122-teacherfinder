@@ -7,6 +7,7 @@ const User = require("./database/User.js");
 const Session = require("./database/Session.js");
 const Advertisement = require("./database/Advertisement.js");
 const Review = require("./database/Review.js");
+const Subscription = require("./database/Subscription.js");
 
 const MongoError = require("./database/MongoError.js");
 
@@ -256,16 +257,58 @@ app.post("/api/reviews/postReview", async (req, res) => {
 
 // Endpoint Iscrizioni
 // ===================
-app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
-  // tutor
+app.put("/api/subscriptions/requestSubscription", async (req, res) => {
+  let requiredParameters = [ "sessionToken", "adId", "hours" ];
+
+  if(checkParameters(requiredParameters, req.body)) {
+    // controllo di ricevere un ID valido (ObjectId con length 24)
+    // e controllo di avere un numero come quantità di ore richieste, per non rompere l'integrità del db
+    if(req.body.adId.length === 24 && typeof req.body.hours === "number") {
+      let subscriberId = await Session.getUserBySession(req.body.sessionToken, req.ip);
+      if(subscriberId !== null) {
+        let myNewSubscription = await Subscription.create({
+          subscriberId,
+          adId: req.body.adId,
+          status: "requested",
+          hours: req.body.hours
+        });
+        res.status(200).json(myNewSubscription);
+      } else {
+        res.sendStatus(403);
+      }
+    } else {
+      res.sendStatus(400);
+    }
+  } else {
+    res.status(400).json({ missingParameters: getMissingParameters(requiredParameters, req.body) });
+  }
 });
 
-app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
+app.put("/api/subscriptions/acceptSubscription/:adId", async (req, res) => {
   // tutor
+  if(typeof req.params.adId !== "undefined") {
+
+  } else {
+    res.status(400).json({ missingParameters: [ "adId" ] });
+  }
 });
 
-app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
+app.put("/api/subscriptions/rejectSubscription/:adId", async (req, res) => {
+  // tutor
+  if(typeof req.params.adId !== "undefined") {
+
+  } else {
+    res.status(400).json({ missingParameters: [ "adId" ] });
+  }
+});
+
+app.put("/api/subscriptions/cancelSubscription/:adId", async (req, res) => {
   // studente
+  if(typeof req.params.adId !== "undefined") {
+
+  } else {
+    res.status(400).json({ missingParameters: [ "adId" ] });
+  }
 });
 
 app.put("/api/subscriptions/paySubscription", async (req, res) => {});
