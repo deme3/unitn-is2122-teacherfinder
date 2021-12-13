@@ -4,8 +4,9 @@ const path = require("path");
 
 const configurationTemplate = {
   databaseName: "teacherfinder",
-  connectionString: `mongodb://127.0.0.1:27071/${configurationTemplate.databaseName}`,
+  connectionString: `mongodb://127.0.0.1:27017/`,
 };
+configurationTemplate.connectionString += configurationTemplate.databaseName;
 
 const CONFIG_PATH = path.join(__dirname, "db-config.json");
 

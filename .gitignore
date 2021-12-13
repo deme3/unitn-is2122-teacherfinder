@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /dist
-server/db-config.json
+server/database/db-config.json
 
 # local env files
 .env.local

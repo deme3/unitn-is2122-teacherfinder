@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const history = require("connect-history-api-fallback");
 
+const Database = require("./database/database.js")
+
 // Inizializzo Express
 const app = express();
 const port = 8080;
@@ -13,11 +15,25 @@ app.get("/api", (req, res) => {
 
 // Endpoint Utente
 // ===============
-app.get("/api/user/login", (req, res) => {});
+app.put("/api/user/register", (req, res) => {
+  // Registro le informazioni su questo utente
 
-app.get("/api/user/logout", (req, res) => {});
+});
 
-app.get("/api/user/checkToken", (req, res) => {});
+app.get("/api/user/login", (req, res) => {
+  // Prendo l'IP dell'utente e lo registro assieme al token
+
+});
+
+app.delete("/api/user/logout/:token", (req, res) => {
+  // Rimuovo il token se l'IP del mittente corrisponde
+
+});
+
+app.get("/api/user/checkToken", (req, res) => {
+  // Restituisco true se il token e l'IP corrispondono
+
+});
 
 // Endpoint Annunci
 // ================
@@ -67,6 +83,13 @@ app.use(history());
 app.use("/", express.static(path.join(__dirname, "..", "dist")));
 
 // Avvio il server
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`Express server listening: http://localhost:${port}/`);
+  console.log(`Caricamento configurazione MongoDB...`);
+  await Database.readConfiguration();
+
+  console.log(`Connessione a ${Database.mongoConfig.connectionString}...`);
+  let conn = await Database.connect();
+
+  console.log("Connesso.");
 });
