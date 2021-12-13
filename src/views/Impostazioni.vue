@@ -45,10 +45,8 @@
 
 .action-buttons {
   display: flex;
-}
-
-.action-buttons button:not(:first-child) {
-  margin-left: 1em;
+  gap: 1em;
+  justify-content: right;
 }
 
 .action-buttons button:first-child {
