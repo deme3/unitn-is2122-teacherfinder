@@ -6,6 +6,7 @@ const Database = require("./database/database.js");
 const User = require("./database/User.js");
 const Session = require("./database/Session.js");
 const Advertisement = require("./database/Advertisement.js");
+const Review = require("./database/Review.js");
 
 const MongoError = require("./database/MongoError.js");
 
@@ -185,7 +186,33 @@ app.get("/api/reviews/getReviews/:adId", async (req, res) => {});
 
 app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {});
 
-app.post("/api/reviews/postReview", async (req, res) => {});
+app.post("/api/reviews/postReview", async (req, res) => {
+  let requiredParameters = [
+    "sessionToken",
+    "adId",
+    "rating",
+    "explanation"
+  ];
+
+  if(checkParameters(requiredParameters, req.body)) {
+    let authorId = await Session.getUserBySession(req.body.sessionToken, req.ip);
+    if(authorId !== null) {
+      let myNewReview = await Review.create({
+        authorId,
+        adId: req.body.adId,
+        rating: req.body.rating,
+        explanation: req.body.explanation
+      });
+      res.status(200).json(myNewReview);
+    } else {
+      res.sendStatus(403);
+    }
+  } else {
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body)
+    });
+  }
+});
 
 // Endpoint Iscrizioni
 // ===================
