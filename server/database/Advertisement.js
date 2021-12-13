@@ -10,8 +10,7 @@ const adSchema = new mongoose.Schema({
     requested: true
   },
   lat: Number,
-  lon: Number,
-  reviews: []
+  lon: Number
 });
 
 const Advertisement = mongoose.model("Advertisement", adSchema);
