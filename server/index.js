@@ -20,14 +20,12 @@ app.use(express.json());
 
 // Definisco endpoint API lato server
 // Funzione che mi permette di verificare che tutti i parametri richiesti siano presenti
-const checkParameters =
-  (parameters, body) => parameters.every(
-    (parameter) => Object.keys(body).includes(parameter)
-  );
+const checkParameters = (parameters, body) =>
+  parameters.every((parameter) => Object.keys(body).includes(parameter));
 
 // Funzione che mi permette di ottenere i parametri mancanti rispetto all'aspettativa dell'endpoint
-const getMissingParameters = 
-  (expectation, reality) => expectation.filter(x => !Object.keys(reality).includes(x));
+const getMissingParameters = (expectation, reality) =>
+  expectation.filter((x) => !Object.keys(reality).includes(x));
 
 app.get("/api", (req, res) => {
   res.send({ works: true });
@@ -46,10 +44,10 @@ app.put("/api/user/register", async (req, res) => {
     "nickname",
     "password",
     "email",
-    "biography"
+    "biography",
   ];
 
-  if(checkParameters(requiredParameters, req.body)) {
+  if (checkParameters(requiredParameters, req.body)) {
     try {
       // Inserisco l'utente nel database
       await User.create(req.body);
@@ -57,8 +55,8 @@ app.put("/api/user/register", async (req, res) => {
       // Rimuovo la password dalla risposta
       delete req.body.password;
       res.status(200).json(req.body);
-    } catch(err) {
-      if(err.code == MongoError.DUPLICATE_ENTRY.code) {
+    } catch (err) {
+      if (err.code == MongoError.DUPLICATE_ENTRY.code) {
         // Se l'errore è causato da un valore univoco duplicato invio la causa
         res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
       } else {
@@ -68,26 +66,28 @@ app.put("/api/user/register", async (req, res) => {
     }
   } else {
     res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body)
+      missingParameters: getMissingParameters(requiredParameters, req.body),
     });
   }
 });
 
 app.get("/api/user/login", async (req, res) => {
   // Prendo l'IP dell'utente e lo registro assieme al token
-  let requiredFields = [ "nickname", "password" ];
+  let requiredFields = ["nickname", "password"];
 
-  if(checkParameters(requiredFields, req.body)) {
-    let myUser = await User
-      .findOne({ 
-        $or: [
-          { nickname: req.body.nickname, password: req.body.password }, // match per nickname
-          { email: req.body.nickname, password: req.body.password } // match per e-mail
-        ]
-      }).exec();
-    
-    if(myUser !== null) {
-      let mySession = await Session.create({ userId: myUser._id, ipAddress: req.ip });
+  if (checkParameters(requiredFields, req.body)) {
+    let myUser = await User.findOne({
+      $or: [
+        { nickname: req.body.nickname, password: req.body.password }, // match per nickname
+        { email: req.body.nickname, password: req.body.password }, // match per e-mail
+      ],
+    }).exec();
+
+    if (myUser !== null) {
+      let mySession = await Session.create({
+        userId: myUser._id,
+        ipAddress: req.ip,
+      });
       res.status(200).json(mySession);
     } else {
       res.status(200).json({});
@@ -100,8 +100,11 @@ app.get("/api/user/login", async (req, res) => {
 app.delete("/api/user/logout/:token", async (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
 
-  if(typeof req.params.token !== "undefined") {
-    let deletedCount = await Session.deleteOne({ _id: req.params.token, ipAddress: req.ip }).exec();
+  if (typeof req.params.token !== "undefined") {
+    let deletedCount = await Session.deleteOne({
+      _id: req.params.token,
+      ipAddress: req.ip,
+    }).exec();
     res.status(200).json({ deletedCount });
   } else {
     res.status(400).json({ missingParameters: ["token"] });
@@ -110,8 +113,15 @@ app.delete("/api/user/logout/:token", async (req, res) => {
 
 app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
-  if(typeof req.params.token !== "undefined" && typeof req.params.userId !== "undefined") {
-    let sessionExists = await Session.checkToken(req.params.token, req.params.userId, req.ip);
+  if (
+    typeof req.params.token !== "undefined" &&
+    typeof req.params.userId !== "undefined"
+  ) {
+    let sessionExists = await Session.checkToken(
+      req.params.token,
+      req.params.userId,
+      req.ip
+    );
     res.status(200).json({ sessionExists });
   }
 });
@@ -119,21 +129,21 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
 // Endpoint Annunci
 // ================
 app.get("/api/ads/list/:userId", async (req, res) => {
-  if(typeof req.params.userId !== "undefined") {
+  if (typeof req.params.userId !== "undefined") {
     let foundAds = await User.findUserAds(req.params.userId);
     res.status(200).json(foundAds);
   } else {
-    res.status(400).json({ missingParameters: [ "userId" ] });
+    res.status(400).json({ missingParameters: ["userId"] });
   }
 });
 
 app.get("/api/ads/search/:keyword", async (req, res) => {});
 
 app.get("/api/ads/getAdInfo/:id", async (req, res) => {
-  if(typeof req.params.id !== "undefined") {
-    if(req.params.id.length === 24) {
+  if (typeof req.params.id !== "undefined") {
+    if (req.params.id.length === 24) {
       let foundAd = await Advertisement.findById(req.params.id);
-      if(foundAd !== null) {
+      if (foundAd !== null) {
         res.status(200).json(foundAd);
       } else {
         res.status(404).json({});
@@ -142,7 +152,7 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
       res.sendStatus(400);
     }
   } else {
-    res.status(400).json({ missingParameters: [ "id" ] });
+    res.status(400).json({ missingParameters: ["id"] });
   }
 });
 
@@ -154,14 +164,17 @@ app.post("/api/ads/createAd", async (req, res) => {
     "price",
     "type",
     "lat",
-    "lon"
+    "lon",
   ];
 
-  if(checkParameters(requiredParameters, req.body)) {
+  if (checkParameters(requiredParameters, req.body)) {
     // Verifico di essere loggato ed ottengo il mio userId
-    let currentUserId = await Session.getUserBySession(req.body.sessionToken, req.ip);
+    let currentUserId = await Session.getUserBySession(
+      req.body.sessionToken,
+      req.ip
+    );
 
-    if(currentUserId !== null) {
+    if (currentUserId !== null) {
       // Se sono loggato uso il mio ID per creare un annuncio
       let myNewAd = await Advertisement.create({
         authorId: currentUserId,
@@ -170,7 +183,7 @@ app.post("/api/ads/createAd", async (req, res) => {
         price: req.body.price,
         type: req.body.type,
         lat: req.body.lat,
-        lon: req.body.lon
+        lon: req.body.lon,
       });
       res.status(200).json(myNewAd);
     } else {
@@ -178,71 +191,65 @@ app.post("/api/ads/createAd", async (req, res) => {
     }
   } else {
     res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body)
-    })
+      missingParameters: getMissingParameters(requiredParameters, req.body),
+    });
   }
 });
 
 // Endpoint Recensioni
 // ===================
 app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
-  if(typeof req.params.adId !== "undefined") {
-    if(req.params.adId.length === 24) {
+  if (typeof req.params.adId !== "undefined") {
+    if (req.params.adId.length === 24) {
       let reviews = await Review.find({ adId: req.params.adId }).exec();
-      if(reviews !== null)
-        res.status(200).json(reviews);
-      else
-        res.status(200).json({});
+      if (reviews !== null) res.status(200).json(reviews);
+      else res.status(200).json({});
     } else {
       res.sendStatus(400);
     }
   } else {
-    res.status(400).json({ missingParameters: [ "adId" ]});
+    res.status(400).json({ missingParameters: ["adId"] });
   }
 });
 
 app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
-  if(typeof req.params.userId !== "undefined") {
-    if(req.params.userId.length === 24) {
+  if (typeof req.params.userId !== "undefined") {
+    if (req.params.userId.length === 24) {
       // Trovo tutti gli annunci dell'utente
       let userAds = await User.findUserAds(req.params.userId);
       let reviews = [];
-      
+
       // Per ogni annuncio aggiungo alla lista tutte le recensioni
-      for(let ad of userAds) {
-        reviews.push(...await Review.find({ adId: ad._id }).exec());
+      for (let ad of userAds) {
+        reviews.push(...(await Review.find({ adId: ad._id }).exec()));
       }
-      
-      if(reviews !== null)
-        res.status(200).json(reviews);
-      else
-        res.status(200).json({});
+
+      if (reviews !== null) res.status(200).json(reviews);
+      else res.status(200).json({});
     } else {
       res.sendStatus(400);
     }
   } else {
-    res.status(400).json({ missingParameters: [ "userId" ]});
+    res.status(400).json({ missingParameters: ["userId"] });
   }
 });
 
 app.post("/api/reviews/postReview", async (req, res) => {
-  let requiredParameters = [
-    "sessionToken",
-    "adId",
-    "rating",
-    "explanation"
-  ];
+  let requiredParameters = ["sessionToken", "adId", "rating", "explanation"];
 
-  if(checkParameters(requiredParameters, req.body)) {
+  if (checkParameters(requiredParameters, req.body)) {
     // Verifico di essere un utente loggato e ottengo il mio userId
-    let authorId = await Session.getUserBySession(req.body.sessionToken, req.ip);
-    if(authorId !== null) {
+    let authorId = await Session.getUserBySession(
+      req.body.sessionToken,
+      req.ip
+    );
+    if (authorId !== null) {
       // Se sono loggato creo la recensione con il mio ID
       let myNewReview = await Review.create({
         authorId,
         adId: req.body.adId,
         rating: req.body.rating,
-        explanation: req.body.explanation
+        explanation: req.body.explanation,
       });
       res.status(200).json(myNewReview);
     } else {
@@ -250,7 +257,7 @@ app.post("/api/reviews/postReview", async (req, res) => {
     }
   } else {
     res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body)
+      missingParameters: getMissingParameters(requiredParameters, req.body),
     });
   }
 });
@@ -258,19 +265,22 @@ app.post("/api/reviews/postReview", async (req, res) => {
 // Endpoint Iscrizioni
 // ===================
 app.put("/api/subscriptions/requestSubscription", async (req, res) => {
-  let requiredParameters = [ "sessionToken", "adId", "hours" ];
+  let requiredParameters = ["sessionToken", "adId", "hours"];
 
-  if(checkParameters(requiredParameters, req.body)) {
+  if (checkParameters(requiredParameters, req.body)) {
     // controllo di ricevere un ID valido (ObjectId con length 24)
     // e controllo di avere un numero come quantità di ore richieste, per non rompere l'integrità del db
-    if(req.body.adId.length === 24 && typeof req.body.hours === "number") {
-      let subscriberId = await Session.getUserBySession(req.body.sessionToken, req.ip);
-      if(subscriberId !== null) {
+    if (req.body.adId.length === 24 && typeof req.body.hours === "number") {
+      let subscriberId = await Session.getUserBySession(
+        req.body.sessionToken,
+        req.ip
+      );
+      if (subscriberId !== null) {
         let myNewSubscription = await Subscription.create({
           subscriberId,
           adId: req.body.adId,
           status: "requested",
-          hours: req.body.hours
+          hours: req.body.hours,
         });
         res.status(200).json(myNewSubscription);
       } else {
@@ -280,38 +290,154 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
       res.sendStatus(400);
     }
   } else {
-    res.status(400).json({ missingParameters: getMissingParameters(requiredParameters, req.body) });
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body),
+    });
   }
 });
 
-app.put("/api/subscriptions/acceptSubscription/:adId", async (req, res) => {
+app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
+  let requiredParameters = ["sessionToken", "subId"];
   // tutor
-  if(typeof req.params.adId !== "undefined") {
+  if (
+    checkParameters(requiredParameters, req.body) &&
+    req.body.subId.length === 24 &&
+    req.body.sessionToken.length === 24
+  ) {
+    let subscription = await Subscription.findById(req.body.subId);
+    if(subscription !== null) {
+      let updateOp = await subscription.updateStatus(
+        req.body.sessionToken,
+        req.ip,
+        "waiting_payment"
+      );
 
+      if (updateOp.success) {
+        // Se l'update ha funzionato mando la nuova entry
+        res.status(200).json(updateOp.result);
+      } else {
+        // Forbidden: Non sono il proprietario dell'annuncio
+        res.status(403).json(updateOp.result);
+      }
+    } else {
+      // Not Found: Non posso aggiornare un'iscrizione inesistente
+      res.sendStatus(404);
+    }
   } else {
-    res.status(400).json({ missingParameters: [ "adId" ] });
+    // Bad Request: parametri incorretti
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body),
+    });
   }
 });
 
-app.put("/api/subscriptions/rejectSubscription/:adId", async (req, res) => {
+app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
+  let requiredParameters = ["sessionToken", "subId"];
   // tutor
-  if(typeof req.params.adId !== "undefined") {
+  if (
+    checkParameters(requiredParameters, req.body) &&
+    req.body.subId.length === 24 &&
+    req.body.sessionToken.length === 24
+  ) {
+    let subscription = await Subscription.findById(req.body.subId);
+    if(subscription !== null) {
+      let updateOp = await subscription.updateStatus(
+        req.body.sessionToken,
+        req.ip,
+        "tutor_rejected"
+      );
 
+      if (updateOp.success) {
+        // Se l'update ha funzionato mando la nuova entry
+        res.status(200).json(updateOp.result);
+      } else {
+        // Forbidden: Non sono il proprietario dell'annuncio
+        res.status(403).json(updateOp.result);
+      }
+    } else {
+      // Not Found: Non posso aggiornare un'iscrizione inesistente
+      res.sendStatus(404);
+    }
   } else {
-    res.status(400).json({ missingParameters: [ "adId" ] });
+    // Bad Request: parametri incorretti
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body),
+    });
   }
 });
 
-app.put("/api/subscriptions/cancelSubscription/:adId", async (req, res) => {
-  // studente
-  if(typeof req.params.adId !== "undefined") {
+app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
+  let requiredParameters = ["sessionToken", "subId"];
+  // tutor
+  if (
+    checkParameters(requiredParameters, req.body) &&
+    req.body.subId.length === 24 &&
+    req.body.sessionToken.length === 24
+  ) {
+    let subscription = await Subscription.findById(req.body.subId);
+    if(subscription !== null) {
+      let updateOp = await subscription.updateStatus(
+        req.body.sessionToken,
+        req.ip,
+        "student_canceled"
+      );
 
+      if (updateOp.success) {
+        // Se l'update ha funzionato mando la nuova entry
+        res.status(200).json(updateOp.result);
+      } else {
+        // Forbidden: Non sono il proprietario dell'annuncio
+        res.status(403).json(updateOp.result);
+      }
+    } else {
+      // Not Found: Non posso aggiornare un'iscrizione inesistente
+      res.sendStatus(404);
+    }
   } else {
-    res.status(400).json({ missingParameters: [ "adId" ] });
+    // Bad Request: parametri incorretti
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body),
+    });
   }
 });
 
-app.put("/api/subscriptions/paySubscription", async (req, res) => {});
+app.put("/api/subscriptions/paySubscription", async (req, res) => {
+  // ...
+  // elaborazione pagamento
+  // ...
+  let requiredParameters = ["sessionToken", "subId"];
+  // tutor
+  if (
+    checkParameters(requiredParameters, req.body) &&
+    req.body.subId.length === 24 &&
+    req.body.sessionToken.length === 24
+  ) {
+    let subscription = await Subscription.findById(req.body.subId);
+    if(subscription !== null) {
+      let updateOp = await subscription.updateStatus(
+        req.body.sessionToken,
+        req.ip,
+        "paid"
+      );
+
+      if (updateOp.success) {
+        // Se l'update ha funzionato mando la nuova entry
+        res.status(200).json(updateOp.result);
+      } else {
+        // Forbidden: Non sono il proprietario dell'annuncio
+        res.sendStatus(403);
+      }
+    } else {
+      // Not Found: Non posso aggiornare un'iscrizione inesistente
+      res.sendStatus(404);
+    }
+  } else {
+    // Bad Request: parametri incorretti
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body),
+    });
+  }
+});
 
 app.get("/api/subscriptions/list/:userId", async (req, res) => {});
 
