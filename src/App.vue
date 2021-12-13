@@ -230,4 +230,23 @@ input[type="submit"]:active {
   background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 5.5 5.5"><path d="M 0 1 L 1 0 L 5 4 L 4 5 L 0 1 M 5.5 5.5 L 5.25 4.25 L 4.25 5.25 L 5.5 5.5" fill="black"></path></svg>');
   background-size: cover;
 }
+
+select,
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"] {
+  font-size: 16px;
+}
 </style>
