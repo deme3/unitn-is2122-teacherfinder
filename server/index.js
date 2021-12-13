@@ -84,7 +84,7 @@ app.get("/api/user/login", async (req, res) => {
       }).exec();
     
     if(myUser !== null) {
-      let mySession = await Session.create({ ipAddress: req.ip });
+      let mySession = await Session.create({ userId: myUser._id, ipAddress: req.ip });
       res.status(200).json(mySession);
     } else {
       res.status(200).json({});
@@ -105,10 +105,10 @@ app.delete("/api/user/logout/:token", async (req, res) => {
   }
 });
 
-app.get("/api/user/checkToken/:token", async (req, res) => {
+app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
-  if(typeof req.params.token !== "undefined") {
-    let sessionExists = await Session.checkToken(req.params.token, req.ip);
+  if(typeof req.params.token !== "undefined" && typeof req.params.userId !== "undefined") {
+    let sessionExists = await Session.checkToken(req.params.token, req.params.userId, req.ip);
     res.status(200).json({ sessionExists });
   }
 });
