@@ -89,6 +89,13 @@ defineExpose({
 </script>
 
 <style>
+:root {
+  color-scheme: light dark;
+  --base-font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol";
+}
+
 @media (prefers-color-scheme: dark) {
   /* Dark theme styles go here */
   :root {
@@ -113,12 +120,6 @@ defineExpose({
     --border-unique-shadow: #00000020;
     --bg-uri: url(assets/bg_pattern.png);
   }
-}
-
-:root {
-  --base-font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
-    "Segoe UI Symbol";
 }
 
 body {
