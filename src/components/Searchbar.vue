@@ -4,6 +4,7 @@
       id="searchinput"
       name="searchinput"
       type="text"
+      placeholder="Cerca un annuncio"
       v-model="searchterms"
     />
     <input id="searchok" name="searchok" type="submit" value="Cerca" />
@@ -38,12 +39,15 @@ header form {
 header input[type="text"] {
   margin-right: 4px;
   color: var(--font-color);
+  border-color: var(--border-unique-color);
   background-color: var(--text-box-bg-color);
 }
 
 header input[type="submit"] {
-  border-radius: 25px;
   margin-left: 4px;
+  -webkit-appearance: none;
   font: var(--base-font);
+  font-size: 16px;
+  border-radius: 5px;
 }
 </style>
