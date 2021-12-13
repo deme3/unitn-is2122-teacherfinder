@@ -12,7 +12,10 @@
 
 <style scoped>
 .user-card {
-  margin: 0 1em;
+  margin-top: 1.34em;
+  margin-bottom: 1.34em;
+  margin-right: 1em;
+  margin-left: 1em;
   display: flex;
   gap: 1em;
   align-items: center;
@@ -47,9 +50,9 @@
 import { defineExpose, ref } from "vue";
 
 const pictureURL = ref("https://picsum.photos/100");
-const firstName = ref("Demetrio");
-const lastName = ref("Battaglia");
-const nickname = ref("deme3");
+const firstName = ref("Francesca");
+const lastName = ref("Mancini");
+const nickname = ref("framcesca");
 //const bio = ref("");
 
 defineExpose({

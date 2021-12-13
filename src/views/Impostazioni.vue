@@ -2,7 +2,7 @@
   <div class="impostazioni tf-box">
     <h1>Impostazioni</h1>
     <UserCard />
-    <TextSettingsEntry description="Nickname" default-value="deme3" />
+    <TextSettingsEntry description="Nickname" default-value="framcesca" />
     <TextSettingsEntry
       description="Biografia"
       default-value="Vuoto"

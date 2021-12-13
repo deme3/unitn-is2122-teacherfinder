@@ -42,6 +42,7 @@ header input[type="text"] {
 }
 
 header input[type="submit"] {
+  border-radius: 25px;
   margin-left: 4px;
   font: var(--base-font);
 }

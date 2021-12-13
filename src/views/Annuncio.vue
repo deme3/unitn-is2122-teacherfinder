@@ -77,6 +77,7 @@ watch(
   box-sizing: border-box;
   text-align: center;
   border-right: 1px solid var(--border-unique-shadow);
+  align-self: center;
 }
 
 .container .info {

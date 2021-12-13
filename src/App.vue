@@ -197,6 +197,7 @@ textarea:focus {
 
 button,
 input[type="submit"] {
+  -webkit-appearance: none;
   font: var(--base-font);
   border: 2px solid var(--border-unique-color);
   color: var(--font-color);
@@ -215,6 +216,7 @@ input[type="submit"]:hover {
 
 button:active,
 input[type="submit"]:active {
+  transition: box-shadow 0s, transform 0s;
   transform: translate(2px, 2px);
   box-shadow: 0px 0px 0 var(--border-unique-shadow);
   cursor: pointer;
