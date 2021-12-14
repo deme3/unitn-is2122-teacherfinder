@@ -2,10 +2,10 @@
   <h1>Impostazioni</h1>
   <div class="impostazioni tf-box">
     <UserCard />
-    <TextSettingsEntry description="Nickname" default-value="framcesca" />
+    <TextSettingsEntry description="Nickname" v-model:text="form.nickname" />
     <TextSettingsEntry
       description="Biografia"
-      default-value="Vuoto"
+      v-model:text="form.bio"
       multiline
     />
 
@@ -56,9 +56,15 @@
 </style>
 
 <script setup>
+import { reactive } from "vue";
 import UserCard from "@/components/UserCard.vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
 import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
+
+const form = reactive({
+  nickname: "framcesca",
+  bio: "Biografia di framcesca",
+});
 
 const logout = () => {
   console.log("logout");

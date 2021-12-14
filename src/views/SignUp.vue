@@ -1,13 +1,20 @@
 <template>
   <div class="SignUp tf-box">
     <div class="register-title">Registrati</div>
-    <form method="post" @submit.prevent="undefined">
+    <form method="post" @submit.prevent="submitSignUp">
       <div class="register-header">
-        <TextSettingsEntry ref="nickname" description="Nickname" />
-        <TextSettingsEntry ref="email" description="E-mail" />
-        <TextSettingsEntry ref="password" description="Password" password />
         <TextSettingsEntry
-          ref="password-repeat"
+          v-model:text="form.nickname"
+          description="Nickname"
+        />
+        <TextSettingsEntry v-model:text="form.email" description="E-mail" />
+        <TextSettingsEntry
+          v-model:text="form.password"
+          description="Password"
+          password
+        />
+        <TextSettingsEntry
+          v-model:text="form.passwordRepeat"
           description="Ripeti password"
           password
         />
@@ -32,5 +39,17 @@
 </style>
 
 <script setup>
+import { ref } from "vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
+
+const form = ref({
+  nickname: "",
+  email: "",
+  password: "",
+  passwordRepeat: "",
+});
+
+const submitSignUp = () => {
+  console.log("Registrazione: ", form.value);
+};
 </script>

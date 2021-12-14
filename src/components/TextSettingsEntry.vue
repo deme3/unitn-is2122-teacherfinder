@@ -1,9 +1,9 @@
 <template>
   <div class="text-settings-entry">
     <div class="description">{{ props.description }}</div>
-    <textarea v-if="multiline" v-model="model" />
-    <input v-else-if="!multiline && password" type="password" v-model="model" />
-    <input v-else type="text" v-model="model" />
+    <textarea v-if="multiline" v-model="value" />
+    <input v-else-if="!multiline && password" type="password" v-model="value" />
+    <input v-else type="text" v-model="value" />
   </div>
 </template>
 
@@ -29,16 +29,19 @@ textarea {
 </style>
 
 <script setup>
-import { defineProps, defineExpose, ref } from "vue";
+import { defineProps, computed, defineEmits } from "vue";
 
 const props = defineProps({
   description: String,
-  defaultValue: String,
+  text: String,
   multiline: Boolean,
   password: Boolean,
 });
 
-const model = ref(props.defaultValue);
+const emit = defineEmits(["update:text"]);
 
-defineExpose({ value: String });
+const value = computed({
+  get: () => props.text,
+  set: (val) => emit("update:text", val),
+});
 </script>
