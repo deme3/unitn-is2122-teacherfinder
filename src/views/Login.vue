@@ -6,10 +6,7 @@
       <TextSettingsEntry ref="password" description="Password" password />
       <ToggleSettingsEntry description="Ricordami" />
       <div class="input-wrapper">
-        <button
-          type="button"
-          @click.prevent="this.$router.push({ name: 'SignUp' })"
-        >
+        <button type="button" @click.prevent="$router.push({ name: 'SignUp' })">
           Registrati
         </button>
         <input type="submit" value="Login" />
