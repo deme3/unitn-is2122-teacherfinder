@@ -464,7 +464,7 @@ app.listen(port, async () => {
   process.stdout.write(chalk.green(" OK\n"));
 
   process.stdout.write(
-    `Connessione a ${Database.mongoConfig.connectionString}...`
+    `Connessione a ${Database.mongoConfig.connectionString} ...`
   );
   await Database.connect();
   process.stdout.write(chalk.green(" OK\n"));
