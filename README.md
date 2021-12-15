@@ -37,6 +37,8 @@ npm run server
 npm run dev
 ```
 
+  **Note**: You have to start MongoDB. 
+
 ### Runs Express server with Vue Router support (ExpressJS)
 
 ```bash
