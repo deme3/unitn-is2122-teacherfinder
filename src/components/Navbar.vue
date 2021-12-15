@@ -75,11 +75,15 @@ img {
   display: none;
 }
 
+.text {
+  display: inherit;
+}
+
 @media only screen and (max-width: 525px) {
   img {
     display: unset;
     height: 30px;
-    widows: 30px;
+    width: 30px;
   }
   .text {
     display: none;
