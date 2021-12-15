@@ -1,29 +1,60 @@
 # unitn-is2122-teacherfinder
 Progetto d'esame Ingegneria del Software del secondo anno del C.d.S. di Informatica all'Università di Trento.
 
-## Project setup
+## Deployment
+
+### Installazione delle dipendenze
+
 ```bash
 npm install
 ```
 
-### Compiles and hot-reloads frontend (Vue CLI) and server (ExpressJS) for development
+### Installazione e avvio di MongoDB (Mac)
+
+1. Segui questa [guida](https://attacomsian.com/blog/install-mongodb-macos).
+2. Avvia MongoDB
+  ```bash
+  brew services run mongodb-community
+  ```
+
+### Building
+
+```bash
+npm run build
+```
+
+### Avvia l'applicazione
+
+```bash
+npm run server
+```
+
+## Development
+
+### Compiles and hot-reloads frontend (Vue CLI) and server (ExpressJS)
+
 ```bash
 npm run dev
 ```
 
 ### Runs Express server with Vue Router support (ExpressJS)
+
 ```bash
 npm run server
 ```
 
-  Note: You have to compile before launching the command
+  **Note**: You have to compile before launching the command.  
+  You also have to start MongoDB.  
+  
 
-### Compiles and hot-reloads for frontend only development (Vue CLI)
+### Compiles and hot-reloads frontend only (Vue CLI)
+
 ```bash
 npm run serve
 ```
 
 ### Compiles and minifies for production (Vue CLI)
+
 ```bash
 npm run build
 ```
