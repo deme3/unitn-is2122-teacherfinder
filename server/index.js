@@ -2,6 +2,8 @@ const express = require("express");
 const path = require("path");
 const history = require("connect-history-api-fallback");
 
+const chalk = require("chalk");
+
 const Database = require("./database/database.js");
 const User = require("./database/User.js");
 const Session = require("./database/Session.js");
@@ -305,7 +307,7 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
     req.body.sessionToken.length === 24
   ) {
     let subscription = await Subscription.findById(req.body.subId);
-    if(subscription !== null) {
+    if (subscription !== null) {
       let updateOp = await subscription.updateStatus(
         req.body.sessionToken,
         req.ip,
@@ -340,7 +342,7 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
     req.body.sessionToken.length === 24
   ) {
     let subscription = await Subscription.findById(req.body.subId);
-    if(subscription !== null) {
+    if (subscription !== null) {
       let updateOp = await subscription.updateStatus(
         req.body.sessionToken,
         req.ip,
@@ -375,7 +377,7 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
     req.body.sessionToken.length === 24
   ) {
     let subscription = await Subscription.findById(req.body.subId);
-    if(subscription !== null) {
+    if (subscription !== null) {
       let updateOp = await subscription.updateStatus(
         req.body.sessionToken,
         req.ip,
@@ -413,7 +415,7 @@ app.put("/api/subscriptions/paySubscription", async (req, res) => {
     req.body.sessionToken.length === 24
   ) {
     let subscription = await Subscription.findById(req.body.subId);
-    if(subscription !== null) {
+    if (subscription !== null) {
       let updateOp = await subscription.updateStatus(
         req.body.sessionToken,
         req.ip,
@@ -454,11 +456,24 @@ app.use("/", express.static(path.join(__dirname, "..", "dist")));
 
 // Avvio il server
 app.listen(port, async () => {
-  console.log(`Express server listening: http://localhost:${port}/`);
-  console.log(`Caricamento configurazione MongoDB...`);
-  await Database.readConfiguration();
+  console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di deployment...");
+  console.log(`Server Express in ascolto su: http://localhost:${port}/`);
 
-  console.log(`Connessione a ${Database.mongoConfig.connectionString}...`);
+  process.stdout.write("Caricamento configurazione MongoDB...");
+  await Database.readConfiguration();
+  process.stdout.write(chalk.green(" OK\n"));
+
+  process.stdout.write(
+    `Connessione a ${Database.mongoConfig.connectionString}...`
+  );
   await Database.connect();
-  console.log("Connesso.");
+  process.stdout.write(chalk.green(" OK\n"));
+
+  console.log(
+    chalk.black.bgGreen("\n FATTO ") + chalk.green(" Avvio completato")
+  );
+  console.log("\n");
+  console.log("  Applicazione accessibile via:");
+  console.log(`  - Locale:   ` + chalk.cyan(`http://localhost:${port}/`));
+  console.log(`  - Network:  ` + chalk.cyan(`http://( LAN IP ):${port}/\n`));
 });
