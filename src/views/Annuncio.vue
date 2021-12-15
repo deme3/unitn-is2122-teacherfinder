@@ -1,33 +1,37 @@
 <template>
-  <div class="annuncio tf-box">
-    <div class="container">
-      <div class="tutor-info">
-        <img class="propic" src="https://picsum.photos/100" />
-        <div class="tutor-nickname">NicknameProfessore</div>
-        <button>Vedi recensioni</button>
-      </div>
-      <div class="info">
-        <h1>{{ adInfo.title }}</h1>
-        <div class="ad-info">
-          <p>Prezzo: {{ adInfo.price.toFixed(2) }}€/ora</p>
-          <p>Offline</p>
+  <div class="annuncio">
+    <div class="tf-box">
+      <div class="container">
+        <div class="tutor-info">
+          <img class="propic" src="https://picsum.photos/100" />
+          <div class="tutor-nickname">NicknameProfessore</div>
+          <button>Vedi recensioni</button>
         </div>
-        <div class="ad-desc">
-          Descrizione dell'annuncio, sono un professore e insegno a tutti i miei
-          studenti cose interessanti. Tutti mi stimano perché sono chiaro e
-          conciso nelle mie lezioni, e rispondo sempre a tutte le domande ch emi
-          vengono poste.
-        </div>
-        <div class="richieste">
-          <button>Chatta con il tutor</button>
-          <button>Richiedi erogazione insegnamento</button>
+        <div class="info">
+          <h1>{{ adInfo.title }}</h1>
+          <div class="ad-info">
+            <p>Prezzo: {{ adInfo.price.toFixed(2) }}€/ora</p>
+            <p>Offline</p>
+          </div>
+          <div class="ad-desc">
+            Descrizione dell'annuncio, sono un professore e insegno a tutti i
+            miei studenti cose interessanti. Tutti mi stimano perché sono chiaro
+            e conciso nelle mie lezioni, e rispondo sempre a tutte le domande ch
+            emi vengono poste.
+          </div>
+          <div class="richieste">
+            <button>Chatta con il tutor</button>
+            <button>Richiedi erogazione insegnamento</button>
+          </div>
         </div>
       </div>
     </div>
+    <ReviewSection />
   </div>
 </template>
 
 <script setup>
+import ReviewSection from "@/components/ReviewSection.vue";
 import { watch } from "vue";
 import { useRoute } from "vue-router";
 
