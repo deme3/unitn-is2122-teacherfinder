@@ -75,7 +75,7 @@ img {
   display: none;
 }
 
-@media only screen and (max-width: 640px) {
+@media only screen and (max-width: 525px) {
   img {
     display: unset;
     height: 30px;
