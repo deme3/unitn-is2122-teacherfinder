@@ -2,8 +2,8 @@
   <div class="tf-box">
     <form method="post" @submit.prevent="checkCredentials">
       <div class="login-header">Login</div>
-      <TextSettingsEntry ref="username" description="Username o E-mail" />
-      <TextSettingsEntry ref="password" description="Password" password />
+      <TextEntry ref="username" description="Username o E-mail" />
+      <TextEntry ref="password" description="Password" password />
       <ToggleEntry description="Ricordami" />
       <div class="input-wrapper">
         <button type="button" @click.prevent="$router.push({ name: 'SignUp' })">
@@ -28,7 +28,7 @@
 
 <script setup>
 import { ref } from "vue";
-import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
+import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
 const username = ref(null);

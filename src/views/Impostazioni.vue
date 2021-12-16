@@ -2,12 +2,8 @@
   <h1>Impostazioni</h1>
   <div class="impostazioni tf-box">
     <UserCard />
-    <TextSettingsEntry description="Nickname" v-model:text="form.nickname" />
-    <TextSettingsEntry
-      description="Biografia"
-      v-model:text="form.bio"
-      multiline
-    />
+    <TextEntry description="Nickname" v-model:text="form.nickname" />
+    <TextEntry description="Biografia" v-model:text="form.bio" multiline />
 
     <h2>Notifiche</h2>
     <section class="notifications">
@@ -64,7 +60,7 @@
 <script setup>
 import { reactive } from "vue";
 import UserCard from "@/components/UserCard.vue";
-import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
+import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
 // Qua andrà una richiesta alla REST api

@@ -3,17 +3,14 @@
     <div class="register-title">Registrati</div>
     <form method="post" @submit.prevent="submitSignUp">
       <div class="register-header">
-        <TextSettingsEntry
-          v-model:text="form.nickname"
-          description="Nickname"
-        />
-        <TextSettingsEntry v-model:text="form.email" description="E-mail" />
-        <TextSettingsEntry
+        <TextEntry v-model:text="form.nickname" description="Nickname" />
+        <TextEntry v-model:text="form.email" description="E-mail" />
+        <TextEntry
           v-model:text="form.password"
           description="Password"
           password
         />
-        <TextSettingsEntry
+        <TextEntry
           v-model:text="form.passwordRepeat"
           description="Ripeti password"
           password
@@ -40,7 +37,7 @@
 
 <script setup>
 import { ref } from "vue";
-import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
+import TextEntry from "@/components/TextEntry.vue";
 
 const form = ref({
   nickname: "",
