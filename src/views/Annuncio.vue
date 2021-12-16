@@ -61,32 +61,23 @@ watch(
   word-wrap: break-word;
 }
 
-.annuncio.tf-box {
-  padding: 0;
-}
-
-.info,
-.tutor-info {
-  padding: 16px 24px;
-}
-
 .container {
   display: flex;
   flex-direction: row;
-  gap: 1em;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: stretch;
+  align-items: center;
+  gap: 2rem;
 }
 
-.container .tutor-info {
-  width: 30%;
-  box-sizing: border-box;
+.info {
+  flex: 1 1 60%;
+}
+
+.tutor-info {
+  flex: 0 1;
   text-align: center;
-  border-right: 1px solid var(--border-unique-shadow);
-  align-self: center;
-}
-
-.container .info {
-  width: 70%;
-  box-sizing: border-box;
 }
 
 .container .info .ad-info p {
@@ -96,7 +87,7 @@ watch(
 .container .info .ad-desc {
   text-align: justify;
   word-break: break-word;
-  margin: 1.34em auto;
+  margin: 1.34em 0;
 }
 
 .richieste {
@@ -109,30 +100,5 @@ watch(
 }
 
 @media only screen and (max-width: 640px) {
-  .container {
-    flex-direction: column;
-  }
-
-  .container .tutor-info {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-unique-shadow);
-  }
-
-  .container .tutor-info .propic {
-    float: left;
-  }
-
-  .container .tutor-info button {
-    clear: both;
-  }
-
-  .container .info {
-    width: 100%;
-  }
-
-  .container .info h1 {
-    margin-top: 0;
-  }
 }
 </style>
