@@ -7,19 +7,19 @@
           <div class="text">Ricerca</div>
         </router-link>
       </li>
-      <li v-if="this.$root.sessionToken !== ''">
+      <li v-if="$root.sessionToken !== ''">
         <router-link to="/iscrizioni">
           <img :src="img.iscrizioni" />
           <div class="text">Le mie iscrizioni</div>
         </router-link>
       </li>
-      <li v-if="this.$root.sessionToken !== ''">
+      <li v-if="$root.sessionToken !== ''">
         <router-link to="/annunci">
           <img :src="img.annunci" />
           <div class="text">I miei annunci</div>
         </router-link>
       </li>
-      <li v-if="this.$root.sessionToken !== ''">
+      <li v-if="$root.sessionToken !== ''">
         <router-link to="/impostazioni">
           <img :src="img.impostazioni" />
           <div class="text">Impostazioni</div>
