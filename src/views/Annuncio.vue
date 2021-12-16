@@ -5,7 +5,7 @@
         <div class="tutor-info">
           <img class="propic" src="https://picsum.photos/100" />
           <div class="tutor-nickname">NicknameProfessore</div>
-          <button>Visualizza profilo</button>
+          <button>Vedi recensioni</button>
         </div>
         <div class="info">
           <h1>{{ adInfo.title }}</h1>
