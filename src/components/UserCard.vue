@@ -47,7 +47,7 @@
 </style>
 
 <script setup>
-import { defineExpose, ref } from "vue";
+import { ref } from "vue";
 
 const pictureURL = ref("https://picsum.photos/100");
 const firstName = ref("Francesca");

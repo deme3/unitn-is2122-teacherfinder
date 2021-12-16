@@ -7,14 +7,7 @@
 </template>
 
 <script setup>
-import {
-  defineExpose,
-  defineEmits,
-  defineProps,
-  ref,
-  watch,
-  computed,
-} from "vue";
+import { ref, watch, computed } from "vue";
 
 const props = defineProps({
   toggle: Boolean,

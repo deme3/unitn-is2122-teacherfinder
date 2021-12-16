@@ -13,7 +13,6 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
 import SearchResult from "@/components/SearchResult.vue"; // @ alias to src
 
 const props = defineProps({
