@@ -32,8 +32,8 @@
     </section>
     <section class="action-buttons">
       <button @click="logout">Logout</button>
-      <button>Annulla modifiche</button>
-      <button>Salva</button>
+      <button @click="cancelEdits">Annulla modifiche</button>
+      <button @click="saveEdits">Salva</button>
     </section>
   </div>
 </template>
@@ -61,16 +61,29 @@ import UserCard from "@/components/UserCard.vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
 import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
 
+// Qua andrà una richiesta alla REST api
+// Per le info del profilo utente
+const original = {};
+original.nickname = "framcesca";
+original.bio = "Biografia di framcesca";
+
 const form = reactive({
-  nickname: "framcesca",
-  bio: "Biografia di framcesca",
+  nickname: original.nickname,
+  bio: original.bio,
 });
 
-const logout = () => {
+const logout = async () => {
   console.log("logout");
+  // Qua andrà una richiesta alla REST api
+  // Per il logout
   document.cookie =
     "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   window.location.replace("/");
+};
+
+const cancelEdits = () => {
+  form.nickname = original.nickname;
+  form.bio = original.bio;
 };
 </script>
 

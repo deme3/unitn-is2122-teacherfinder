@@ -50,6 +50,7 @@ const form = ref({
 });
 
 const submitSignUp = () => {
+  // Qua ci va la REST api
   console.log("Registrazione: ", form.value);
 };
 </script>

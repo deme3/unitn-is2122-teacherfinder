@@ -32,7 +32,7 @@
 
 <script setup>
 import ReviewSection from "@/components/ReviewSection.vue";
-import { watch } from "vue";
+import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -44,14 +44,11 @@ let adInfo = {
   uuid: "000",
 };
 
-watch(
-  () => route.params.id,
-  (toParams, previousParams) => {
-    console.log(toParams, previousParams);
-    // react to route changes...
-    // Qua ci va una REST request che chiede i dettagli dell'annuncio
-  }
-);
+onMounted(async () => {
+  let uuid = route.params.uuid;
+  console.log("Questo è l'uuid dell'annuncio: ", uuid);
+  // Qua andrà una richiesta alla REST api
+});
 </script>
 
 <style scoped>
