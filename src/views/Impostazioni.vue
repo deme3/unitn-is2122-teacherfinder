@@ -11,27 +11,27 @@
 
     <h2>Notifiche</h2>
     <section class="notifications">
-      <EntryToggle
+      <ToggleEntry
         v-model:toggle="form.notifiche.ricevuta"
         description="Richiesta insegnamento ricevuta da studente"
       />
-      <EntryToggle
+      <ToggleEntry
         v-model:toggle="form.notifiche.annullata"
         description="Richiesta insegnamento annullata da studente"
       />
-      <EntryToggle
+      <ToggleEntry
         v-model:toggle="form.notifiche.pagamentoOK"
         description="Pagamento insegnamento effettuato da studente"
       />
-      <EntryToggle
+      <ToggleEntry
         v-model:toggle="form.notifiche.concluso"
         description="Uno studente ha segnalato che l'insegnamento è stato portato a termine"
       />
-      <EntryToggle
+      <ToggleEntry
         v-model:toggle="form.notifiche.accettato"
         description="Un tutor ha accettato la richiesta di insegnamento"
       />
-      <EntryToggle
+      <ToggleEntry
         v-model:toggle="form.notifiche.rifiutato"
         description="Un tutor ha rifiutato la richiesta di insegnamento"
       />
@@ -65,7 +65,7 @@
 import { reactive } from "vue";
 import UserCard from "@/components/UserCard.vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
-import EntryToggle from "@/components/EntryToggle.vue";
+import ToggleEntry from "@/components/ToggleEntry.vue";
 
 // Qua andrà una richiesta alla REST api
 // Per le info del profilo utente
