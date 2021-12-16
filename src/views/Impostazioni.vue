@@ -11,22 +11,28 @@
 
     <h2>Notifiche</h2>
     <section class="notifications">
-      <ToggleSettingsEntry
+      <EntryToggle
+        v-model:toggle="form.notifiche.ricevuta"
         description="Richiesta insegnamento ricevuta da studente"
       />
-      <ToggleSettingsEntry
+      <EntryToggle
+        v-model:toggle="form.notifiche.annullata"
         description="Richiesta insegnamento annullata da studente"
       />
-      <ToggleSettingsEntry
+      <EntryToggle
+        v-model:toggle="form.notifiche.pagamentoOK"
         description="Pagamento insegnamento effettuato da studente"
       />
-      <ToggleSettingsEntry
+      <EntryToggle
+        v-model:toggle="form.notifiche.concluso"
         description="Uno studente ha segnalato che l'insegnamento è stato portato a termine"
       />
-      <ToggleSettingsEntry
+      <EntryToggle
+        v-model:toggle="form.notifiche.accettato"
         description="Un tutor ha accettato la richiesta di insegnamento"
       />
-      <ToggleSettingsEntry
+      <EntryToggle
+        v-model:toggle="form.notifiche.rifiutato"
         description="Un tutor ha rifiutato la richiesta di insegnamento"
       />
     </section>
@@ -59,17 +65,26 @@
 import { reactive } from "vue";
 import UserCard from "@/components/UserCard.vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
-import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
+import EntryToggle from "@/components/EntryToggle.vue";
 
 // Qua andrà una richiesta alla REST api
 // Per le info del profilo utente
 const original = {};
 original.nickname = "framcesca";
 original.bio = "Biografia di framcesca";
+original.notifiche = {
+  ricevuta: false,
+  annullata: false,
+  pagamentoOK: false,
+  concluso: false,
+  accettato: false,
+  rifiutato: false,
+};
 
 const form = reactive({
   nickname: original.nickname,
   bio: original.bio,
+  notifiche: { ...original.notifiche },
 });
 
 const logout = async () => {
@@ -84,6 +99,11 @@ const logout = async () => {
 const cancelEdits = () => {
   form.nickname = original.nickname;
   form.bio = original.bio;
+  form.notifiche = { ...original.notifiche };
+};
+
+const saveEdits = () => {
+  // REST api salvataggio modifiche
 };
 </script>
 

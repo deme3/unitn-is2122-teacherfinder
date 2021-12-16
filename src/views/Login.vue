@@ -4,7 +4,7 @@
       <div class="login-header">Login</div>
       <TextSettingsEntry ref="username" description="Username o E-mail" />
       <TextSettingsEntry ref="password" description="Password" password />
-      <ToggleSettingsEntry description="Ricordami" />
+      <EntryToggle description="Ricordami" />
       <div class="input-wrapper">
         <button type="button" @click.prevent="$router.push({ name: 'SignUp' })">
           Registrati
@@ -29,7 +29,7 @@
 <script setup>
 import { ref } from "vue";
 import TextSettingsEntry from "@/components/TextSettingsEntry.vue";
-import ToggleSettingsEntry from "@/components/ToggleSettingsEntry.vue";
+import EntryToggle from "@/components/EntryToggle.vue";
 
 const username = ref(null);
 const password = ref(null);

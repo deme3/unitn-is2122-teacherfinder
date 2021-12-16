@@ -1,28 +1,28 @@
 <template>
-  <div class="toggle-settings-entry" @click="onClick">
+  <div class="toggle-entry" @click="onClick">
     <div class="description">{{ props.description }}</div>
-    <div class="toggle"><ToggleButton ref="togglebutton" /></div>
+    <div class="toggle"><ToggleButton v-model:toggle="toggleStatus" /></div>
   </div>
 </template>
 
 <style scoped>
-.toggle-settings-entry {
+.toggle-entry {
   display: flex;
   justify-content: center;
 }
 
-.toggle-settings-entry .description {
+.toggle-entry .description {
   width: 100%;
   user-select: none;
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none;
 }
 
-.toggle-settings-entry .toggle {
+.toggle-entry .toggle {
   width: 48px;
 }
 
-.toggle-settings-entry .toggle .toggle-button {
+.toggle-entry .toggle .toggle-button {
   margin: 0 auto;
 }
 
@@ -32,7 +32,7 @@
   margin-bottom: auto;
 }
 
-.toggle-settings-entry:not(:last-child) {
+.toggle-entry:not(:last-child) {
   border-bottom: 2px solid var(--border-unique-color);
   margin-bottom: 1em;
   padding-bottom: 1em;
@@ -41,24 +41,26 @@
 
 <script setup>
 import ToggleButton from "@/components/ToggleButton.vue";
-import { defineProps, computed, ref, defineExpose } from "vue";
+import { computed } from "vue";
 
 const props = defineProps({
-  description: String,
+  description: {
+    type: String,
+    default: "Default description",
+  },
+  toggle: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const togglebutton = ref(null);
-
-const toggleStatus = computed(() => {
-  if (togglebutton.value == null) return false;
-  return togglebutton.value.toggleStatus;
+const emit = defineEmits(["update:toggle"]);
+const toggleStatus = computed({
+  get: () => props.toggle,
+  set: (val) => emit("update:toggle", val),
 });
 
 const onClick = () => {
-  togglebutton.value.toggle();
+  toggleStatus.value = !toggleStatus.value;
 };
-
-defineExpose({
-  toggleStatus: toggleStatus,
-});
 </script>

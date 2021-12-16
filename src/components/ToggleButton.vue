@@ -7,9 +7,25 @@
 </template>
 
 <script setup>
-import { defineExpose, ref, watch } from "vue";
+import {
+  defineExpose,
+  defineEmits,
+  defineProps,
+  ref,
+  watch,
+  computed,
+} from "vue";
 
-const toggleStatus = ref(false);
+const props = defineProps({
+  toggle: Boolean,
+});
+
+const emit = defineEmits(["update:toggle"]);
+let toggleStatus = computed({
+  get: () => props.toggle,
+  set: (val) => emit("update:toggle", val),
+});
+
 const toggleDotClass = ref(
   "toggle-dot" + (toggleStatus.value ? " toggled" : "")
 );
