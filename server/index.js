@@ -483,6 +483,106 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/ads/createAd:
+ *   post:
+ *     summary: Crea un nuovo annuncio.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sessionToken:
+ *                  type: string
+ *                  description: session id.
+ *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *               authorId:
+ *                  type: string
+ *                  description: user Id insegnante.
+ *                  example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *               title:
+ *                  type: string
+ *                  description: titolo.
+ *                  example: Analisi 3
+ *               description:
+ *                  type: string
+ *                  description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                  example: 0.0.0.0
+ *               price:
+ *                  type: number
+ *                  description: prezzo all'ora.
+ *                  example: 25
+ *               type:
+ *                  type: string
+ *                  description: tipologia insegnemento.
+ *                  example: online
+ *               lat:
+ *                  type: number
+ *                  description: latitudine posizione.
+ *                  example: -1
+ *               lon:
+ *                  type: number
+ *                  description: longitudine posizione.
+ *                  example: -1
+ *     responses:
+ *       200:
+ *         description: session Id.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       authorId:
+ *                          type: string
+ *                          description: user Id insegnante.
+ *                          example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                       title:
+ *                          type: string
+ *                          description: titolo.
+ *                          example: Analisi 3
+ *                       description:
+ *                          type: string
+ *                          description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                          example: 0.0.0.0
+ *                       price:
+ *                          type: number
+ *                          description: prezzo all'ora.
+ *                          example: 25
+ *                       type:
+ *                          type: string
+ *                          description: tipologia insegnemento.
+ *                          example: online
+ *                       lat:
+ *                          type: number
+ *                          description: latitudine posizione.
+ *                          example: -1
+ *                       lon:
+ *                          type: number
+ *                          description: longitudine posizione.
+ *                          example: -1
+ *       403:
+ *         description: utente non autorizzato perché non registrato
+ *       400:
+ *         description: Parametro mancante.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   missingParameters:
+ *                     type: string
+ *                     description: parametro mancante
+ *                     example: sessionToken 
+ */
 app.post("/api/ads/createAd", async (req, res) => {
   let requiredParameters = [
     "sessionToken",
