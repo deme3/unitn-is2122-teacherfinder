@@ -47,8 +47,8 @@ import { reactive } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 
 const form = reactive({
-  firstname: "",
-  lastname: "",
+  firstName: "",
+  lastName: "",
   nickname: "",
   password: "",
   email: "",
@@ -62,6 +62,9 @@ const submitSignUp = async () => {
     alert("Le password non combaciano");
     return;
   }
+
+  // passwordRepeat non deve essere trasmesso al server
+  delete form.passwordRepeat;
 
   // Qua ci va la REST api
   console.log("Registrazione: ", form);
