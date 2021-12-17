@@ -18,7 +18,7 @@
           password
         />
         <TextEntry
-          v-model:text="form.passwordRepeat"
+          v-model:text="passRepeat"
           description="Ripeti password"
           password
         />
@@ -43,7 +43,7 @@
 </style>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 
 const form = reactive({
@@ -53,18 +53,15 @@ const form = reactive({
   password: "",
   email: "",
   biography: "",
-  passwordRepeat: "",
 });
+const passRepeat = ref("");
 
 const submitSignUp = async () => {
-  if (form.password != form.passwordRepeat) {
+  if (form.password != passRepeat.value) {
     console.log("Le password non combaciano");
     alert("Le password non combaciano");
     return;
   }
-
-  // passwordRepeat non deve essere trasmesso al server
-  delete form.passwordRepeat;
 
   // Qua ci va la REST api
   console.log("Registrazione: ", form);
@@ -80,10 +77,10 @@ const submitSignUp = async () => {
 
   if (resp.ok) {
     console.log("La registrazione è andata a buon fine!");
-    console.log(resp.json());
+    console.log(await resp.json());
   } else {
     console.log("Errore nella registrazione!");
-    console.log(resp.json());
+    console.log(await resp.json());
   }
 };
 </script>
