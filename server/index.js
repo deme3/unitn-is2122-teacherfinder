@@ -3,6 +3,10 @@ const path = require("path");
 const history = require("connect-history-api-fallback");
 
 const chalk = require("chalk");
+const os = require("os");
+
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const Database = require("./database/database.js");
 const User = require("./database/User.js");
@@ -18,37 +22,34 @@ const app = express();
 const port = 8080;
 
 //moduli per generare la documentazione delle API
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
 const swaggerOptions = {
-    swaggerDefinition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'TeacherFinder',
-            version: '1.0.0',
-            description:
-                'This is a API application made with Express.',
-            license: {
-                name: 'Licensed Under MIT',
-                url: 'https://spdx.org/licenses/MIT.html',
-            },
-            contact: {
-                name: 'G14',
-                url: 'http://localhost:8080/',
-            },
-        },
-        servers: [
-            {
-                url: 'http://localhost:8080/',
-                description: 'Development server',
-            },
-        ],
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "TeacherFinder",
+      version: "1.0.0",
+      description: "This is a API application made with Express.",
+      license: {
+        name: "MIT License",
+        url: "https://raw.githubusercontent.com/deme3/unitn-is2122-teacherfinder/main/LICENSE",
+      },
+      contact: {
+        name: "G14",
+        url: "http://www.github.com/deme3/unitn-is2122-teacherfinder/",
+      },
     },
-    apis: [path.join(__dirname, "/index.js")]
+    servers: [
+      {
+        url: "http://localhost:8080/",
+        description: "Endpoint API",
+      },
+    ],
+  },
+  apis: [path.join(__dirname, "/index.js")],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // BodyParser per JSON
 app.use(express.json());
@@ -114,7 +115,7 @@ app.get("/api", (req, res) => {
  *         description: internal server error
  *       400:
  *         description: missing parameters
-*/
+ */
 app.put("/api/user/register", async (req, res) => {
   // Registro le informazioni su questo utente
   // Nome, cognome, nickname, password, conferma password, e-mail
@@ -580,7 +581,14 @@ app.put("/api/settings/change/:settingId/to/:newValue", async (req, res) => {});
 app.use(history());
 app.use("/", express.static(path.join(__dirname, "..", "dist")));
 
+const lanIp =
+  Object.values(os.networkInterfaces())
+    .flat()
+    .filter((item) => !item.internal && item.family === "IPv4")
+    .find(Boolean).address || "( LAN IP )";
+
 // Avvio il server
+// prettier-ignore
 app.listen(port, async () => {
   console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di deployment...");
   console.log(`Server Express in ascolto su: http://localhost:${port}/`);
@@ -600,6 +608,9 @@ app.listen(port, async () => {
   );
   console.log("\n");
   console.log("  Applicazione accessibile via:");
-  console.log(`  - Locale:   ` + chalk.cyan(`http://localhost:${port}/`));
-  console.log(`  - Network:  ` + chalk.cyan(`http://( LAN IP ):${port}/\n`));
+  console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/`));
+  console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/\n`));
+  console.log("  Documentazione accessibile via:");
+  console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/api/docs`));
+  console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/api/docs\n`));
 });
