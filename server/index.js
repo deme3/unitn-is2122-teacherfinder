@@ -3,6 +3,10 @@ const path = require("path");
 const history = require("connect-history-api-fallback");
 
 const chalk = require("chalk");
+const os = require("os");
+
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 
 const Database = require("./database/database.js");
 const User = require("./database/User.js");
@@ -18,8 +22,6 @@ const app = express();
 const port = 8080;
 
 //moduli per generare la documentazione delle API
-const swaggerJsDoc = require("swagger-jsdoc");
-const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
@@ -531,6 +533,12 @@ app.put("/api/settings/change/:settingId/to/:newValue", async (req, res) => {});
 app.use(history());
 app.use("/", express.static(path.join(__dirname, "..", "dist")));
 
+const lanIp =
+  Object.values(os.networkInterfaces())
+    .flat()
+    .filter((item) => !item.internal && item.family === "IPv4")
+    .find(Boolean).address || "( LAN IP )";
+
 // Avvio il server
 // prettier-ignore
 app.listen(port, async () => {
@@ -553,8 +561,8 @@ app.listen(port, async () => {
   console.log("\n");
   console.log("  Applicazione accessibile via:");
   console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/`));
-  console.log("  - Network:  " + chalk.cyan(`http://( LAN IP ):${port}/\n`));
+  console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/\n`));
   console.log("  Documentazione accessibile via:");
   console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/api/docs`));
-  console.log("  - Network:  " + chalk.cyan(`http://( LAN IP ):${port}/api/docs\n`));
+  console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/api/docs\n`));
 });
