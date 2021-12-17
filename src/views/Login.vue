@@ -37,7 +37,7 @@ const password = ref(null);
 const checkCredentials = () => {
   // TO-DO : REST API fetch
   console.log("Credentials: ", username.value, password.value);
-  document.cookie = "sessionToken=YES";
+  document.cookie = "sessionToken=YES; SameSite=Strict;";
   window.location.replace("/");
 };
 </script>
