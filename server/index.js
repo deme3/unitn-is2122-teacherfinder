@@ -219,7 +219,7 @@ app.post("/api/user/login", async (req, res) => {
       });
       res.status(200).json(mySession);
     } else {
-      res.status(200).json({});
+      res.status(200).json({ error: "INVALID_CREDENTIALS" });
     }
   } else {
     res.sendStatus(500);
