@@ -30,18 +30,18 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "This is a API application made with Express.",
       license: {
-        name: "Licensed Under MIT",
-        url: "https://spdx.org/licenses/MIT.html",
+        name: "MIT License",
+        url: "https://raw.githubusercontent.com/deme3/unitn-is2122-teacherfinder/main/LICENSE",
       },
       contact: {
         name: "G14",
-        url: "http://localhost:8080/",
+        url: "http://www.github.com/deme3/unitn-is2122-teacherfinder/",
       },
     },
     servers: [
       {
         url: "http://localhost:8080/",
-        description: "Development server",
+        description: "Endpoint API",
       },
     ],
   },
