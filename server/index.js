@@ -152,7 +152,7 @@ app.put("/api/user/register", async (req, res) => {
   }
 });
 
-app.get("/api/user/login", async (req, res) => {
+app.post("/api/user/login", async (req, res) => {
   // Prendo l'IP dell'utente e lo registro assieme al token
   let requiredFields = ["nickname", "password"];
 
