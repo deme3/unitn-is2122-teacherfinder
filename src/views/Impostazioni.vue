@@ -88,7 +88,7 @@ const logout = async () => {
   // Qua andrà una richiesta alla REST api
   // Per il logout
   document.cookie =
-    "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
   window.location.replace("/");
 };
 

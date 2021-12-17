@@ -18,7 +18,7 @@
           password
         />
         <TextEntry
-          v-model:text="form.passwordRepeat"
+          v-model:text="passRepeat"
           description="Ripeti password"
           password
         />
@@ -43,8 +43,10 @@
 </style>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, ref, inject } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
+
+const url = inject("apiBaseURL");
 
 const form = reactive({
   firstName: "",
@@ -53,23 +55,19 @@ const form = reactive({
   password: "",
   email: "",
   biography: "",
-  passwordRepeat: "",
 });
+const passRepeat = ref("");
 
 const submitSignUp = async () => {
-  if (form.password != form.passwordRepeat) {
+  if (form.password != passRepeat.value) {
     console.log("Le password non combaciano");
     alert("Le password non combaciano");
     return;
   }
 
-  // passwordRepeat non deve essere trasmesso al server
-  delete form.passwordRepeat;
-
   // Qua ci va la REST api
-  console.log("Registrazione: ", form);
-
-  const resp = await fetch("/api/user/register", {
+  console.log(`${url}/api/user/register\n`, "Registrazione: ", { ...form });
+  const resp = await fetch(`${url}/api/user/register`, {
     method: "PUT",
     headers: {
       Accept: "application/json",
@@ -80,10 +78,12 @@ const submitSignUp = async () => {
 
   if (resp.ok) {
     console.log("La registrazione è andata a buon fine!");
-    console.log(resp.json());
+    console.log(await resp.json());
   } else {
-    console.log("Errore nella registrazione!");
-    console.log(resp.json());
+    console.log(
+      `[${resp.status}] Errore nella registrazione!\n`,
+      await resp.text()
+    );
   }
 };
 </script>

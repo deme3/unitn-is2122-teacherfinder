@@ -1,10 +1,10 @@
 <template>
   <div class="tf-box">
-    <form method="post" @submit.prevent="checkCredentials">
+    <form method="post" @submit.prevent="submitLogin">
       <div class="login-header">Login</div>
-      <TextEntry ref="username" description="Username o E-mail" />
-      <TextEntry ref="password" description="Password" password />
-      <ToggleEntry description="Ricordami" />
+      <TextEntry v-model:text="loginData.nickname" description="Username o E-mail" />
+      <TextEntry v-model:text="loginData.password" description="Password" password />
+      <ToggleEntry v-model:toggle="loginData.remember" description="Ricordami" />
       <div class="input-wrapper">
         <button type="button" @click.prevent="$router.push({ name: 'SignUp' })">
           Registrati
@@ -27,17 +27,42 @@
 </style>
 
 <script setup>
-import { ref } from "vue";
+import { reactive, inject } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
-const username = ref(null);
-const password = ref(null);
+const url = inject("apiBaseURL");
 
-const checkCredentials = () => {
-  // TO-DO : REST API fetch
-  console.log("Credentials: ", username.value, password.value);
-  document.cookie = "sessionToken=YES";
-  window.location.replace("/");
+const loginData = reactive({
+  nickname: "",
+  password: "",
+  remember: false,
+});
+
+const submitLogin = async () => {
+  const res = await (
+    await fetch(`${url}/user/login`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nickname: loginData.nickname,
+        password: loginData.password,
+      }),
+    })
+  ).json();
+
+  if (typeof res._id !== "undefined") {
+    if (loginData.remember) {
+      // Cookie persistente: Durata cookie di 12 mesi (espressa in secondi)
+      document.cookie = `sessionToken=${res._id}; Max-Age=${60 * 60 * 24 * 30 * 12}; SameSite=Strict;`;
+    } else {
+      // Session cookie: Scade quando termina la sessione del browser
+      document.cookie = `sessionToken=${res._id}; SameSite=Strict;`;
+    }
+    window.location.replace("/");
+  }
 };
 </script>
