@@ -66,8 +66,7 @@ const submitSignUp = async () => {
   }
 
   // Qua ci va la REST api
-  console.log("Registrazione: ", { ...form });
-  console.log(`${url}/api/user/register`);
+  console.log(`${url}/api/user/register\n`, "Registrazione: ", { ...form });
   const resp = await fetch(`${url}/api/user/register`, {
     method: "PUT",
     headers: {
@@ -81,8 +80,10 @@ const submitSignUp = async () => {
     console.log("La registrazione è andata a buon fine!");
     console.log(await resp.json());
   } else {
-    console.log(`[${resp.status}] Errore nella registrazione!`);
-    console.log(await resp.text());
+    console.log(
+      `[${resp.status}] Errore nella registrazione!\n`,
+      await resp.text()
+    );
   }
 };
 </script>
