@@ -76,7 +76,8 @@ app.get("/api", (req, res) => {
  * @swagger
  * /api/user/register:
  *   put:
- *     summary: Registro le informazioni su questo utente.
+ *     summary: Registra un nuovo utente.
+ *     description: Registra un nuovo utente memorizzando nel database tutte le informazioni da lui inserite.
  *     requestBody:
  *       required: true
  *       content:
@@ -230,7 +231,8 @@ app.post("/api/user/login", async (req, res) => {
  * @swagger
  * /api/user/logout/{token}:
  *   delete:
- *     summary: Rimuovo il token se l'IP del mittente corrisponde.
+ *     summary: Effettua il logout.
+ *     description: Rimuove il token se l'IP del mittente corrisponde.
  *     parameters:
  *       - in: path
  *         name: token
@@ -263,8 +265,8 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  * @swagger
  * /api/user/checkToken/{token}/user/{userId}:
  *   get:
- *     summary: Retrieve a list of products.
- *     description: Restituisco true se il token e l'IP corrispondono.
+ *     summary: Fa il check del token.
+ *     description: Restituisce true se il token e l'IP corrispondono.
  *     parameters:
  *       - in: path
  *         name: token
@@ -310,6 +312,62 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
 
 // Endpoint Annunci
 // ================
+
+/**
+ * @swagger
+ * /api/ads/list/{userId}:
+ *   get:
+ *     summary: Trova gli annunci scritti da un utente.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *             type: string
+ *             example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *         required: true
+ *         description: user id
+ *     responses:
+ *       200:
+ *         description: Questi sono gli annunci scritti dall'utente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       authorId:
+ *                         type: string
+ *                         description: user Id insegnante.
+ *                         example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                       title:
+ *                         type: string
+ *                         description: titolo.
+ *                         example: Analisi 3
+ *                       description:
+ *                         type: string
+ *                         description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                         example: 0.0.0.0
+ *                       price:
+ *                         type: number
+ *                         description: prezzo all'ora.
+ *                         example: 25
+ *                       type:
+ *                         type: string
+ *                         description: tipologia insegnemento.
+ *                         example: online
+ *                       lat:
+ *                         type: number
+ *                         description: latitudine posizione.
+ *                         example: -1
+ *                       lon:
+ *                         type: number
+ *                         description: longitudine posizione.
+ *                         example: -1
+ */
 app.get("/api/ads/list/:userId", async (req, res) => {
   if (typeof req.params.userId !== "undefined") {
     let foundAds = await User.findUserAds(req.params.userId);
