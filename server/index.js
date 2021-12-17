@@ -532,6 +532,7 @@ app.use(history());
 app.use("/", express.static(path.join(__dirname, "..", "dist")));
 
 // Avvio il server
+// prettier-ignore
 app.listen(port, async () => {
   console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di deployment...");
   console.log(`Server Express in ascolto su: http://localhost:${port}/`);
@@ -551,6 +552,9 @@ app.listen(port, async () => {
   );
   console.log("\n");
   console.log("  Applicazione accessibile via:");
-  console.log(`  - Locale:   ` + chalk.cyan(`http://localhost:${port}/`));
-  console.log(`  - Network:  ` + chalk.cyan(`http://( LAN IP ):${port}/\n`));
+  console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/`));
+  console.log("  - Network:  " + chalk.cyan(`http://( LAN IP ):${port}/\n`));
+  console.log("  Documentazione accessibile via:");
+  console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/api/docs`));
+  console.log("  - Network:  " + chalk.cyan(`http://( LAN IP ):${port}/api/docs\n`));
 });
