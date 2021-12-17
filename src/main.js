@@ -11,14 +11,15 @@ app.config.globalProperties.$isDevEnv = () => {
     typeof process !== "undefined" &&
     typeof process.env !== "undefined" &&
     typeof process.env.NODE_ENV !== "undefined" &&
-    process.env.NODE_ENV === "development");
+    process.env.NODE_ENV === "development"
+  );
 };
 
 app.config.globalProperties.$apiBaseURL = () => {
   let port = app.config.globalProperties.$isDevEnv()
     ? 8080
     : window.location.port;
-  return `http://${window.location.hostname}:${port}/api`
+  return `http://${window.location.hostname}:${port}/api`;
 };
 
 app.use(router);

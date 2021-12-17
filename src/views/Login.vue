@@ -58,10 +58,10 @@ const submitLogin = async () => {
   if (typeof res._id !== "undefined") {
     if (loginData.remember) {
       // Cookie persistente: Durata cookie di 12 mesi (espressa in secondi)
-      document.cookie = `sessionToken=${res._id}; Max-Age=${60 * 60 * 24 * 30 * 12}`;
+      document.cookie = `sessionToken=${res._id}; Max-Age=${60 * 60 * 24 * 30 * 12}; SameSite=Strict;`;
     } else {
       // Session cookie: Scade quando termina la sessione del browser
-      document.cookie = `sessionToken=${res._id}`;
+      document.cookie = `sessionToken=${res._id}; SameSite=Strict;`;
     }
     window.location.replace("/");
   }
