@@ -56,7 +56,7 @@ export default defineComponent({
     watch(
       () => route.name,
       (toParams, previousParams) => {
-        console.log(previousParams, toParams);
+        console.log(`Nav: ${previousParams} > ${toParams}`);
         if (toParams == "Login") showLoginBtn.value = false;
         else showLoginBtn.value = true;
       }
