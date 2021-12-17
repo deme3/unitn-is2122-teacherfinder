@@ -3,8 +3,15 @@
     <div class="register-title">Registrati</div>
     <form method="post" @submit.prevent="submitSignUp">
       <div class="register-header">
+        <TextEntry v-model:text="form.firstName" description="Nome" />
+        <TextEntry v-model:text="form.lastName" description="Cognome" />
         <TextEntry v-model:text="form.nickname" description="Nickname" />
         <TextEntry v-model:text="form.email" description="E-mail" />
+        <TextEntry
+          v-model:text="form.biography"
+          :multiline="true"
+          description="Biografia"
+        />
         <TextEntry
           v-model:text="form.password"
           description="Password"
@@ -36,18 +43,44 @@
 </style>
 
 <script setup>
-import { ref } from "vue";
+import { reactive } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 
-const form = ref({
+const form = reactive({
+  firstname: "",
+  lastname: "",
   nickname: "",
-  email: "",
   password: "",
+  email: "",
+  biography: "",
   passwordRepeat: "",
 });
 
-const submitSignUp = () => {
+const submitSignUp = async () => {
+  if (form.password != form.passwordRepeat) {
+    console.log("Le password non combaciano");
+    alert("Le password non combaciano");
+    return;
+  }
+
   // Qua ci va la REST api
-  console.log("Registrazione: ", form.value);
+  console.log("Registrazione: ", form);
+
+  const resp = await fetch("/api/user/register", {
+    method: "PUT",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(form),
+  });
+
+  if (resp.ok) {
+    console.log("La registrazione è andata a buon fine!");
+    console.log(resp.json());
+  } else {
+    console.log("Errore nella registrazione!");
+    console.log(resp.json());
+  }
 };
 </script>
