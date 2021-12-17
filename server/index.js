@@ -259,6 +259,40 @@ app.delete("/api/user/logout/:token", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/user/checkToken/{token}/user/{userId}:
+ *   get:
+ *     summary: Retrieve a list of products.
+ *     description: Restituisco true se il token e l'IP corrispondono.
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *             type: string
+ *             example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *         required: true
+ *         description: session id
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *             type: string
+ *             example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *         required: true
+ *         description: user id
+ *     responses:
+ *       200:
+ *         description: token e IP corrispondono.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: boolean
+ */
 app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
   if (
