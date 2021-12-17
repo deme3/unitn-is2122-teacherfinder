@@ -27,22 +27,21 @@
 </style>
 
 <script setup>
-import { reactive, getCurrentInstance } from "vue";
+import { reactive, inject } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
-const app = getCurrentInstance();
+const url = inject("apiBaseURL");
 
 const loginData = reactive({
   nickname: "",
   password: "",
   remember: false,
 });
-const apiURL = app.appContext.config.globalProperties.$apiBaseURL();
 
 const submitLogin = async () => {
   const res = await (
-    await fetch(apiURL + "/user/login", {
+    await fetch(`${url}/user/login`, {
       method: "POST",
       headers: {
         Accept: "application/json",
