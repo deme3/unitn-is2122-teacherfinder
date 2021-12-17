@@ -151,7 +151,55 @@ app.put("/api/user/register", async (req, res) => {
   }
 });
 
-app.get("/api/user/login", async (req, res) => {
+/**
+ * @swagger
+ * /api/user/login:
+ *   post:
+ *     summary: Prende l'IP dell'utente e lo registra assieme al token.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nickname:
+ *                  type: string
+ *                  description: Il nickname dell'utente.
+ *                  example: Red
+ *               password:
+ *                  type: string
+ *                  description: La password dell'account associato all'utente.
+ *                  example: 0000
+ *     responses:
+ *       200:
+ *         description: session Id.
+ *       500:
+ *         description: utente già registrato
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: Session Id.
+ *                         example: disfsdfhosjdifajasdfnkod
+ *                       userId:
+ *                         type: string
+ *                         description: user Id.
+ *                         example: askfjohdfipsadfsbhoufrds
+ *                       ipAddress:
+ *                         type: string
+ *                         description: ip address.
+ *                         example: bjk
+ */
+app.post("/api/user/login", async (req, res) => {
   // Prendo l'IP dell'utente e lo registro assieme al token
   let requiredFields = ["nickname", "password"];
 
