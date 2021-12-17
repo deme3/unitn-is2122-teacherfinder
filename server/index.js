@@ -190,15 +190,15 @@ app.put("/api/user/register", async (req, res) => {
  *                       _id:
  *                         type: string
  *                         description: Session Id.
- *                         example: disfsdfhosjdifajasdfnkod
+ *                         example: aaaaaaaaaaaaaaaaaaaaaaaa
  *                       userId:
  *                         type: string
  *                         description: user Id.
- *                         example: askfjohdfipsadfsbhoufrds
+ *                         example: bbbbbbbbbbbbbbbbbbbbbbbb
  *                       ipAddress:
  *                         type: string
  *                         description: ip address.
- *                         example: bjk
+ *                         example: 0.0.0.0
  */
 app.post("/api/user/login", async (req, res) => {
   // Prendo l'IP dell'utente e lo registro assieme al token
@@ -226,6 +226,25 @@ app.post("/api/user/login", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/user/logout/{token}:
+ *   delete:
+ *     summary: Rimuovo il token se l'IP del mittente corrisponde.
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         schema:
+ *             type: string
+ *             example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *         required: true
+ *         description: session id
+ *     responses:
+ *       200:
+ *         description: il token è stato rimosso
+ *       404:
+ *         description: il token non è stato trovato
+*/
 app.delete("/api/user/logout/:token", async (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
 
