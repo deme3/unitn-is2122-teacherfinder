@@ -17,6 +17,39 @@ const MongoError = require("./database/MongoError.js");
 const app = express();
 const port = 8080;
 
+//moduli per generare la documentazione delle API
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'TeacherFinder',
+            version: '1.0.0',
+            description:
+                'This is a API application made with Express.',
+            license: {
+                name: 'Licensed Under MIT',
+                url: 'https://spdx.org/licenses/MIT.html',
+            },
+            contact: {
+                name: 'G14',
+                url: 'http://localhost:8080/',
+            },
+        },
+        servers: [
+            {
+                url: 'http://localhost:8080/',
+                description: 'Development server',
+            },
+        ],
+    },
+    apis: [path.join(__dirname, "/index.js")]
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 // BodyParser per JSON
 app.use(express.json());
 
@@ -37,6 +70,51 @@ app.get("/api", (req, res) => {
 // ===============
 
 // Trasmissione naive di credenziali senza sicurezza a scopo dimostrativo
+
+/**
+ * @swagger
+ * /api/user/register:
+ *   put:
+ *     summary: Registro le informazioni su questo utente.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                  type: string
+ *                  description: Il nome dell'utente.
+ *                  example: Mario
+ *               lastName:
+ *                  type: string
+ *                  description: Il cognome dell'utente.
+ *                  example: Rossi
+ *               nickname:
+ *                  type: string
+ *                  description: Il nickname dell'utente.
+ *                  example: Red
+ *               password:
+ *                  type: string
+ *                  description: La password dell'account associato all'utente.
+ *                  example: 0000
+ *               email:
+ *                  type: string
+ *                  description: L'email dell'account associato all'utente.
+ *                  example: mariorossi@a.it
+ *               biography:
+ *                  type: string
+ *                  description: Breve descrizione dell'utente.
+ *                  example: Sono uno studente laureando in matematica di 38 anni, sono scrupoloso, educato e saluto sempre.
+ *     responses:
+ *       201:
+ *         description: successful executed
+ *       500:
+ *         description: internal server error
+ *       400:
+ *         description: missing parameters
+*/
 app.put("/api/user/register", async (req, res) => {
   // Registro le informazioni su questo utente
   // Nome, cognome, nickname, password, conferma password, e-mail
