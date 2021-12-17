@@ -18,37 +18,36 @@ const app = express();
 const port = 8080;
 
 //moduli per generare la documentazione delle API
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUi = require('swagger-ui-express');
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = {
-    swaggerDefinition: {
-        openapi: '3.0.0',
-        info: {
-            title: 'TeacherFinder',
-            version: '1.0.0',
-            description:
-                'This is a API application made with Express.',
-            license: {
-                name: 'Licensed Under MIT',
-                url: 'https://spdx.org/licenses/MIT.html',
-            },
-            contact: {
-                name: 'G14',
-                url: 'http://localhost:8080/',
-            },
-        },
-        servers: [
-            {
-                url: 'http://localhost:8080/',
-                description: 'Development server',
-            },
-        ],
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "TeacherFinder",
+      version: "1.0.0",
+      description: "This is a API application made with Express.",
+      license: {
+        name: "Licensed Under MIT",
+        url: "https://spdx.org/licenses/MIT.html",
+      },
+      contact: {
+        name: "G14",
+        url: "http://localhost:8080/",
+      },
     },
-    apis: [path.join(__dirname, "/index.js")]
+    servers: [
+      {
+        url: "http://localhost:8080/",
+        description: "Development server",
+      },
+    ],
+  },
+  apis: [path.join(__dirname, "/index.js")],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // BodyParser per JSON
 app.use(express.json());
@@ -114,7 +113,7 @@ app.get("/api", (req, res) => {
  *         description: internal server error
  *       400:
  *         description: missing parameters
-*/
+ */
 app.put("/api/user/register", async (req, res) => {
   // Registro le informazioni su questo utente
   // Nome, cognome, nickname, password, conferma password, e-mail
