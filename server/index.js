@@ -115,7 +115,17 @@ app.get("/api", (req, res) => {
  *       500:
  *         description: internal server error
  *       400:
- *         description: missing parameters
+ *         description: un paramentro non è stato trovato
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   MongoError.DUPLICATE_ENTRY.json(err):
+ *                     type: json
+ *                     description: errore parametro mancante
+ *                     example: email
  */
 app.put("/api/user/register", async (req, res) => {
   // Registro le informazioni su questo utente
@@ -176,8 +186,6 @@ app.put("/api/user/register", async (req, res) => {
  *     responses:
  *       200:
  *         description: session Id.
- *       500:
- *         description: utente già registrato
  *         content:
  *           application/json:
  *             schema:
@@ -200,6 +208,8 @@ app.put("/api/user/register", async (req, res) => {
  *                         type: string
  *                         description: ip address.
  *                         example: 0.0.0.0
+ *       500:
+ *         description: utente già registrato
  */
 app.post("/api/user/login", async (req, res) => {
   // Prendo l'IP dell'utente e lo registro assieme al token
@@ -244,8 +254,18 @@ app.post("/api/user/login", async (req, res) => {
  *     responses:
  *       200:
  *         description: il token è stato rimosso
- *       404:
+ *       400:
  *         description: il token non è stato trovato
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   missingParameters:
+ *                     type: string
+ *                     description: parametro mancante
+ *                     example: token
 */
 app.delete("/api/user/logout/:token", async (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
@@ -367,6 +387,18 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
  *                         type: number
  *                         description: longitudine posizione.
  *                         example: -1
+ *       400:
+ *         description: Parametro mancante.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   missingParameters:
+ *                     type: string
+ *                     description: parametro mancante
+ *                     example: id 
  */
 app.get("/api/ads/list/:userId", async (req, res) => {
   if (typeof req.params.userId !== "undefined") {
@@ -379,6 +411,61 @@ app.get("/api/ads/list/:userId", async (req, res) => {
 
 app.get("/api/ads/search/:keyword", async (req, res) => {});
 
+/**
+ * @swagger
+ * /api/ads/getAdInfo/{id}:
+ *   get:
+ *     summary: Restituisce le informazioni di un annuncio.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *             type: string
+ *             example: cccccccccccccccccccccccc
+ *         required: true
+ *         description: id dell'annuncio
+ *     responses:
+ *       200:
+ *         description: Info annuncio.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   authorId:
+ *                     type: string
+ *                     description: user Id insegnante.
+ *                     example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                   title:
+ *                     type: string
+ *                     description: titolo.
+ *                     example: Analisi 3
+ *                   description:
+ *                     type: string
+ *                     description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                     example: 0.0.0.0
+ *                   price:
+ *                     type: number
+ *                     description: prezzo all'ora.
+ *                     example: 25
+ *                   type:
+ *                     type: string
+ *                     description: tipologia insegnemento.
+ *                     example: online
+ *                   lat:
+ *                     type: number
+ *                     description: latitudine posizione.
+ *                     example: -1
+ *                   lon:
+ *                     type: number
+ *                     description: longitudine posizione.
+ *                     example: -1
+ *       404:
+ *         description: Annuncio non trovato
+ *       400:
+ *         description: Id invalido o assente
+ */
 app.get("/api/ads/getAdInfo/:id", async (req, res) => {
   if (typeof req.params.id !== "undefined") {
     if (req.params.id.length === 24) {
