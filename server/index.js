@@ -529,45 +529,41 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
  *                  example: -1
  *     responses:
  *       200:
- *         description: session Id.
+ *         description: annuncio.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
  *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       authorId:
- *                          type: string
- *                          description: user Id insegnante.
- *                          example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                       title:
- *                          type: string
- *                          description: titolo.
- *                          example: Analisi 3
- *                       description:
- *                          type: string
- *                          description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
- *                          example: 0.0.0.0
- *                       price:
- *                          type: number
- *                          description: prezzo all'ora.
- *                          example: 25
- *                       type:
- *                          type: string
- *                          description: tipologia insegnemento.
- *                          example: online
- *                       lat:
- *                          type: number
- *                          description: latitudine posizione.
- *                          example: -1
- *                       lon:
- *                          type: number
- *                          description: longitudine posizione.
- *                          example: -1
+ *                    authorId:
+ *                       type: string
+ *                       description: user Id insegnante.
+ *                       example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                    title:
+ *                       type: string
+ *                       description: titolo.
+ *                       example: Analisi 3
+ *                    description:
+ *                       type: string
+ *                       description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                       example: 0.0.0.0
+ *                    price:
+ *                       type: number
+ *                       description: prezzo all'ora.
+ *                       example: 25
+ *                    type:
+ *                       type: string
+ *                       description: tipologia insegnemento.
+ *                       example: online
+ *                    lat:
+ *                       type: number
+ *                       description: latitudine posizione.
+ *                       example: -1
+ *                    lon:
+ *                       type: number
+ *                       description: longitudine posizione.
+ *                       example: -1
  *       403:
  *         description: utente non autorizzato perché non registrato
  *       400:
@@ -625,6 +621,52 @@ app.post("/api/ads/createAd", async (req, res) => {
 
 // Endpoint Recensioni
 // ===================
+
+/**
+ * @swagger
+ * /api/reviews/getAdReviews/{adId}:
+ *   get:
+ *     summary: Fornisce le recensioni dell'annuncio.
+ *     parameters:
+ *       - in: path
+ *         name: adId
+ *         schema:
+ *             type: string
+ *             example: cccccccccccccccccccccccc
+ *         required: true
+ *         description: id dell'annuncio
+ *     responses:
+ *       200:
+ *         description: Elenco recensioni.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       authorId:
+ *                          type: string
+ *                          description: Id insegnante.
+ *                          example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                       adId:
+ *                          type: string
+ *                          description: Id dell'annuncio.
+ *                          example: cccccccccccccccccccccccc
+ *                       rating:
+ *                          type: number
+ *                          description: Stelline
+ *                          example: 4
+ *                       explanation:
+ *                          type: string
+ *                          description: Recensione.
+ *                          example: Molto bravo e competente, ma una volta non mi ha salutato.
+ *       400:
+ *         description: Id invalido o assente
+ */
 app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
   if (typeof req.params.adId !== "undefined") {
     if (req.params.adId.length === 24) {
