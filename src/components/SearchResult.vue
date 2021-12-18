@@ -73,6 +73,17 @@ const onClick = () => {
   margin-left: 0;
 }
 
+.sr-grading.star-0 .star {
+  display: none;
+}
+
+.sr-grading.star-0:after {
+  content: "Nessuna valutazione";
+  vertical-align: top;
+  line-height: 1.1em;
+  color: goldenrod;
+}
+
 .sr-grading.star-1 .star:not(:first-child),
 .sr-grading.star-2 .star:not(:first-child, :nth-child(2)),
 .sr-grading.star-3 .star:not(:first-child, :nth-child(2), :nth-child(3)),
