@@ -976,7 +976,7 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  *               subId:
  *                  type: string
  *                  description: Id della richiesta di iscrizione.
- *                  example: dddddddddddddddddddddddd
+ *                  example: eeeeeeeeeeeeeeeeeeeeeeee
  *     responses:
  *       200:
  *         description: Insegnamento.
@@ -1050,6 +1050,64 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/subscriptions/rejectSubscription:
+ *   put:
+ *     summary: L'insegnante rifiuta una richiesta di insegnamento.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sessionToken:
+ *                  type: string
+ *                  description: Session id.
+ *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *               subId:
+ *                  type: string
+ *                  description: Id della richiesta di iscrizione.
+ *                  example: eeeeeeeeeeeeeeeeeeeeeeee
+ *     responses:
+ *       200:
+ *         description: Insegnamento.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                    sessionToken:
+ *                       type: string
+ *                       description: Session id insegnante.
+ *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                    ipAddress:
+ *                       type: string
+ *                       description: ip address.
+ *                       example: 0.0.0.0
+ *                    status:
+ *                       type: string
+ *                       description: stato dell'iscrizione.
+ *                       example: tutor_rejected
+ *       403:
+ *         description: L'utente non è il proprietario dell'annuncio
+ *       404:
+ *         description: Iscrizione inesistente
+ *       400:
+ *         description: Parametri incorretti
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   missingParameters:
+ *                     type: string
+ *                     description: parametro mancante
+ *                     example: sessionToken 
+ */
 app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "subId"];
   // tutor
