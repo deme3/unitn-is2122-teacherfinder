@@ -110,8 +110,35 @@ app.get("/api", (req, res) => {
  *                  description: Breve descrizione dell'utente.
  *                  example: Sono uno studente laureando in matematica di 38 anni, sono scrupoloso, educato e saluto sempre.
  *     responses:
- *       201:
- *         description: successful executed
+ *       200:
+ *         description: Utente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   properties:
+ *                     firstName:
+ *                        type: string
+ *                        description: Il nome dell'utente.
+ *                        example: Mario
+ *                     lastName:
+ *                        type: string
+ *                        description: Il cognome dell'utente.
+ *                        example: Rossi
+ *                     nickname:
+ *                        type: string
+ *                        description: Il nickname dell'utente.
+ *                        example: Red
+ *                     email:
+ *                        type: string
+ *                        description: L'email dell'account associato all'utente.
+ *                        example: mariorossi@a.it
+ *                     biography:
+ *                        type: string
+ *                        description: Breve descrizione dell'utente.
+ *                        example: Sono uno studente laureando in matematica di 38 anni, sono scrupoloso, educato e saluto sempre.
  *       500:
  *         description: internal server error
  *       400:
@@ -775,7 +802,7 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
  *                  example: Molto bravo e competente, ma una volta non mi ha salutato.
  *     responses:
  *       200:
- *         description: annuncio.
+ *         description: Recensione.
  *         content:
  *           application/json:
  *             schema:
@@ -870,7 +897,7 @@ app.post("/api/reviews/postReview", async (req, res) => {
  *                  example: 12
  *     responses:
  *       200:
- *         description: annuncio.
+ *         description: Richiesta d'insegnamento.
  *         content:
  *           application/json:
  *             schema:
@@ -885,6 +912,10 @@ app.post("/api/reviews/postReview", async (req, res) => {
  *                       type: string
  *                       description: Id dell'annuncio.
  *                       example: cccccccccccccccccccccccc
+ *                    status:
+ *                       type: string
+ *                       description: stato dell'iscrizione.
+ *                       example: requested
  *                    hours:
  *                       type: number
  *                       description: Ore di insegnamento programmate.
@@ -926,6 +957,64 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/subscriptions/acceptSubscription:
+ *   put:
+ *     summary: L'insegnante accetta una richiesta di insegnamento.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sessionToken:
+ *                  type: string
+ *                  description: Session id.
+ *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *               subId:
+ *                  type: string
+ *                  description: Id della richiesta di iscrizione.
+ *                  example: dddddddddddddddddddddddd
+ *     responses:
+ *       200:
+ *         description: Insegnamento.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                    sessionToken:
+ *                       type: string
+ *                       description: Session id insegnante.
+ *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                    ipAddress:
+ *                       type: string
+ *                       description: ip address.
+ *                       example: 0.0.0.0
+ *                    status:
+ *                       type: string
+ *                       description: stato dell'iscrizione.
+ *                       example: waiting_payment
+ *       403:
+ *         description: L'utente non è il proprietario dell'annuncio
+ *       404:
+ *         description: Iscrizione inesistente
+ *       400:
+ *         description: Parametri incorretti
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   missingParameters:
+ *                     type: string
+ *                     description: parametro mancante
+ *                     example: sessionToken 
+ */
 app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "subId"];
   // tutor
