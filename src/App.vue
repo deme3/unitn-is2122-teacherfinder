@@ -296,4 +296,9 @@ input[type="color"] {
   -webkit-appearance: none;
   border-radius: 5px;
 }
+
+input {
+  -webkit-appearance: none;
+  border-radius: 0;
+}
 </style>
