@@ -291,7 +291,7 @@ app.post("/api/user/login", async (req, res) => {
  *                     type: string
  *                     description: parametro mancante
  *                     example: token
-*/
+ */
 app.delete("/api/user/logout/:token", async (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
 
@@ -342,17 +342,13 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  */
 app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
-  if (
-    mongoose.isValidObjectId(req.params.token) &&
-    typeof req.params.userId !== "undefined"
-  ) {
-    let sessionExists = await Session.checkToken(
-      req.params.token,
-      req.params.userId,
-      req.ip
-    );
-    res.status(200).json({ sessionExists });
-  }
+  // Session.checkToken fa type checking degli ID al suo interno!
+  let sessionExists = await Session.checkToken(
+    req.params.token,
+    req.params.userId,
+    req.ip
+  );
+  res.status(200).json({ sessionExists });
 });
 
 // Endpoint Annunci
@@ -423,7 +419,7 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
  *                   missingParameters:
  *                     type: string
  *                     description: parametro mancante
- *                     example: id 
+ *                     example: id
  */
 app.get("/api/ads/list/:userId", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.userId)) {
@@ -434,7 +430,14 @@ app.get("/api/ads/list/:userId", async (req, res) => {
   }
 });
 
-app.get("/api/ads/search/:keyword", async (req, res) => {});
+app.get("/api/ads/search/:keywords", async (req, res) => {
+  let keywords = new RegExp(req.params.keywords?.split(" ").join("|"), "i");
+  let foundAds = await Advertisement.find({
+    title: { $regex: keywords },
+  }).exec();
+
+  res.status(200).json(foundAds);
+});
 
 /**
  * @swagger
@@ -598,7 +601,7 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
  *                   missingParameters:
  *                     type: string
  *                     description: parametro mancante
- *                     example: sessionToken 
+ *                     example: sessionToken
  */
 app.post("/api/ads/createAd", async (req, res) => {
   let requiredParameters = [
@@ -827,7 +830,7 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
  *                   missingParameters:
  *                     type: string
  *                     description: parametro mancante
- *                     example: sessionToken 
+ *                     example: sessionToken
  */
 app.post("/api/reviews/postReview", async (req, res) => {
   let requiredParameters = ["sessionToken", "adId", "rating", "explanation"];
@@ -1099,7 +1102,7 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
  *                   missingParameters:
  *                     type: string
  *                     description: parametro mancante
- *                     example: sessionToken 
+ *                     example: sessionToken
  */
 app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "subId"];
@@ -1192,7 +1195,7 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
  *                   missingParameters:
  *                     type: string
  *                     description: parametro mancante
- *                     example: sessionToken 
+ *                     example: sessionToken
  */
 app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "subId"];
@@ -1284,7 +1287,7 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
  *                   missingParameters:
  *                     type: string
  *                     description: parametro mancante
- *                     example: sessionToken 
+ *                     example: sessionToken
  */
 app.put("/api/subscriptions/paySubscription", async (req, res) => {
   // ...
@@ -1345,6 +1348,7 @@ const lanIp =
 
 // Avvio il server
 // prettier-ignore
+app.enable("trust proxy");
 app.listen(port, async () => {
   console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di deployment...");
   console.log(`Server Express in ascolto su: http://localhost:${port}/`);
