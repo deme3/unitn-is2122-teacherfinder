@@ -99,7 +99,7 @@ app.get("/api", (req, res) => {
  *                  example: Red
  *               password:
  *                  type: string
- *                  description: La password dell'account associato all'utente.
+ *                  description: La password dell'account associato dell'utente.
  *                  example: 0000
  *               email:
  *                  type: string
@@ -192,22 +192,19 @@ app.put("/api/user/register", async (req, res) => {
  *               type: object
  *               properties:
  *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                         description: Session Id.
- *                         example: aaaaaaaaaaaaaaaaaaaaaaaa
- *                       userId:
- *                         type: string
- *                         description: user Id.
- *                         example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                       ipAddress:
- *                         type: string
- *                         description: ip address.
- *                         example: 0.0.0.0
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: Session Id.
+ *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                     userId:
+ *                       type: string
+ *                       description: user Id.
+ *                       example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                     ipAddress:
+ *                       type: string
+ *                       description: ip address.
+ *                       example: 0.0.0.0
  *       500:
  *         description: utente già registrato
  */
@@ -748,6 +745,74 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/reviews/postReview:
+ *   post:
+ *     summary: Crea una nuova recensione.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sessionToken:
+ *                  type: string
+ *                  description: Session id.
+ *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *               adId:
+ *                  type: string
+ *                  description: Id annuncio.
+ *                  example: cccccccccccccccccccccccc
+ *               rating:
+ *                  type: number
+ *                  description: Stelline.
+ *                  example: 4
+ *               explanation:
+ *                  type: string
+ *                  description: Rcensione.
+ *                  example: Molto bravo e competente, ma una volta non mi ha salutato.
+ *     responses:
+ *       200:
+ *         description: annuncio.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                    authorId:
+ *                       type: string
+ *                       description: Id insegnante.
+ *                       example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                    adId:
+ *                       type: string
+ *                       description: Id dell'annuncio.
+ *                       example: cccccccccccccccccccccccc
+ *                    rating:
+ *                       type: number
+ *                       description: Stelline
+ *                       example: 4
+ *                    explanation:
+ *                       type: string
+ *                       description: Recensione.
+ *                       example: Molto bravo e competente, ma una volta non mi ha salutato.
+ *       403:
+ *         description: utente non autorizzato perché non registrato
+ *       400:
+ *         description: Parametro mancante.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   missingParameters:
+ *                     type: string
+ *                     description: parametro mancante
+ *                     example: sessionToken 
+ */
 app.post("/api/reviews/postReview", async (req, res) => {
   let requiredParameters = ["sessionToken", "adId", "rating", "explanation"];
 
@@ -778,6 +843,57 @@ app.post("/api/reviews/postReview", async (req, res) => {
 
 // Endpoint Iscrizioni
 // ===================
+
+/**
+ * @swagger
+ * /api/subscriptions/requestSubscription:
+ *   put:
+ *     summary: Memorizza una nuova registrazione ad un insegnamento.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sessionToken:
+ *                  type: string
+ *                  description: Session id.
+ *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *               adId:
+ *                  type: string
+ *                  description: Id annuncio.
+ *                  example: cccccccccccccccccccccccc
+ *               hours:
+ *                  type: number
+ *                  description: Ore di insegnamento programmate.
+ *                  example: 12
+ *     responses:
+ *       200:
+ *         description: annuncio.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                    subscriberId:
+ *                       type: string
+ *                       description: Id studente richiedente.
+ *                       example: dddddddddddddddddddddddd
+ *                    adId:
+ *                       type: string
+ *                       description: Id dell'annuncio.
+ *                       example: cccccccccccccccccccccccc
+ *                    hours:
+ *                       type: number
+ *                       description: Ore di insegnamento programmate.
+ *                       example: 12
+ *       403:
+ *         description: utente non autorizzato perché non registrato
+ *       400:
+ *         description: Id invalido o assente
+ */
 app.put("/api/subscriptions/requestSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "adId", "hours"];
 
