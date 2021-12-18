@@ -436,7 +436,25 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
     title: { $regex: keywords },
   }).exec();
 
-  res.status(200).json(foundAds);
+  let adsIds = foundAds.map((x) => x._id);
+
+  let averageRatings = await Review.aggregate().match({
+      adId: { $in: adsIds },
+    })
+    .group({
+      _id: "$adId",
+      average: { $avg: "$rating" },
+    });
+
+  let aggregatedAverages = foundAds.map((x) => {
+    let { _id, authorId, title, description, price, type, lat, lon } = x;
+    let rating =
+      averageRatings.find((y) => y._id.toString() == _id)?.average ?? 0;
+
+    return { _id, authorId, title, description, price, type, lat, lon, rating };
+  });
+
+  res.status(200).json(aggregatedAverages);
 });
 
 /**
