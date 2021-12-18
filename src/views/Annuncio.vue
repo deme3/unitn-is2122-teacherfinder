@@ -2,11 +2,6 @@
   <div class="annuncio">
     <div class="tf-box">
       <div class="container">
-        <div class="tutor-info">
-          <img class="propic" src="https://picsum.photos/100" />
-          <div class="tutor-nickname">NicknameProfessore</div>
-          <button>Visualizza profilo</button>
-        </div>
         <div class="info">
           <h1>{{ adInfo.title }}</h1>
           <div class="ad-info">
@@ -19,10 +14,15 @@
             e conciso nelle mie lezioni, e rispondo sempre a tutte le domande ch
             emi vengono poste.
           </div>
-          <div class="richieste">
-            <button>Chatta con il tutor</button>
-            <button>Richiedi erogazione insegnamento</button>
-          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="tutor-info">
+          <img class="propic" src="https://picsum.photos/100" />
+          <div class="tutor-nickname">NicknameProfessore</div>
+        </div>
+        <div class="richieste">
+          <button>Chatta con il tutor</button>
+          <button>Richiedi erogazione insegnamento</button>
         </div>
       </div>
     </div>
@@ -52,41 +52,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.tutor-nickname {
-  margin: 1em auto;
-  box-sizing: border-box;
-  word-wrap: break-word;
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-content: stretch;
-  align-items: center;
-  gap: 2rem;
-}
-
-.info {
-  flex: 1 1 60%;
-}
-
-.tutor-info {
-  flex: 0 1;
-  text-align: center;
-}
-
-.container .info .ad-info p {
-  margin: 0;
-}
-
-.container .info .ad-desc {
-  text-align: justify;
-  word-break: break-word;
-  margin: 1.34em 0;
-}
-
 .richieste {
   margin-top: 1.34em;
   margin-bottom: 1.34em;
@@ -94,6 +59,33 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
   gap: 1em;
+}
+
+.info {
+  margin-bottom: 1.34em;
+}
+
+.divider {
+  border-bottom: 1px solid var(--border-unique-color);
+}
+
+.tutor-info {
+  margin: 1.34em 0;
+}
+
+.propic {
+  border-radius: 100%;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 1rem;
+  height: 50px;
+  width: 50px;
+}
+
+.tutor-nickname {
+  display: inline-block;
+  margin: auto;
+  vertical-align: middle;
 }
 
 @media only screen and (max-width: 640px) {
