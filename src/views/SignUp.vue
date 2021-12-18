@@ -43,10 +43,8 @@
 </style>
 
 <script setup>
-import { reactive, ref, inject } from "vue";
+import { reactive, ref } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
-
-const url = inject("apiBaseURL");
 
 const form = reactive({
   firstName: "",
@@ -66,8 +64,8 @@ const submitSignUp = async () => {
   }
 
   // Qua ci va la REST api
-  console.log(`${url}/api/user/register\n`, "Registrazione: ", { ...form });
-  const resp = await fetch(`${url}/api/user/register`, {
+  console.log(`/api/user/register\n`, "Registrazione: ", { ...form });
+  const resp = await fetch(`/api/user/register`, {
     method: "PUT",
     headers: {
       Accept: "application/json",

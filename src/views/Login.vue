@@ -34,11 +34,9 @@
 </style>
 
 <script setup>
-import { reactive, inject, ref } from "vue";
+import { reactive, ref } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
-
-const url = inject("apiBaseURL");
 
 const loginForm = reactive({
   nickname: "",
@@ -48,7 +46,7 @@ const loginForm = reactive({
 const rememberLogin = ref(false);
 
 const submitLogin = async () => {
-  const resp = await fetch(`${url}/api/user/login`, {
+  const resp = await fetch(`/api/user/login`, {
     method: "POST",
     headers: {
       Accept: "application/json",
