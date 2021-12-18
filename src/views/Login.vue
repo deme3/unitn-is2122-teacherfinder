@@ -71,15 +71,15 @@ const submitLogin = async () => {
     return;
   }
 
-  if (typeof respObj?.error == "undefined") {
+  if (typeof respObj?._id != "undefined") {
     if (rememberLogin.value) {
       // Cookie persistente: Durata cookie di 12 mesi (espressa in secondi)
-      document.cookie = `sessionToken=${resp._id}; Max-Age=${
+      document.cookie = `sessionToken=${respObj._id}; Max-Age=${
         60 * 60 * 24 * 30 * 12
       }; SameSite=Strict;`;
     } else {
       // Session cookie: Scade quando termina la sessione del browser
-      document.cookie = `sessionToken=${resp._id}; SameSite=Strict;`;
+      document.cookie = `sessionToken=${respObj._id}; SameSite=Strict;`;
     }
     window.location.replace("/");
   }
