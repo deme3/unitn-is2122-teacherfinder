@@ -2,9 +2,16 @@
   <div class="tf-box">
     <form method="post" @submit.prevent="submitLogin">
       <div class="login-header">Login</div>
-      <TextEntry v-model:text="loginData.nickname" description="Username o E-mail" />
-      <TextEntry v-model:text="loginData.password" description="Password" password />
-      <ToggleEntry v-model:toggle="loginData.remember" description="Ricordami" />
+      <TextEntry
+        v-model:text="loginForm.nickname"
+        description="Username o E-mail"
+      />
+      <TextEntry
+        v-model:text="loginForm.password"
+        description="Password"
+        password
+      />
+      <ToggleEntry v-model:toggle="rememberLogin" description="Ricordami" />
       <div class="input-wrapper">
         <button type="button" @click.prevent="$router.push({ name: 'SignUp' })">
           Registrati
@@ -27,40 +34,52 @@
 </style>
 
 <script setup>
-import { reactive, inject } from "vue";
+import { reactive, inject, ref } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
 const url = inject("apiBaseURL");
 
-const loginData = reactive({
+const loginForm = reactive({
   nickname: "",
   password: "",
-  remember: false,
 });
 
-const submitLogin = async () => {
-  const res = await (
-    await fetch(`${url}/user/login`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        nickname: loginData.nickname,
-        password: loginData.password,
-      }),
-    })
-  ).json();
+const rememberLogin = ref(false);
 
-  if (typeof res._id !== "undefined") {
-    if (loginData.remember) {
+const submitLogin = async () => {
+  const resp = await fetch(`${url}/api/user/login`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...loginForm }),
+  });
+
+  let respObj = {};
+
+  if (resp.ok) {
+    console.log("La registrazione è andata a buon fine!");
+    respObj = await resp.json();
+    console.log(respObj);
+  } else {
+    console.log(
+      `[${resp.status}] Errore nella registrazione!\n`,
+      await resp.text()
+    );
+    return;
+  }
+
+  if (typeof respObj?._id != "undefined") {
+    if (rememberLogin.value) {
       // Cookie persistente: Durata cookie di 12 mesi (espressa in secondi)
-      document.cookie = `sessionToken=${res._id}; Max-Age=${60 * 60 * 24 * 30 * 12}; SameSite=Strict;`;
+      document.cookie = `sessionToken=${respObj._id}; Max-Age=${
+        60 * 60 * 24 * 30 * 12
+      }; SameSite=Strict;`;
     } else {
       // Session cookie: Scade quando termina la sessione del browser
-      document.cookie = `sessionToken=${res._id}; SameSite=Strict;`;
+      document.cookie = `sessionToken=${respObj._id}; SameSite=Strict;`;
     }
     window.location.replace("/");
   }
