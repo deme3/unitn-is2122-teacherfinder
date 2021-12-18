@@ -8,7 +8,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "server": "node server/index.js",
-    "dev": "tmux new -s 'tf-dev' 'cd server && nodemon index.js ; read' \\; setw -g mouse on \\; split-window -h 'vue-cli-service serve --host localhost --port 8081 ; read' \\; attach"
+    "dev": "tmux new -s 'tf-dev' 'cd server && NODE_ENV=development nodemon index.js ; read' \\; setw -g mouse on \\; split-window -h 'vue-cli-service serve --host localhost --port 8081 ; read' \\; attach"
   },
   "dependencies": {
     "chalk": "^4.1.2",
