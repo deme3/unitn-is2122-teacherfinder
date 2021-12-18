@@ -16,7 +16,7 @@
           </div>
         </div>
         <div class="divider"></div>
-        <div class="tutor-info">
+        <div class="tutor-info" @click="onTutorInfoClick">
           <img class="propic" src="https://picsum.photos/100" />
           <div class="tutor-nickname">NicknameProfessore</div>
         </div>
@@ -49,6 +49,11 @@ onMounted(async () => {
   console.log("Questo è l'uuid dell'annuncio: ", uuid);
   // Qua andrà una richiesta alla REST api
 });
+
+const onTutorInfoClick = () => {
+  // Ci andrà il router al tutor profile
+  console.log("Click tutor");
+};
 </script>
 
 <style scoped>
@@ -71,6 +76,7 @@ onMounted(async () => {
 
 .tutor-info {
   margin: 1.34em 0;
+  cursor: pointer;
 }
 
 .propic {
