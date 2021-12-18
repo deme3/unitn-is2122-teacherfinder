@@ -1365,8 +1365,8 @@ const lanIp =
     .find(Boolean).address || "( LAN IP )";
 
 // Avvio il server
-// prettier-ignore
 app.enable("trust proxy");
+// prettier-ignore
 app.listen(port, async () => {
   console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di deployment...");
   console.log(`Server Express in ascolto su: http://localhost:${port}/`);
@@ -1388,7 +1388,7 @@ app.listen(port, async () => {
   console.log("  Applicazione accessibile via:");
   console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/`));
   console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/\n`));
-  console.log("  Documentazione accessibile via:");
+  console.log("  Documentazione REST API accessibile via:");
   console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/api/docs`));
   console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/api/docs\n`));
 });
