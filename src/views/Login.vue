@@ -48,26 +48,38 @@ const loginForm = reactive({
 const rememberLogin = ref(false);
 
 const submitLogin = async () => {
-  const res = await (
-    await fetch(`${url}/user/login`, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...loginForm }),
-    })
-  ).json();
+  const resp = await fetch(`${url}/api/user/login`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ ...loginForm }),
+  });
 
-  if (typeof res._id !== "undefined") {
-    if (loginForm.remember) {
+  let respObj = {};
+
+  if (resp.ok) {
+    console.log("La registrazione è andata a buon fine!");
+    respObj = await resp.json();
+    console.log(respObj);
+  } else {
+    console.log(
+      `[${resp.status}] Errore nella registrazione!\n`,
+      await resp.text()
+    );
+    return;
+  }
+
+  if (typeof respObj?.error == "undefined") {
+    if (rememberLogin.value) {
       // Cookie persistente: Durata cookie di 12 mesi (espressa in secondi)
-      document.cookie = `sessionToken=${res._id}; Max-Age=${
+      document.cookie = `sessionToken=${resp._id}; Max-Age=${
         60 * 60 * 24 * 30 * 12
       }; SameSite=Strict;`;
     } else {
       // Session cookie: Scade quando termina la sessione del browser
-      document.cookie = `sessionToken=${res._id}; SameSite=Strict;`;
+      document.cookie = `sessionToken=${resp._id}; SameSite=Strict;`;
     }
     window.location.replace("/");
   }
