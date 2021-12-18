@@ -875,7 +875,7 @@ app.post("/api/reviews/postReview", async (req, res) => {
  * @swagger
  * /api/subscriptions/requestSubscription:
  *   put:
- *     summary: Memorizza una nuova registrazione ad un insegnamento.
+ *     summary: Memorizza una nuova iscrizione ad un insegnamento.
  *     requestBody:
  *       required: true
  *       content:
@@ -897,7 +897,7 @@ app.post("/api/reviews/postReview", async (req, res) => {
  *                  example: 12
  *     responses:
  *       200:
- *         description: Richiesta d'insegnamento.
+ *         description: Iscrizione.
  *         content:
  *           application/json:
  *             schema:
@@ -1185,7 +1185,7 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
  *                       description: stato dell'iscrizione.
  *                       example: student_canceled
  *       403:
- *         description: L'utente non è il proprietario dell'annuncio
+ *         description: L'utente non è iscrittto
  *       404:
  *         description: Iscrizione inesistente
  *       400:
@@ -1238,7 +1238,7 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
 
 /**
  * @swagger
- * /api/subscriptions/cancelSubscription:
+ * /api/subscriptions/paySubscription:
  *   put:
  *     summary: Lo studente paga un insegnamento.
  *     requestBody:
@@ -1278,8 +1278,7 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
  *                       description: stato dell'iscrizione.
  *                       example: paid
  *       403:
- *         description: L'utente non è il proprietario dell'annuncio
- *       404:
+ *         description: L'utente non è iscritto
  *         description: Iscrizione inesistente
  *       400:
  *         description: Parametri incorretti
