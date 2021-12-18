@@ -11,9 +11,10 @@ let sessionSchema = new mongoose.Schema({
 });
 
 sessionSchema.statics.checkToken = async function(token, userId, ipAddress) {
-  // Il token è un ObjectId, di lunghezza 24 caratteri
-  // se non rispetto la lunghezza causo un CastError fatale
-  if(mongoose.isValidObjectId(token)) {
+  // Il token è un ObjectId, di lunghezza 24 caratteri ed esadecimale
+  // se non rispetto la lunghezza o uso lettere oltre la F
+  // causo un CastingError fatale
+  if (mongoose.isValidObjectId(token) && mongoose.isValidObjectId(userId)) {
     return await Session.exists({ _id: token, userId, ipAddress });
   } else {
     return false;
