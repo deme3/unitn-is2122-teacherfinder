@@ -23,7 +23,7 @@ sessionSchema.statics.checkToken = async function(token, userId, ipAddress) {
 sessionSchema.statics.getUserBySession = async function(token, ipAddress) {
   // Il token è un ObjectId, di lunghezza 24 caratteri
   // se non rispetto la lunghezza causo un CastError fatale
-  if (mongoose.isValidObjectId(token)) return null;
+  if (!mongoose.isValidObjectId(token)) return null;
 
   let session = await Session.findOne({ _id: token, ipAddress }).exec();
   if (session === null) return null;
