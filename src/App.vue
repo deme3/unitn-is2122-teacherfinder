@@ -110,6 +110,7 @@ export default defineComponent({
   --base-font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
+  --toggle-active-color: #00b87cb5;
 }
 
 @media (prefers-color-scheme: dark) {

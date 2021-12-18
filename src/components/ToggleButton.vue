@@ -1,5 +1,5 @@
 <template>
-  <div class="toggle-button">
+  <div :class="toggleBtnClass">
     <div class="toggle-dot-container">
       <div :class="toggleDotClass"></div>
     </div>
@@ -22,16 +22,17 @@ let toggleStatus = computed({
 const toggleDotClass = ref(
   "toggle-dot" + (toggleStatus.value ? " toggled" : "")
 );
-
-const toggle = () => {
-  toggleStatus.value = !toggleStatus.value;
-};
+const toggleBtnClass = ref(
+  "toggle-button" + (toggleStatus.value ? " toggled" : "")
+);
 
 watch(toggleStatus, () => {
   toggleDotClass.value = "toggle-dot" + (toggleStatus.value ? " toggled" : "");
+  toggleBtnClass.value =
+    "toggle-button" + (toggleStatus.value ? " toggled" : "");
 });
 
-defineExpose({ toggleStatus: Boolean, toggle });
+defineExpose({ toggleStatus: Boolean });
 </script>
 
 <style scoped>
@@ -60,5 +61,9 @@ defineExpose({ toggleStatus: Boolean, toggle });
 .toggled.toggle-dot {
   right: 0;
   transition: right 0.05s ease-out;
+}
+
+.toggled.toggle-button {
+  background: var(--toggle-active-color);
 }
 </style>
