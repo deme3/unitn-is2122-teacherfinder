@@ -1,30 +1,32 @@
 <template>
-  <h1>Registrati</h1>
-  <div class="SignUp tf-box">
-    <form method="post" @submit.prevent="submitSignUp">
-      <div class="register-header">
-        <TextEntry v-model:text="form.firstName" description="Nome" />
-        <TextEntry v-model:text="form.lastName" description="Cognome" />
-        <TextEntry v-model:text="form.nickname" description="Nickname" />
-        <TextEntry v-model:text="form.email" description="E-mail" />
-        <TextEntry
-          v-model:text="form.biography"
-          :multiline="true"
-          description="Biografia"
-        />
-        <TextEntry
-          v-model:text="form.password"
-          description="Password"
-          password
-        />
-        <TextEntry
-          v-model:text="passRepeat"
-          description="Ripeti password"
-          password
-        />
-      </div>
-      <div class="register-btn-wrapper"><button>Registrati</button></div>
-    </form>
+  <div class="signup-view">
+    <h1>Registrati</h1>
+    <div class="tf-box">
+      <form method="post" @submit.prevent="submitSignUp">
+        <div class="register-header">
+          <TextEntry v-model:text="form.firstName" description="Nome" />
+          <TextEntry v-model:text="form.lastName" description="Cognome" />
+          <TextEntry v-model:text="form.nickname" description="Nickname" />
+          <TextEntry v-model:text="form.email" description="E-mail" />
+          <TextEntry
+            v-model:text="form.biography"
+            :multiline="true"
+            description="Biografia"
+          />
+          <TextEntry
+            v-model:text="form.password"
+            description="Password"
+            password
+          />
+          <TextEntry
+            v-model:text="passRepeat"
+            description="Ripeti password"
+            password
+          />
+        </div>
+        <div class="register-btn-wrapper"><button>Registrati</button></div>
+      </form>
+    </div>
   </div>
 </template>
 
