@@ -8,6 +8,7 @@ const os = require("os");
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
+const mongoose = require("mongoose");
 const Database = require("./database/database.js");
 const User = require("./database/User.js");
 const Session = require("./database/Session.js");
@@ -294,7 +295,7 @@ app.post("/api/user/login", async (req, res) => {
 app.delete("/api/user/logout/:token", async (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
 
-  if (typeof req.params.token !== "undefined") {
+  if (mongoose.isValidObjectId(req.params.token)) {
     let deletedCount = await Session.deleteOne({
       _id: req.params.token,
       ipAddress: req.ip,
@@ -342,7 +343,7 @@ app.delete("/api/user/logout/:token", async (req, res) => {
 app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
   if (
-    typeof req.params.token !== "undefined" &&
+    mongoose.isValidObjectId(req.params.token) &&
     typeof req.params.userId !== "undefined"
   ) {
     let sessionExists = await Session.checkToken(
@@ -425,7 +426,7 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
  *                     example: id 
  */
 app.get("/api/ads/list/:userId", async (req, res) => {
-  if (typeof req.params.userId !== "undefined") {
+  if (mongoose.isValidObjectId(req.params.userId)) {
     let foundAds = await User.findUserAds(req.params.userId);
     res.status(200).json(foundAds);
   } else {
@@ -491,16 +492,12 @@ app.get("/api/ads/search/:keyword", async (req, res) => {});
  *         description: Id invalido o assente
  */
 app.get("/api/ads/getAdInfo/:id", async (req, res) => {
-  if (typeof req.params.id !== "undefined") {
-    if (req.params.id.length === 24) {
-      let foundAd = await Advertisement.findById(req.params.id);
-      if (foundAd !== null) {
-        res.status(200).json(foundAd);
-      } else {
-        res.status(404).json({});
-      }
+  if (mongoose.isValidObjectId(req.params.id)) {
+    let foundAd = await Advertisement.findById(req.params.id);
+    if (foundAd !== null) {
+      res.status(200).json(foundAd);
     } else {
-      res.sendStatus(400);
+      res.status(404).json({});
     }
   } else {
     res.status(400).json({ missingParameters: ["id"] });
@@ -692,14 +689,10 @@ app.post("/api/ads/createAd", async (req, res) => {
  *         description: Id invalido o assente
  */
 app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
-  if (typeof req.params.adId !== "undefined") {
-    if (req.params.adId.length === 24) {
-      let reviews = await Review.find({ adId: req.params.adId }).exec();
-      if (reviews !== null) res.status(200).json(reviews);
-      else res.status(200).json({});
-    } else {
-      res.sendStatus(400);
-    }
+  if (mongoose.isValidObjectId(req.params.adId)) {
+    let reviews = await Review.find({ adId: req.params.adId }).exec();
+    if (reviews !== null) res.status(200).json(reviews);
+    else res.status(200).json({});
   } else {
     res.status(400).json({ missingParameters: ["adId"] });
   }
@@ -751,22 +744,18 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
  *         description: Id invalido o assente
  */
 app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
-  if (typeof req.params.userId !== "undefined") {
-    if (req.params.userId.length === 24) {
-      // Trovo tutti gli annunci dell'utente
-      let userAds = await User.findUserAds(req.params.userId);
-      let reviews = [];
+  if (mongoose.isValidObjectId(req.params.userId)) {
+    // Trovo tutti gli annunci dell'utente
+    let userAds = await User.findUserAds(req.params.userId);
+    let reviews = [];
 
-      // Per ogni annuncio aggiungo alla lista tutte le recensioni
-      for (let ad of userAds) {
-        reviews.push(...(await Review.find({ adId: ad._id }).exec()));
-      }
-
-      if (reviews !== null) res.status(200).json(reviews);
-      else res.status(200).json({});
-    } else {
-      res.sendStatus(400);
+    // Per ogni annuncio aggiungo alla lista tutte le recensioni
+    for (let ad of userAds) {
+      reviews.push(...(await Review.find({ adId: ad._id }).exec()));
     }
+
+    if (reviews !== null) res.status(200).json(reviews);
+    else res.status(200).json({});
   } else {
     res.status(400).json({ missingParameters: ["userId"] });
   }
@@ -845,6 +834,7 @@ app.post("/api/reviews/postReview", async (req, res) => {
 
   if (checkParameters(requiredParameters, req.body)) {
     // Verifico di essere un utente loggato e ottengo il mio userId
+    // Session.getUserBySession fa già type checking!
     let authorId = await Session.getUserBySession(
       req.body.sessionToken,
       req.ip
@@ -931,7 +921,10 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
   if (checkParameters(requiredParameters, req.body)) {
     // controllo di ricevere un ID valido (ObjectId con length 24)
     // e controllo di avere un numero come quantità di ore richieste, per non rompere l'integrità del db
-    if (req.body.adId.length === 24 && typeof req.body.hours === "number") {
+    if (
+      mongoose.isValidObjectId(req.body.adId) &&
+      typeof req.body.hours === "number"
+    ) {
       let subscriberId = await Session.getUserBySession(
         req.body.sessionToken,
         req.ip
@@ -1013,15 +1006,15 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  *                   missingParameters:
  *                     type: string
  *                     description: parametro mancante
- *                     example: sessionToken 
+ *                     example: sessionToken
  */
 app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "subId"];
   // tutor
   if (
     checkParameters(requiredParameters, req.body) &&
-    req.body.subId.length === 24 &&
-    req.body.sessionToken.length === 24
+    mongoose.isValidObjectId(req.body.subId) &&
+    mongoose.isValidObjectId(req.body.sessionToken)
   ) {
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription !== null) {
@@ -1113,8 +1106,8 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
   // tutor
   if (
     checkParameters(requiredParameters, req.body) &&
-    req.body.subId.length === 24 &&
-    req.body.sessionToken.length === 24
+    mongoose.isValidObjectId(req.body.subId) &&
+    mongoose.isValidObjectId(req.body.sessionToken)
   ) {
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription !== null) {
@@ -1206,8 +1199,8 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
   // tutor
   if (
     checkParameters(requiredParameters, req.body) &&
-    req.body.subId.length === 24 &&
-    req.body.sessionToken.length === 24
+    mongoose.isValidObjectId(req.body.subId) &&
+    mongoose.isValidObjectId(req.body.sessionToken)
   ) {
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription !== null) {
@@ -1302,8 +1295,8 @@ app.put("/api/subscriptions/paySubscription", async (req, res) => {
   // tutor
   if (
     checkParameters(requiredParameters, req.body) &&
-    req.body.subId.length === 24 &&
-    req.body.sessionToken.length === 24
+    mongoose.isValidObjectId(req.body.subId) &&
+    mongoose.isValidObjectId(req.body.sessionToken)
   ) {
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription !== null) {
