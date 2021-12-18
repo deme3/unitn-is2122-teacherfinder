@@ -24,7 +24,7 @@ const routes = [
     component: () => import("../views/Impostazioni.vue"),
   },
   {
-    path: "/annuncio/:uuid",
+    path: "/annuncio/:id",
     name: "Annuncio",
     component: () => import("../views/Annuncio.vue"),
   },

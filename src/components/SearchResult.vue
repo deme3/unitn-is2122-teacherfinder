@@ -2,7 +2,7 @@
   <div class="sr-info tf-box" @click="onClick">
     <div class="sr-title">{{ props.title }}</div>
     <div class="sr-price">Prezzo: {{ prettyPrice }}€/ora</div>
-    <div :class="gradingClass">
+    <div :class="ratingClass">
       <div class="star"></div>
       <div class="star"></div>
       <div class="star"></div>
@@ -21,22 +21,22 @@ const router = useRouter();
 const props = defineProps({
   title: String,
   price: Number,
-  grading: Number,
-  uuid: String,
+  rating: Number,
+  id: String,
 });
 
 const emit = defineEmits(["offer-click"]);
 
-const gradingClass = computed(() => {
-  return "sr-grading star-" + props.grading;
+const ratingClass = computed(() => {
+  return "sr-grading star-" + props.rating;
 });
 const prettyPrice = computed(() => {
   return props.price.toFixed(2);
 });
 
 const onClick = () => {
-  router.push({ name: "Annuncio", params: { uuid: props.uuid } });
-  emit("offer-click", props.uuid);
+  router.push({ name: "Annuncio", params: { id: props.id } });
+  emit("offer-click", props.id);
 };
 </script>
 

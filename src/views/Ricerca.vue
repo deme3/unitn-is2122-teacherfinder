@@ -4,10 +4,10 @@
     <SearchResult
       v-for="ad in props.ads"
       :key="ad._id"
-      :uuid="ad._id"
+      :id="ad._id"
       :title="ad.title"
       :price="ad.price"
-      :grading="ad.rating"
+      :rating="ad.rating"
       @offer-click="offerClick"
     />
   </div>
@@ -28,7 +28,7 @@ const props = defineProps({
   ads: Array,
 });
 
-const offerClick = (uuid) => {
-  console.log("Click of " + uuid);
+const offerClick = (id) => {
+  console.log("Click of " + id);
 };
 </script>

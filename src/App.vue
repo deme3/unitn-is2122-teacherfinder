@@ -63,42 +63,42 @@ export default defineComponent({
     );
 
     ads.value = [
-      { title: "Analisi I", price: 10.5, grading: 1, id: "4567876543" },
+      { title: "Analisi I", price: 10.5, rating: 1, _id: "4567876543" },
       {
         title: "Ingegneria del Software I",
         price: 15.344,
-        grading: 5,
-        id: "56788675687",
+        rating: 5,
+        _id: "56788675687",
       },
       {
         title: "Ingegneria del Software I",
         price: 803.22,
-        grading: 3,
-        id: "56768786756768",
+        rating: 3,
+        _id: "56768786756768",
       },
       {
         title: "Ingegneria del Software I",
         price: 2.34,
-        grading: 5,
-        id: "4382843",
+        rating: 5,
+        _id: "4382843",
       },
       {
         title: "Ingegneria del Software I",
         price: 12123.232,
-        grading: 2,
-        id: "43242",
+        rating: 2,
+        _id: "43242",
       },
       {
         title: "Ingegneria del Software I",
         price: 232.32,
-        grading: 5,
-        id: "4535453453423",
+        rating: 5,
+        _id: "4535453453423",
       },
       {
         title: "Ingegneria del Software I",
         price: 3232.2,
-        grading: 1,
-        id: "92993293",
+        rating: 1,
+        _id: "92993293",
       },
     ];
 

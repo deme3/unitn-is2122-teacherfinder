@@ -40,13 +40,13 @@ const route = useRoute();
 let adInfo = {
   title: "Caricamento...",
   price: 0,
-  grading: 5,
-  uuid: "000",
+  rating: 5,
+  id: "000",
 };
 
 onMounted(async () => {
-  let uuid = route.params.uuid;
-  console.log("Questo è l'uuid dell'annuncio: ", uuid);
+  let id = route.params.id;
+  console.log("Questo è l'uuid dell'annuncio: ", id);
   // Qua andrà una richiesta alla REST api
 });
 
