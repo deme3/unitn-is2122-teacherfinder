@@ -2,9 +2,16 @@
   <div class="tf-box">
     <form method="post" @submit.prevent="submitLogin">
       <div class="login-header">Login</div>
-      <TextEntry v-model:text="loginData.nickname" description="Username o E-mail" />
-      <TextEntry v-model:text="loginData.password" description="Password" password />
-      <ToggleEntry v-model:toggle="loginData.remember" description="Ricordami" />
+      <TextEntry
+        v-model:text="loginForm.nickname"
+        description="Username o E-mail"
+      />
+      <TextEntry
+        v-model:text="loginForm.password"
+        description="Password"
+        password
+      />
+      <ToggleEntry v-model:toggle="rememberLogin" description="Ricordami" />
       <div class="input-wrapper">
         <button type="button" @click.prevent="$router.push({ name: 'SignUp' })">
           Registrati
@@ -27,17 +34,18 @@
 </style>
 
 <script setup>
-import { reactive, inject } from "vue";
+import { reactive, inject, ref } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
 const url = inject("apiBaseURL");
 
-const loginData = reactive({
+const loginForm = reactive({
   nickname: "",
   password: "",
-  remember: false,
 });
+
+const rememberLogin = ref(false);
 
 const submitLogin = async () => {
   const res = await (
@@ -47,17 +55,16 @@ const submitLogin = async () => {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        nickname: loginData.nickname,
-        password: loginData.password,
-      }),
+      body: JSON.stringify({ ...loginForm }),
     })
   ).json();
 
   if (typeof res._id !== "undefined") {
-    if (loginData.remember) {
+    if (loginForm.remember) {
       // Cookie persistente: Durata cookie di 12 mesi (espressa in secondi)
-      document.cookie = `sessionToken=${res._id}; Max-Age=${60 * 60 * 24 * 30 * 12}; SameSite=Strict;`;
+      document.cookie = `sessionToken=${res._id}; Max-Age=${
+        60 * 60 * 24 * 30 * 12
+      }; SameSite=Strict;`;
     } else {
       // Session cookie: Scade quando termina la sessione del browser
       document.cookie = `sessionToken=${res._id}; SameSite=Strict;`;
