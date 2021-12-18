@@ -451,6 +451,8 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
     let rating =
       averageRatings.find((y) => y._id.toString() == _id)?.average ?? 0;
 
+    rating = Math.round(rating);
+
     return { _id, authorId, title, description, price, type, lat, lon, rating };
   });
 
