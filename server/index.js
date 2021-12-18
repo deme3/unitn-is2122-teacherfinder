@@ -681,6 +681,51 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/reviews/getUserReviews/{userId}:
+ *   get:
+ *     summary: Fornisce le recensioni dell'insegnante.
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *             type: string
+ *             example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *         required: true
+ *         description: id dell'insegnante
+ *     responses:
+ *       200:
+ *         description: Elenco recensioni.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       authorId:
+ *                          type: string
+ *                          description: Id insegnante.
+ *                          example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                       adId:
+ *                          type: string
+ *                          description: Id dell'annuncio.
+ *                          example: cccccccccccccccccccccccc
+ *                       rating:
+ *                          type: number
+ *                          description: Stelline
+ *                          example: 4
+ *                       explanation:
+ *                          type: string
+ *                          description: Recensione.
+ *                          example: Molto bravo e competente, ma una volta non mi ha salutato.
+ *       400:
+ *         description: Id invalido o assente
+ */
 app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
   if (typeof req.params.userId !== "undefined") {
     if (req.params.userId.length === 24) {
