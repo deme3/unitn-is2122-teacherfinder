@@ -7,7 +7,7 @@
       :uuid="ad._id"
       :title="ad.title"
       :price="ad.price"
-      :grading="ad.grading"
+      :grading="ad.rating"
       @offer-click="offerClick"
     />
   </div>
