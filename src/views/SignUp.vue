@@ -1,6 +1,6 @@
 <template>
+  <h1>Registrati</h1>
   <div class="SignUp tf-box">
-    <div class="register-title">Registrati</div>
     <form method="post" @submit.prevent="submitSignUp">
       <div class="register-header">
         <TextEntry v-model:text="form.firstName" description="Nome" />
@@ -29,7 +29,7 @@
 </template>
 
 <style scoped>
-.register-title {
+h1 {
   text-align: center;
 }
 

@@ -1,7 +1,7 @@
 <template>
+  <h1>Login</h1>
   <div class="tf-box">
     <form method="post" @submit.prevent="submitLogin">
-      <div class="login-header">Login</div>
       <TextEntry
         v-model:text="loginForm.nickname"
         description="Username o E-mail"
@@ -23,7 +23,7 @@
 </template>
 
 <style scoped>
-.login-header {
+h1 {
   text-align: center;
 }
 
