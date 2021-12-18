@@ -351,6 +351,15 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
   res.status(200).json({ sessionExists });
 });
 
+app.get("/api/user/profile/:id", async (req, res) => {
+  if(mongoose.isValidObjectId(req.params.id)) {
+    let user = await User.findById(req.params.id).select("-password").exec();
+    
+    if(user !== null) res.status(200).json(user);
+    else res.sendStatus(404);
+  }
+});
+
 // Endpoint Annunci
 // ================
 
