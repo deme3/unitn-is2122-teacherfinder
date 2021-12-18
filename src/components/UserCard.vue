@@ -47,15 +47,16 @@
 </style>
 
 <script setup>
-import { ref } from "vue";
+//import { ref } from "vue";
+import { defineProps } from "vue";
 
-const pictureURL = ref("https://picsum.photos/100");
+/*const pictureURL = ref("https://picsum.photos/100");
 const firstName = ref("Francesca");
 const lastName = ref("Mancini");
-const nickname = ref("framcesca");
+const nickname = ref("framcesca");*/
 //const bio = ref("");
 
-defineExpose({
+defineProps({
   pictureURL: String,
   firstName: String,
   lastName: String,

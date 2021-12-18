@@ -357,6 +357,8 @@ app.get("/api/user/profile/:id", async (req, res) => {
     
     if(user !== null) res.status(200).json(user);
     else res.sendStatus(404);
+  } else {
+    res.sendStatus(400);
   }
 });
 
