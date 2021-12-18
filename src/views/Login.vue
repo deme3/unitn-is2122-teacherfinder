@@ -1,21 +1,26 @@
 <template>
-  <h1>Login</h1>
-  <div class="tf-box">
-    <form method="post" @submit.prevent="submitLogin">
-      <TextEntry v-model:text="loginForm.nickname" description="Username" />
-      <TextEntry
-        v-model:text="loginForm.password"
-        description="Password"
-        password
-      />
-      <ToggleEntry v-model:toggle="rememberLogin" description="Ricordami" />
-      <div class="input-wrapper">
-        <button type="button" @click.prevent="$router.push({ name: 'SignUp' })">
-          Registrati
-        </button>
-        <input type="submit" value="Login" />
-      </div>
-    </form>
+  <div class="login-view">
+    <h1>Login</h1>
+    <div class="tf-box">
+      <form method="post" @submit.prevent="submitLogin">
+        <TextEntry v-model:text="loginForm.nickname" description="Username" />
+        <TextEntry
+          v-model:text="loginForm.password"
+          description="Password"
+          password
+        />
+        <ToggleEntry v-model:toggle="rememberLogin" description="Ricordami" />
+        <div class="input-wrapper">
+          <button
+            type="button"
+            @click.prevent="$router.push({ name: 'SignUp' })"
+          >
+            Registrati
+          </button>
+          <input type="submit" value="Login" />
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
