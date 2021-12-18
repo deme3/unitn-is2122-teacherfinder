@@ -2,10 +2,7 @@
   <h1>Login</h1>
   <div class="tf-box">
     <form method="post" @submit.prevent="submitLogin">
-      <TextEntry
-        v-model:text="loginForm.nickname"
-        description="Username o E-mail"
-      />
+      <TextEntry v-model:text="loginForm.nickname" description="Username" />
       <TextEntry
         v-model:text="loginForm.password"
         description="Password"
