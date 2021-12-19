@@ -48,6 +48,7 @@ h1 {
 import { reactive, ref } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 
+document.title = "TeacherFinder – Registrati";
 const form = reactive({
   firstName: "",
   lastName: "",

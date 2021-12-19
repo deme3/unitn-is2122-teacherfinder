@@ -40,6 +40,7 @@ import { reactive, ref } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
+document.title = "TeacherFinder – Login";
 const loginForm = reactive({
   nickname: "",
   password: "",

@@ -23,7 +23,7 @@
 
 <script setup>
 import SearchResult from "@/components/SearchResult.vue"; // @ alias to src
-
+document.title = "TeacherFinder";
 const props = defineProps({
   ads: Array,
 });

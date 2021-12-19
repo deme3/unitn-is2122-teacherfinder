@@ -63,6 +63,7 @@ import UserCard from "@/components/UserCard.vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
+document.title = "TeacherFinder – Impostazioni";
 // Qua andrà una richiesta alla REST api
 // Per le info del profilo utente
 const original = {};

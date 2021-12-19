@@ -51,9 +51,10 @@ onMounted(async () => {
   let profile = await fetch(`/api/user/profile/${userId}`);
   if (profile.status === 200) {
     Object.assign(userProfile, await profile.json());
-    document.title = "Profilo di " + userProfile.nickname;
+    document.title = `TeacherFinder – Profilo di ${userProfile.nickname}`;
   } else {
     userProfile.firstName = userProfile.biography = NOTFOUND;
+    document.title = `TeacherFinder – ${NOTFOUND}`;
   }
 });
 </script>

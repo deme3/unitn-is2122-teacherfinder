@@ -60,8 +60,10 @@ onMounted(async () => {
   let ad = await fetch(`/api/ads/getAdInfo/${id}`);
   if(ad.status === 200) {
     Object.assign(adInfo, await ad.json());
+    document.title = `TeacherFinder – ${adInfo.title}`;
   } else {
     adInfo.title = adInfo.description = "Annuncio non trovato.";
+    document.title = "TeacherFinder – Annuncio non trovato";
   }
 });
 
