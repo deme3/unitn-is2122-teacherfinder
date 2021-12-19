@@ -27,11 +27,10 @@
 
 <script setup>
 import UserCard from "@/components/UserCard.vue";
-import { onMounted, reactive, inject } from "vue";
+import { onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
-const apiBaseURL = inject("apiBaseURL");
 
 const NOTFOUND = "Utente non trovato.";
 
@@ -49,7 +48,7 @@ onMounted(async () => {
   userId = route.params.userId;
   console.log("Questo è l'id dell'utente: ", userId);
 
-  let profile = await fetch(`${apiBaseURL}/api/user/profile/${userId}`);
+  let profile = await fetch(`/api/user/profile/${userId}`);
   if (profile.status === 200) {
     Object.assign(userProfile, await profile.json());
     document.title = "Profilo di " + userProfile.nickname;

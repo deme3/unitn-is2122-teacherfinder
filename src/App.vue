@@ -21,13 +21,12 @@
 import Searchbar from "@/components/Searchbar.vue";
 import Navbar from "@/components/Navbar.vue";
 
-import { defineComponent, ref, watch, inject } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 export default defineComponent({
   components: { Searchbar, Navbar },
   setup() {
-    let apiBaseURL = inject("apiBaseURL");
     const route = useRoute();
 
     const ads = ref([]);
@@ -36,9 +35,7 @@ export default defineComponent({
     const searchOffer = async function (searchterms) {
       console.log("Searching for: " + searchterms);
       ads.value = await (
-        await fetch(
-          `${apiBaseURL}/api/ads/search/${encodeURIComponent(searchterms)}`
-        )
+        await fetch(`/api/ads/search/${encodeURIComponent(searchterms)}`)
       ).json();
     };
 
@@ -113,6 +110,7 @@ export default defineComponent({
   --base-font: 11pt -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
+  --toggle-active-color: #00b87cb5;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -298,5 +296,10 @@ input[type="color"] {
   border-color: var(--border-unique-strongcolor);
   -webkit-appearance: none;
   border-radius: 5px;
+}
+
+input {
+  -webkit-appearance: none;
+  border-radius: 0;
 }
 </style>

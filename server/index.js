@@ -1387,8 +1387,11 @@ app.put("/api/settings/change/:settingId/to/:newValue", async (req, res) => {});
 
 // Permetto a Vue.js di gestire le path single-page con Vue Router
 // Sul front-end compilato!
-app.use(history());
-app.use("/", express.static(path.join(__dirname, "..", "dist")));
+// Solo in deployment.
+if (process?.env?.NODE_ENV !== "development") {
+  app.use(history());
+  app.use("/", express.static(path.join(__dirname, "..", "dist")));
+}
 
 const lanIp =
   Object.values(os.networkInterfaces())

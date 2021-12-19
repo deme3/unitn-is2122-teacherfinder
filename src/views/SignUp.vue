@@ -1,35 +1,37 @@
 <template>
-  <div class="SignUp tf-box">
-    <div class="register-title">Registrati</div>
-    <form method="post" @submit.prevent="submitSignUp">
-      <div class="register-header">
-        <TextEntry v-model:text="form.firstName" description="Nome" />
-        <TextEntry v-model:text="form.lastName" description="Cognome" />
-        <TextEntry v-model:text="form.nickname" description="Nickname" />
-        <TextEntry v-model:text="form.email" description="E-mail" />
-        <TextEntry
-          v-model:text="form.biography"
-          :multiline="true"
-          description="Biografia"
-        />
-        <TextEntry
-          v-model:text="form.password"
-          description="Password"
-          password
-        />
-        <TextEntry
-          v-model:text="passRepeat"
-          description="Ripeti password"
-          password
-        />
-      </div>
-      <div class="register-btn-wrapper"><button>Registrati</button></div>
-    </form>
+  <div class="signup-view">
+    <h1>Registrati</h1>
+    <div class="tf-box">
+      <form method="post" @submit.prevent="submitSignUp">
+        <div class="register-header">
+          <TextEntry v-model:text="form.firstName" description="Nome" />
+          <TextEntry v-model:text="form.lastName" description="Cognome" />
+          <TextEntry v-model:text="form.nickname" description="Nickname" />
+          <TextEntry v-model:text="form.email" description="E-mail" />
+          <TextEntry
+            v-model:text="form.biography"
+            :multiline="true"
+            description="Biografia"
+          />
+          <TextEntry
+            v-model:text="form.password"
+            description="Password"
+            password
+          />
+          <TextEntry
+            v-model:text="passRepeat"
+            description="Ripeti password"
+            password
+          />
+        </div>
+        <div class="register-btn-wrapper"><button>Registrati</button></div>
+      </form>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.register-title {
+h1 {
   text-align: center;
 }
 
@@ -43,10 +45,8 @@
 </style>
 
 <script setup>
-import { reactive, ref, inject } from "vue";
+import { reactive, ref } from "vue";
 import TextEntry from "@/components/TextEntry.vue";
-
-const url = inject("apiBaseURL");
 
 const form = reactive({
   firstName: "",
@@ -66,8 +66,8 @@ const submitSignUp = async () => {
   }
 
   // Qua ci va la REST api
-  console.log(`${url}/api/user/register\n`, "Registrazione: ", { ...form });
-  const resp = await fetch(`${url}/api/user/register`, {
+  console.log(`/api/user/register\n`, "Registrazione: ", { ...form });
+  const resp = await fetch(`/api/user/register`, {
     method: "PUT",
     headers: {
       Accept: "application/json",
