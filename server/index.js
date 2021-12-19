@@ -548,7 +548,7 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
       .exec();
 
     if (foundAd !== null) {
-      res.status(200).json(foundAd);
+      res.status(200).json(foundAd[0]);
     } else {
       res.status(404).json({});
     }
