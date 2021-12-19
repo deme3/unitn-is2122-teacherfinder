@@ -527,7 +527,26 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  */
 app.get("/api/ads/getAdInfo/:id", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.id)) {
-    let foundAd = await Advertisement.findById(req.params.id);
+    let foundAd = await Advertisement.aggregate()
+      .match({ _id: new mongoose.Types.ObjectId(req.params.id) })
+      .lookup({
+        from: "users",
+        localField: "authorId",
+        foreignField: "_id",
+        as: "author",
+        pipeline: [{ $project: { password: 0 } }], // escludo la password dall'autore
+      })
+      .project({
+        title: 1,
+        description: 1,
+        price: 1,
+        type: 1,
+        author: {
+          $arrayElemAt: [ "$author", 0 ]
+        }
+      })
+      .exec();
+
     if (foundAd !== null) {
       res.status(200).json(foundAd);
     } else {
@@ -1375,7 +1394,7 @@ const lanIp =
   Object.values(os.networkInterfaces())
     .flat()
     .filter((item) => !item.internal && item.family === "IPv4")
-    .find(Boolean).address || "( LAN IP )";
+    .find(Boolean)?.address || "( LAN IP )";
 
 // Avvio il server
 app.enable("trust proxy");
