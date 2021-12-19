@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="divider"></div>
-        <div class="tutor-info" @click="onTutorInfoClick">
+        <div class="tutor-info" @click.prevent="onTutorInfoClick">
           <img class="propic" src="https://picsum.photos/100" />
           <div class="tutor-nickname">{{ adInfo.author.nickname }}</div>
         </div>
@@ -30,9 +30,10 @@
 <script setup>
 import ReviewSection from "@/components/ReviewSection.vue";
 import { onMounted, reactive, computed } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
+const router = useRouter();
 
 let adInfo = reactive({
   title: "Caricamento...",
@@ -66,7 +67,7 @@ onMounted(async () => {
 
 const onTutorInfoClick = () => {
   // Ci andrà il router al tutor profile
-  console.log("Click tutor");
+  router.push({ name: 'Profilo', params: { userId: adInfo.author._id } });
 };
 </script>
 
