@@ -1417,7 +1417,47 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
 // =====================
 app.get("/api/settings/current", async (req, res) => {});
 
-app.put("/api/settings/change/:settingId/to/:newValue", async (req, res) => {});
+app.put("/api/settings/change", async (req, res) => {
+  let requiredParameters = ["sessionToken", "settingId", "newValue"];
+  let allowedSettings = ["nickname", "biography", "profilePicture", "notifications"];
+  let directSettings = ["nickname", "biography", "notifications"];
+
+  if (
+    checkParameters(requiredParameters, req.body) &&
+    mongoose.isValidObjectId(req.body.sessionToken)
+  ) {
+    if(allowedSettings.includes(req.body.settingId)) {
+      let myToken = await Session.getUserBySession(req.body.sessionToken, req.ip);
+      if (myToken === null) {
+        res.status(403).json({ error: true, message: "Invalid token." });
+        return;
+      }
+
+      if(directSettings.includes(req.body.settingId)) {
+        let updateQuery = {};
+        updateQuery[req.body.settingId] = req.body.newValue;
+
+        let updateResult = await User.updateOne({ _id: myToken }, updateQuery);
+        res.status(200).json(updateResult);
+      } else {
+        if (
+          req.body.settingId === "profilePicture" &&
+          req.files?.length === 1
+        ) {
+          // let newPicture = req.files[0];
+          // TO-DO : Implementare upload
+        }
+      }
+    } else {
+      res.status(400).json({ error: true, message: "Invalid settingId." });
+    }
+  } else {
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredParameters, req.body),
+      validToken: mongoose.isValidObjectId(req.body.sessionToken),
+    });
+  }
+});
 
 // Permetto a Vue.js di gestire le path single-page con Vue Router
 // Sul front-end compilato!
