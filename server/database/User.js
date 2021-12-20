@@ -7,23 +7,24 @@ const userSchema = new mongoose.Schema({
   nickname: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
   biography: String,
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
-  password: String
+  password: String,
 });
 
-userSchema.statics.findUserAds = async function(userId) {
-  if(userId.length === 24)
+userSchema.statics.findUserAds = async function (userId) {
+  if (userId.length === 24) {
     return await Advertisement.find({ authorId: userId }).exec();
-  else
+  } else {
     return [];
-}
+  }
+};
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
