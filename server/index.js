@@ -238,7 +238,7 @@ app.put("/api/user/register", async (req, res) => {
  */
 app.post("/api/user/login", async (req, res) => {
   // Prendo l'IP dell'utente e lo registro assieme al token
-  let requiredFields = ["nickname", "password"];
+  let requiredFields = ["nickname", "password", "persistent"];
 
   if (checkParameters(requiredFields, req.body)) {
     let myUser = await User.findOne({
@@ -252,6 +252,7 @@ app.post("/api/user/login", async (req, res) => {
       let mySession = await Session.create({
         userId: myUser._id,
         ipAddress: req.ip,
+        persistent: req.body.persistent,
       });
       res.status(200).json(mySession);
     } else {
@@ -340,15 +341,22 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  *                   items:
  *                     type: boolean
  */
-app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
+app.get("/api/user/checkToken/:token", async (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
   // Session.checkToken fa type checking degli ID al suo interno!
-  let sessionExists = await Session.checkToken(
-    req.params.token,
-    req.params.userId,
-    req.ip
-  );
-  res.status(200).json({ sessionExists });
+  let sessionExists = await Session.checkToken(req.params.token, req.ip);
+
+  if (sessionExists.exists && !sessionExists.expired) {
+    let profile = await User.findById(sessionExists.session.userId).select("-password").exec();
+
+    if (profile !== null) {
+      res.status(200).json({ ...sessionExists, profile });
+    } else {
+      res.status(200).json({ ...sessionExists, profile: false });
+    }
+  } else {
+    res.status(200).json({ ...sessionExists });
+  }
 });
 
 app.get("/api/user/profile/:id", async (req, res) => {
