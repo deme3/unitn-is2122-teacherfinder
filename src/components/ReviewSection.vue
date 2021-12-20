@@ -1,6 +1,6 @@
 <template>
   <div class="review-section">
-    <h1>Recensioni</h1>
+    <h1>{{ props.title }}</h1>
     <NoResults v-if="props.reviews.length === 0" />
     <Review
       v-for="review in props.reviews"
@@ -18,6 +18,10 @@
 import Review from "@/components/Review.vue";
 import NoResults from "@/components/NoResults.vue";
 const props = defineProps({
+  title: {
+    type: String,
+    default: "Recensioni",
+  },
   reviews: Array,
 });
 </script>

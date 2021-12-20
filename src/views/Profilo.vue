@@ -10,7 +10,7 @@
       <div class="parameter-descriptor">Biografia</div>
       <div class="parameter-content">{{ userProfile.biography }}</div>
     </div>
-    <ReviewSection :reviews="userProfile.reviews" />
+    <ReviewSection :reviews="userProfile.reviews" title="Recensioni migliori" />
     <div class="profile-ads-list">
       <h1>Annunci</h1>
       <SearchResult
