@@ -1,6 +1,6 @@
 <template>
   <div class="ricerca">
-    <div class="no-results tf-box" v-if="props.ads.length === 0">Nessun risultato!</div>
+    <NoResults v-if="props.ads.length === 0" />
     <SearchResult
       v-for="ad in props.ads"
       :key="ad._id"
@@ -13,16 +13,10 @@
   </div>
 </template>
 
-<style scoped>
-.no-results {
-  width: fit-content;
-  margin: 2em auto;
-  font-weight: bold;
-}
-</style>
-
 <script setup>
 import SearchResult from "@/components/SearchResult.vue"; // @ alias to src
+import NoResults from "@/components/NoResults.vue";
+
 document.title = "TeacherFinder";
 const props = defineProps({
   ads: Array,
