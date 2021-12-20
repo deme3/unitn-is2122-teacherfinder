@@ -1051,13 +1051,17 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
         req.ip
       );
       if (subscriberId !== null) {
-        let myNewSubscription = await Subscription.create({
-          subscriberId,
-          adId: req.body.adId,
-          status: "requested",
-          hours: req.body.hours,
-        });
-        res.status(200).json(myNewSubscription);
+        try {
+          let myNewSubscription = await Subscription.create({
+            subscriberId,
+            adId: req.body.adId,
+            status: "requested",
+            hours: req.body.hours,
+          });
+          res.status(200).json(myNewSubscription);
+        } catch {
+          res.sendStatus(500);
+        }
       } else {
         res.sendStatus(403);
       }
