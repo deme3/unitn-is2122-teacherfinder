@@ -1,7 +1,7 @@
 <template>
   <h1>Impostazioni</h1>
   <div class="impostazioni tf-box">
-    <UserCard />
+    <UserCard v-bind="props.userInfo" />
     <TextEntry description="Nickname" v-model:text="form.nickname" />
     <TextEntry description="Biografia" v-model:text="form.bio" multiline />
 
@@ -64,6 +64,15 @@ import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
 document.title = "TeacherFinder – Impostazioni";
+
+const props = defineProps({
+  userInfo: {
+    firstName: String,
+    lastName: String,
+    nickname: String,
+  },
+});
+
 // Qua andrà una richiesta alla REST api
 // Per le info del profilo utente
 const original = {};

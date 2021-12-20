@@ -14,7 +14,7 @@
     <Searchbar @search-offer="searchOffer" />
     <Navbar v-if="sessionToken" />
   </header>
-  <router-view :ads="ads" />
+  <router-view :ads="ads" :userInfo="userInfo" />
 </template>
 
 <script>
@@ -120,7 +120,7 @@ export default defineComponent({
       },
     ];
 
-    return { searchOffer, sessionToken, showLoginBtn, ads };
+    return { searchOffer, sessionToken, showLoginBtn, ads, userInfo };
   },
 });
 </script>
