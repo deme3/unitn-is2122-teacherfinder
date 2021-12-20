@@ -354,9 +354,11 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
 app.get("/api/user/profile/:id", async (req, res) => {
   if(mongoose.isValidObjectId(req.params.id)) {
     let user = await User.findById(req.params.id).select("-password").exec();
-    let ads = await Advertisement.find({ authorId: req.params.id }).exec();
+    let ads = await Advertisement.getEnrichedAdList(
+      await Advertisement.find({ authorId: req.params.id }).exec()
+    );
     let reviews = await Review.aggregate()
-      .match({ adId: { $in: ads.map(x => new mongoose.Types.ObjectId(x.id)) } })
+      .match({ adId: { $in: ads.map(x => new mongoose.Types.ObjectId(x._id)) } })
       .lookup({
         from: "users",
         localField: "authorId",
@@ -466,28 +468,9 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
   let foundAds = await Advertisement.find({
     title: { $regex: keywords },
   }).exec();
+  let enrichedList = await Advertisement.getEnrichedAdList(foundAds);
 
-  let adsIds = foundAds.map((x) => x._id);
-
-  let averageRatings = await Review.aggregate().match({
-      adId: { $in: adsIds },
-    })
-    .group({
-      _id: "$adId",
-      average: { $avg: "$rating" },
-    });
-
-  let aggregatedAverages = foundAds.map((x) => {
-    let { _id, authorId, title, description, price, type, lat, lon } = x;
-    let rating =
-      averageRatings.find((y) => y._id.toString() == _id)?.average ?? 0;
-
-    rating = Math.round(rating);
-
-    return { _id, authorId, title, description, price, type, lat, lon, rating };
-  });
-
-  res.status(200).json(aggregatedAverages);
+  res.status(200).json(enrichedList);
 });
 
 /**
@@ -583,12 +566,15 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
           $arrayElemAt: [ "$author", 0 ],
         },
       })
-      .sort({ rating: "desc" })
-      .limit(3)
       .exec();
     
+    let rating = 0;
+    
+    if(reviews !== null && reviews.length > 0)
+      rating = Math.round(reviews.reduce((prev, curr) => { return prev.rating + curr.rating; }) / reviews.length);
+    
     if (foundAd !== null) {
-      res.status(200).json({ ...foundAd[0], reviews });
+      res.status(200).json({ ...foundAd[0], rating, reviews });
     } else {
       res.status(404).json({});
     }
