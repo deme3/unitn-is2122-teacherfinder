@@ -303,11 +303,15 @@ app.delete("/api/user/logout/:token", async (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
 
   if (mongoose.isValidObjectId(req.params.token)) {
-    let deletedCount = await Session.deleteOne({
-      _id: req.params.token,
-      ipAddress: req.ip,
-    }).exec();
-    res.status(200).json({ deletedCount });
+    try {
+      let deletedCount = await Session.deleteOne({
+        _id: req.params.token,
+        ipAddress: req.ip,
+      }).exec();
+      res.status(200).json({ deletedCount });
+    } catch {
+      res.sendStatus(500);
+    }
   } else {
     res.status(400).json({ missingParameters: ["token"] });
   }
@@ -353,12 +357,16 @@ app.get("/api/user/checkToken/:token", async (req, res) => {
   let sessionExists = await Session.checkToken(req.params.token, req.ip);
 
   if (sessionExists.exists && !sessionExists.expired) {
-    let profile = await User.findById(sessionExists.session.userId).select("-password").exec();
+    try {
+      let profile = await User.findById(sessionExists.session.userId).select("-password").exec();
 
-    if (profile !== null) {
-      res.status(200).json({ ...sessionExists, profile });
-    } else {
-      res.status(200).json({ ...sessionExists, profile: false });
+      if (profile !== null) {
+        res.status(200).json({ ...sessionExists, profile });
+      } else {
+        res.status(200).json({ ...sessionExists, profile: false });
+      }
+    } catch {
+      res.sendStatus(500);
     }
   } else {
     res.status(200).json({ ...sessionExists });
@@ -367,32 +375,36 @@ app.get("/api/user/checkToken/:token", async (req, res) => {
 
 app.get("/api/user/profile/:id", async (req, res) => {
   if(mongoose.isValidObjectId(req.params.id)) {
-    let user = await User.findById(req.params.id).select("-password").exec();
-    let ads = await Advertisement.getEnrichedAdList(
-      await Advertisement.find({ authorId: req.params.id }).exec()
-    );
-    let reviews = await Review.aggregate()
-      .match({ adId: { $in: ads.map(x => new mongoose.Types.ObjectId(x._id)) } })
-      .lookup({
-        from: "users",
-        localField: "authorId",
-        foreignField: "_id",
-        as: "author",
-        pipeline: [{ $project: { password: 0, biography: 0, email: 0 } }],
-      })
-      .project({
-        explanation: 1,
-        rating: 1,
-        author: {
-          $arrayElemAt: [ "$author", 0 ]
-        },
-      })
-      .sort({ rating: "desc" })
-      .limit(3)
-      .exec();
+    try {
+      let user = await User.findById(req.params.id).select("-password").exec();
+      let ads = await Advertisement.getEnrichedAdList(
+        await Advertisement.find({ authorId: req.params.id }).exec()
+      );
+      let reviews = await Review.aggregate()
+        .match({ adId: { $in: ads.map(x => new mongoose.Types.ObjectId(x._id)) } })
+        .lookup({
+          from: "users",
+          localField: "authorId",
+          foreignField: "_id",
+          as: "author",
+          pipeline: [{ $project: { password: 0, biography: 0, email: 0 } }],
+        })
+        .project({
+          explanation: 1,
+          rating: 1,
+          author: {
+            $arrayElemAt: [ "$author", 0 ]
+          },
+        })
+        .sort({ rating: "desc" })
+        .limit(3)
+        .exec();
 
-    if(user !== null) res.status(200).json({ ...user._doc, ads, reviews });
-    else res.sendStatus(404);
+      if(user !== null) res.status(200).json({ ...user._doc, ads, reviews });
+      else res.sendStatus(404);
+    } catch {
+      res.sendStatus(500);
+    }
   } else {
     res.sendStatus(400);
   }
@@ -478,13 +490,17 @@ app.get("/api/ads/list/:userId", async (req, res) => {
 });
 
 app.get("/api/ads/search/:keywords", async (req, res) => {
-  let keywords = new RegExp(req.params.keywords?.split(" ").join("|"), "i");
-  let foundAds = await Advertisement.find({
-    title: { $regex: keywords },
-  }).exec();
-  let enrichedList = await Advertisement.getEnrichedAdList(foundAds);
+  try {
+    let keywords = new RegExp(req.params.keywords?.split(" ").join("|"), "i");
+    let foundAds = await Advertisement.find({
+      title: { $regex: keywords },
+    }).exec();
+    let enrichedList = await Advertisement.getEnrichedAdList(foundAds);
 
-  res.status(200).json(enrichedList);
+    res.status(200).json(enrichedList);
+  } catch {
+    res.sendStatus(500);
+  }
 });
 
 /**
@@ -544,53 +560,57 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  */
 app.get("/api/ads/getAdInfo/:id", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.id)) {
-    let foundAd = await Advertisement.aggregate()
-      .match({ _id: new mongoose.Types.ObjectId(req.params.id) })
-      .lookup({
-        from: "users",
-        localField: "authorId",
-        foreignField: "_id",
-        as: "author",
-        pipeline: [{ $project: { password: 0 } }], // escludo la password dall'autore
-      })
-      .project({
-        title: 1,
-        description: 1,
-        price: 1,
-        type: 1,
-        author: {
-          $arrayElemAt: [ "$author", 0 ],
-        },
-      })
-      .exec();
+    try {
+      let foundAd = await Advertisement.aggregate()
+        .match({ _id: new mongoose.Types.ObjectId(req.params.id) })
+        .lookup({
+          from: "users",
+          localField: "authorId",
+          foreignField: "_id",
+          as: "author",
+          pipeline: [{ $project: { password: 0 } }], // escludo la password dall'autore
+        })
+        .project({
+          title: 1,
+          description: 1,
+          price: 1,
+          type: 1,
+          author: {
+            $arrayElemAt: [ "$author", 0 ],
+          },
+        })
+        .exec();
 
-    let reviews = await Review.aggregate()
-      .match({ adId: foundAd[0]._id })
-      .lookup({
-        from: "users",
-        localField: "authorId",
-        foreignField: "_id",
-        as: "author",
-        pipeline: [{ $project: { password: 0, biography: 0, email: 0 } }],
-      })
-      .project({
-        explanation: 1,
-        rating: 1,
-        author: {
-          $arrayElemAt: [ "$author", 0 ],
-        },
-      })
-      .exec();
-    
-    let rating = 0;
-    
-    if(reviews !== null && reviews.length > 0)
-      rating = Math.round(reviews.reduce((prev, curr) => { return prev.rating + curr.rating; }) / reviews.length);
-    
-    if (foundAd !== null) {
-      res.status(200).json({ ...foundAd[0], rating, reviews });
-    } else {
-      res.status(404).json({});
+      let reviews = await Review.aggregate()
+        .match({ adId: foundAd[0]._id })
+        .lookup({
+          from: "users",
+          localField: "authorId",
+          foreignField: "_id",
+          as: "author",
+          pipeline: [{ $project: { password: 0, biography: 0, email: 0 } }],
+        })
+        .project({
+          explanation: 1,
+          rating: 1,
+          author: {
+            $arrayElemAt: [ "$author", 0 ],
+          },
+        })
+        .exec();
+      
+      let rating = 0;
+      
+      if(reviews !== null && reviews.length > 0)
+        rating = Math.round(reviews.reduce((prev, curr) => { return prev.rating + curr.rating; }) / reviews.length);
+      
+      if (foundAd !== null) {
+        res.status(200).json({ ...foundAd[0], rating, reviews });
+      } else {
+        res.status(404).json({});
+      }
+    } catch {
+      res.sendStatus(500);
     }
   } else {
     res.status(400).json({ missingParameters: ["id"] });
@@ -705,26 +725,30 @@ app.post("/api/ads/createAd", async (req, res) => {
   ];
 
   if (checkParameters(requiredParameters, req.body)) {
-    // Verifico di essere loggato ed ottengo il mio userId
-    let currentUserId = await Session.getUserBySession(
-      req.body.sessionToken,
-      req.ip
-    );
+    try {
+      // Verifico di essere loggato ed ottengo il mio userId
+      let currentUserId = await Session.getUserBySession(
+        req.body.sessionToken,
+        req.ip
+      );
 
-    if (currentUserId !== null) {
-      // Se sono loggato uso il mio ID per creare un annuncio
-      let myNewAd = await Advertisement.create({
-        authorId: currentUserId,
-        title: req.body.title,
-        description: req.body.description,
-        price: req.body.price,
-        type: req.body.type,
-        lat: req.body.lat,
-        lon: req.body.lon,
-      });
-      res.status(200).json(myNewAd);
-    } else {
-      res.sendStatus(403);
+      if (currentUserId !== null) {
+        // Se sono loggato uso il mio ID per creare un annuncio
+        let myNewAd = await Advertisement.create({
+          authorId: currentUserId,
+          title: req.body.title,
+          description: req.body.description,
+          price: req.body.price,
+          type: req.body.type,
+          lat: req.body.lat,
+          lon: req.body.lon,
+        });
+        res.status(200).json(myNewAd);
+      } else {
+        res.sendStatus(403);
+      }
+    } catch {
+      res.sendStatus(500);
     }
   } else {
     res.status(400).json({
@@ -783,9 +807,13 @@ app.post("/api/ads/createAd", async (req, res) => {
  */
 app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.adId)) {
-    let reviews = await Review.find({ adId: req.params.adId }).exec();
-    if (reviews !== null) res.status(200).json(reviews);
-    else res.status(200).json({});
+    try {
+      let reviews = await Review.find({ adId: req.params.adId }).exec();
+      if (reviews !== null) res.status(200).json(reviews);
+      else res.status(200).json({});
+    } catch {
+      res.sendStatus(500);
+    }
   } else {
     res.status(400).json({ missingParameters: ["adId"] });
   }
