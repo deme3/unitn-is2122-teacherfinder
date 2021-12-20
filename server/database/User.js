@@ -16,6 +16,13 @@ const userSchema = new mongoose.Schema({
     unique: true,
   },
   password: String,
+  notifications: {
+    type: String,
+    required: true,
+    default: "000000",
+    minlength: 6,
+    maxlength: 6,
+  },
 });
 
 userSchema.statics.findUserAds = async function (userId) {

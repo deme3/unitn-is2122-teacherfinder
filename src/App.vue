@@ -38,6 +38,7 @@ export default defineComponent({
       nickname: "",
       email: "",
       biography: "",
+      sessionToken: "",
     });
 
     const searchOffer = async function (searchterms) {
@@ -64,6 +65,7 @@ export default defineComponent({
         console.log(resJSON);
         if (resJSON.exists && !resJSON.error && !resJSON.expired) {
           Object.assign(userInfo, resJSON.profile);
+          userInfo.sessionToken = sessionToken.value;
         } else {
           document.cookie = "sessionToken=;Max-Age=0";
         }
