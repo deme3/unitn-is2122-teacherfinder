@@ -3,6 +3,11 @@
     <div class="description">{{ props.description }}</div>
     <textarea v-if="multiline" v-model="value" />
     <input v-else-if="!multiline && password" type="password" v-model="value" />
+    <input
+      v-else-if="!multiline && !password && numeric"
+      type="number"
+      v-model="value"
+    />
     <input v-else type="text" v-model="value" />
   </div>
 </template>
@@ -36,6 +41,7 @@ const props = defineProps({
   text: String,
   multiline: Boolean,
   password: Boolean,
+  numeric: Boolean,
 });
 
 const emit = defineEmits(["update:text"]);

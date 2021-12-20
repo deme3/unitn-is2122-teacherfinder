@@ -235,6 +235,7 @@ textarea {
 
 input[type="text"],
 input[type="password"],
+input[type="number"],
 textarea {
   padding: 8px;
   border: 2px solid var(--border-unique-color);
@@ -248,6 +249,7 @@ textarea {
 
 input[type="text"]:focus,
 input[type="password"]:focus,
+input[type="number"]:focus,
 textarea:focus {
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--border-unique-shadow);

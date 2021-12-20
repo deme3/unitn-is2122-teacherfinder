@@ -42,6 +42,11 @@ const routes = [
     path: "/profilo/:userId",
     name: "Profilo",
     component: () => import("../views/Profilo.vue"),
+  },
+  {
+    path: "/pubblica-annuncio",
+    name: "Pubblica annuncio",
+    component: () => import("../views/NuovoAnnuncio.vue"),
   }
 ];
 
