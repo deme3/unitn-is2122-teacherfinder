@@ -55,7 +55,7 @@ const submitLogin = async () => {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ ...loginForm, persistent: rememberLogin }),
+    body: JSON.stringify({ ...loginForm, persistent: rememberLogin.value }),
   });
 
   let respObj = {};
