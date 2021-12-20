@@ -249,17 +249,23 @@ app.post("/api/user/login", async (req, res) => {
     }).exec();
 
     if (myUser !== null) {
-      let mySession = await Session.create({
-        userId: myUser._id,
-        ipAddress: req.ip,
-        persistent: req.body.persistent,
-      });
-      res.status(200).json(mySession);
+      try {
+        let mySession = await Session.create({
+          userId: myUser._id,
+          ipAddress: req.ip,
+          persistent: req.body.persistent,
+        });
+        res.status(200).json(mySession);
+      } catch {
+        res.sendStatus(500);
+      }
     } else {
       res.sendStatus(401);
     }
   } else {
-    res.sendStatus(500);
+    res.status(400).json({
+      missingParameters: getMissingParameters(requiredFields, req.body)
+    });
   }
 });
 
