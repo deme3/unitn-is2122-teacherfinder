@@ -1415,8 +1415,6 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
 
 // Endpoint Impostazioni
 // =====================
-app.get("/api/settings/current", async (req, res) => {});
-
 app.put("/api/settings/change", async (req, res) => {
   let requiredParameters = ["sessionToken", "updates"];
   let allowedSettings = ["nickname", "biography", "notifications"];
