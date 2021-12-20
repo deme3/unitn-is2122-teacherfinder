@@ -1418,38 +1418,37 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
 app.get("/api/settings/current", async (req, res) => {});
 
 app.put("/api/settings/change", async (req, res) => {
-  let requiredParameters = ["sessionToken", "settingId", "newValue"];
-  let allowedSettings = ["nickname", "biography", "profilePicture", "notifications"];
-  let directSettings = ["nickname", "biography", "notifications"];
+  let requiredParameters = ["sessionToken", "updates"];
+  let allowedSettings = ["nickname", "biography", "notifications"];
 
   if (
     checkParameters(requiredParameters, req.body) &&
     mongoose.isValidObjectId(req.body.sessionToken)
   ) {
-    if(allowedSettings.includes(req.body.settingId)) {
-      let myToken = await Session.getUserBySession(req.body.sessionToken, req.ip);
-      if (myToken === null) {
-        res.status(403).json({ error: true, message: "Invalid token." });
-        return;
-      }
+    let myToken = await Session.getUserBySession(req.body.sessionToken, req.ip);
+    if (myToken === null) {
+      res.status(403).json({ error: true, message: "Invalid token." });
+      return;
+    }
 
-      if(directSettings.includes(req.body.settingId)) {
-        let updateQuery = {};
-        updateQuery[req.body.settingId] = req.body.newValue;
-
-        let updateResult = await User.updateOne({ _id: myToken }, updateQuery);
-        res.status(200).json(updateResult);
-      } else {
-        if (
-          req.body.settingId === "profilePicture" &&
-          req.files?.length === 1
-        ) {
-          // let newPicture = req.files[0];
-          // TO-DO : Implementare upload
+    if (typeof req.body.updates !== "object") {
+      res.status(400).json({ error: true, message: "Invalid settings object." });
+      return;
+    }
+    
+    let updateKeys = Object.keys(req.body.updates);
+    if (updateKeys.length > 0) {
+      for (let updateKey of updateKeys) {
+        if(!allowedSettings.includes(updateKey)) {
+          res.status(400).json({ error: true, message: `Invalid setting: ${updateKey}.` });
+          return;
         }
       }
+
+      let updateResult = await User.updateOne({ _id: myToken }, req.body.updates);
+      res.status(200).json(updateResult);
     } else {
-      res.status(400).json({ error: true, message: "Invalid settingId." });
+      res.status(400).json({ error: true, message: "No changes." });
     }
   } else {
     res.status(400).json({
