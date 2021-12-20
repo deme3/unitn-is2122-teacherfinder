@@ -35,7 +35,7 @@
     <section class="action-buttons">
       <button @click="logout">Logout</button>
       <button @click="cancelEdits">Annulla modifiche</button>
-      <button @click="saveEdits">Salva</button>
+      <button @click="saveEdits" :disabled="settingsModified">Salva</button>
     </section>
   </div>
 </template>
@@ -55,10 +55,14 @@
 .action-buttons button:first-child {
   margin-right: auto;
 }
+
+.action-buttons :disabled {
+  opacity: 0.5;
+}
 </style>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 import UserCard from "@/components/UserCard.vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
@@ -70,21 +74,23 @@ const props = defineProps({
     firstName: String,
     lastName: String,
     nickname: String,
+    biography: String,
   },
 });
 
 // Qua andrà una richiesta alla REST api
 // Per le info del profilo utente
-const original = {};
-original.nickname = "framcesca";
-original.bio = "Biografia di framcesca";
-original.notifiche = {
-  ricevuta: false,
-  annullata: false,
-  pagamentoOK: false,
-  concluso: false,
-  accettato: false,
-  rifiutato: false,
+const original = {
+  nickname: props.userInfo.nickname,
+  bio: props.userInfo.biography,
+  notifiche: {
+    ricevuta: false,
+    annullata: false,
+    pagamentoOK: false,
+    concluso: false,
+    accettato: false,
+    rifiutato: false,
+  },
 };
 
 const form = reactive({
@@ -111,10 +117,20 @@ const cancelEdits = () => {
 const saveEdits = () => {
   // REST api salvataggio modifiche
 };
-</script>
 
-<script>
-export default {
-  inheritAttrs: false,
+const notificationsString = (formObject) => {
+  let str = "";
+  for(let notification of Object.values(formObject))
+    str += (notification ? 1 : 0);
+  
+  return str;
 };
+
+const settingsModified = computed(() => {
+  return !(
+    form.nickname != original.nickname ||
+    form.bio != original.bio ||
+    notificationsString(form.notifiche) != notificationsString(original.notifiche)
+  );
+});
 </script>
