@@ -10,15 +10,7 @@
       <div class="parameter-descriptor">Biografia</div>
       <div class="parameter-content">{{ userProfile.biography }}</div>
     </div>
-    <div class="profile-reviews-list">
-      <h1>Recensioni migliori</h1>
-      <Review
-        v-for="review in userProfile.reviews"
-        :key="review._id"
-        :author="review.author"
-        :reviewText="review.explanation"
-      />
-    </div>
+    <ReviewSection :reviews="userProfile.reviews" />
     <div class="profile-ads-list">
       <h1>Annunci</h1>
       <SearchResult
@@ -48,7 +40,7 @@
 <script setup>
 import UserCard from "@/components/UserCard.vue";
 import SearchResult from "@/components/SearchResult.vue";
-import Review from "@/components/Review.vue";
+import ReviewSection from "@/components/ReviewSection.vue";
 import { onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 
