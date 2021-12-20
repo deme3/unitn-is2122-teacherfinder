@@ -354,8 +354,28 @@ app.get("/api/user/checkToken/:token/user/:userId", async (req, res) => {
 app.get("/api/user/profile/:id", async (req, res) => {
   if(mongoose.isValidObjectId(req.params.id)) {
     let user = await User.findById(req.params.id).select("-password").exec();
-    
-    if(user !== null) res.status(200).json(user);
+    let ads = await Advertisement.find({ authorId: req.params.id }).exec();
+    let reviews = await Review.aggregate()
+      .match({ adId: { $in: ads.map(x => new mongoose.Types.ObjectId(x.id)) } })
+      .lookup({
+        from: "users",
+        localField: "authorId",
+        foreignField: "_id",
+        as: "author",
+        pipeline: [{ $project: { password: 0, biography: 0, email: 0 } }],
+      })
+      .project({
+        explanation: 1,
+        rating: 1,
+        author: {
+          $arrayElemAt: [ "$author", 0 ]
+        },
+      })
+      .sort({ rating: "desc" })
+      .limit(3)
+      .exec();
+
+    if(user !== null) res.status(200).json({ ...user._doc, ads, reviews });
     else res.sendStatus(404);
   } else {
     res.sendStatus(400);

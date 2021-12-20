@@ -10,6 +10,26 @@
       <div class="parameter-descriptor">Biografia</div>
       <div class="parameter-content">{{ userProfile.biography }}</div>
     </div>
+    <div class="profile-reviews-list">
+      <h1>Recensioni migliori</h1>
+      <Review
+        v-for="review in userProfile.reviews"
+        :key="review._id"
+        :author="review.author"
+        :reviewText="review.explanation"
+      />
+    </div>
+    <div class="profile-ads-list">
+      <h1>Annunci</h1>
+      <SearchResult
+        v-for="ad in userProfile.ads"
+        :key="ad._id"
+        :id="ad._id"
+        :title="ad.title"
+        :price="ad.price"
+        :rating="ad.rating"
+      />
+    </div>
   </div>
 </template>
 
@@ -27,6 +47,8 @@
 
 <script setup>
 import UserCard from "@/components/UserCard.vue";
+import SearchResult from "@/components/SearchResult.vue";
+import Review from "@/components/Review.vue";
 import { onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 
@@ -42,6 +64,8 @@ let userProfile = reactive({
   email: "",
   profilePicture: "",
   biography: "Caricamento...",
+  ads: [],
+  reviews: [],
 });
 
 onMounted(async () => {
