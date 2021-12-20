@@ -21,7 +21,7 @@
 import Searchbar from "@/components/Searchbar.vue";
 import Navbar from "@/components/Navbar.vue";
 
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 
 export default defineComponent({
@@ -31,6 +31,14 @@ export default defineComponent({
 
     const ads = ref([]);
     const sessionToken = ref("");
+    const userInfo = reactive({
+      _id: "",
+      firstName: "",
+      lastName: "",
+      nickname: "",
+      email: "",
+      biography: "",
+    });
 
     const searchOffer = async function (searchterms) {
       console.log("Searching for: " + searchterms);
@@ -48,6 +56,19 @@ export default defineComponent({
     };
 
     sessionToken.value = getCookie("sessionToken");
+
+    if (sessionToken.value.trim() !== "") {
+      console.log("Token: ", sessionToken.value);
+      fetch(`/api/user/checkToken/${sessionToken.value}`).then(async (res) => {
+        let resJSON = await res.json();
+        console.log(resJSON);
+        if (resJSON.exists && !resJSON.error && !resJSON.expired) {
+          Object.assign(userInfo, resJSON.profile);
+        } else {
+          document.cookie = "sessionToken=;Max-Age=0";
+        }
+      });
+    }
 
     const showLoginBtn = ref(true);
     watch(
