@@ -1,27 +1,39 @@
 <template>
   <div class="review tf-box">
-    <div class="title">
+    <div class="author" @click="$router.push({ name: 'Profilo', params: { userId: props.author._id } });">
       <img src="https://picsum.photos/50" />
-      <h2 style="display: inline">Francesca Mancini</h2>
+      <h2 style="display: inline">{{ author.firstName }} {{ author.lastName }}</h2>
     </div>
     <p>
-      Ottime lezioni, insegnate bene con strumenti giusti e tempi corretti. Sono
-      soddisfatt di tutto. Grazie mille
+      {{ reviewText }}
     </p>
   </div>
 </template>
 
 <style scoped>
-.title {
+.author {
+  cursor: pointer;
   gap: 1rem;
   display: flex;
   align-content: center;
   align-items: center;
 }
 
-.title > img {
+.author > img {
   width: 50px;
   height: 50px;
   border-radius: 100%;
 }
 </style>
+
+<script setup>
+const props = defineProps({
+  author: {
+    _id: "",
+    firstName: "Caricamento...",
+    lastName: "",
+    nickname: "",
+  },
+  reviewText: String,
+});
+</script>
