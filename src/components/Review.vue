@@ -3,9 +3,10 @@
     <div class="author" @click="$router.push({ name: 'Profilo', params: { userId: props.author._id } });">
       <img src="https://picsum.photos/50" />
       <h2 style="display: inline">{{ author.firstName }} {{ author.lastName }}</h2>
+      <RatingStars :rating="props.rating" />
     </div>
     <p>
-      {{ reviewText }}
+      {{ explanation }}
     </p>
   </div>
 </template>
@@ -27,6 +28,8 @@
 </style>
 
 <script setup>
+import RatingStars from "@/components/RatingStars.vue";
+
 const props = defineProps({
   author: {
     _id: "",
@@ -34,6 +37,7 @@ const props = defineProps({
     lastName: "",
     nickname: "",
   },
-  reviewText: String,
+  explanation: String,
+  rating: Number,
 });
 </script>

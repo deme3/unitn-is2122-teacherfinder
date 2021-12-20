@@ -6,7 +6,7 @@
       v-for="review in props.reviews"
       :key="review._id"
       :author="review.author"
-      :reviewText="review.explanation"
+      :explanation="review.explanation"
       :rating="review.rating"
     />
   </div>
