@@ -562,13 +562,33 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
         price: 1,
         type: 1,
         author: {
-          $arrayElemAt: [ "$author", 0 ]
-        }
+          $arrayElemAt: [ "$author", 0 ],
+        },
       })
       .exec();
 
+    let reviews = await Review.aggregate()
+      .match({ adId: foundAd[0]._id })
+      .lookup({
+        from: "users",
+        localField: "authorId",
+        foreignField: "_id",
+        as: "author",
+        pipeline: [{ $project: { password: 0, biography: 0, email: 0 } }],
+      })
+      .project({
+        explanation: 1,
+        rating: 1,
+        author: {
+          $arrayElemAt: [ "$author", 0 ],
+        },
+      })
+      .sort({ rating: "desc" })
+      .limit(3)
+      .exec();
+    
     if (foundAd !== null) {
-      res.status(200).json(foundAd[0]);
+      res.status(200).json({ ...foundAd[0], reviews });
     } else {
       res.status(404).json({});
     }

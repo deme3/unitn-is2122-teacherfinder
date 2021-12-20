@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <ReviewSection />
+    <ReviewSection :reviews="adInfo.reviews" />
   </div>
 </template>
 
@@ -49,6 +49,7 @@ let adInfo = reactive({
     nickname: "Caricamento...",
     email: "Caricamento...",
   },
+  reviews: [],
 });
 
 let prettyType = computed(() => adInfo.type[0].toUpperCase() + adInfo.type.substr(1));

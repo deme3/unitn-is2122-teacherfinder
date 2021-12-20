@@ -1,11 +1,13 @@
 <template>
   <div class="review-section">
     <h1>Recensioni</h1>
-    <Review />
-    <Review />
-    <Review />
-    <Review />
-    <Review />
+    <Review
+      v-for="review in props.reviews"
+      :key="review._id"
+      :author="review.author"
+      :reviewText="review.explanation"
+      :rating="review.rating"
+    />
   </div>
 </template>
 
@@ -13,4 +15,7 @@
 
 <script setup>
 import Review from "@/components/Review.vue";
+const props = defineProps({
+  reviews: Array,
+});
 </script>
