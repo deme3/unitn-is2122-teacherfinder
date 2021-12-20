@@ -43,9 +43,8 @@ export default defineComponent({
 
     const searchOffer = async function (searchterms) {
       console.log("Searching for: " + searchterms);
-      ads.value = await (
-        await fetch(`/api/ads/search/${encodeURIComponent(searchterms)}`)
-      ).json();
+      let searchResults = await fetch(`/api/ads/search/${encodeURIComponent(searchterms)}`);
+      if (searchResults.ok) ads.value = await searchResults.json();
     };
 
     const getCookie = function (name) {
@@ -59,15 +58,16 @@ export default defineComponent({
     sessionToken.value = getCookie("sessionToken");
 
     if (sessionToken.value.trim() !== "") {
-      console.log("Token: ", sessionToken.value);
       fetch(`/api/user/checkToken/${sessionToken.value}`).then(async (res) => {
-        let resJSON = await res.json();
-        console.log(resJSON);
-        if (resJSON.exists && !resJSON.error && !resJSON.expired) {
-          Object.assign(userInfo, resJSON.profile);
-          userInfo.sessionToken = sessionToken.value;
-        } else {
-          document.cookie = "sessionToken=;Max-Age=0";
+        if (res.status == 200) {
+          let resJSON = await res.json();
+          
+          if (resJSON.exists && !resJSON.error && !resJSON.expired) {
+            Object.assign(userInfo, resJSON.profile);
+            userInfo.sessionToken = sessionToken.value;
+          } else {
+            document.cookie = "sessionToken=;Max-Age=0";
+          }
         }
       });
     }
