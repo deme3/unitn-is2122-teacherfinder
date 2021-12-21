@@ -2003,8 +2003,18 @@ app.put("/api/settings/change", async (req, res) => {
         }
       }
 
-      let updateResult = await User.updateOne({ _id: myToken }, req.body.updates);
-      res.status(200).json(updateResult);
+      try {
+        let updateResult = await User.updateOne({ _id: myToken }, req.body.updates);
+        res.status(200).json(updateResult);
+      } catch (err) {
+        if (err.code == MongoError.DUPLICATE_ENTRY.code) {
+          // Se l'errore è causato da un valore univoco duplicato invio la causa
+          res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
+        } else {
+          // Altrimenti invio solo Internal Server Error
+          res.sendStatus(500);
+        }
+      }
     } else {
       res.status(400).json({ error: true, message: "No changes." });
     }
