@@ -78,6 +78,8 @@ app.get("/api", (req, res) => {
  * /api/user/register:
  *   put:
  *     summary: Registra un nuovo utente.
+ *     tags:
+ *       - user
  *     description: Registra un nuovo utente memorizzando nel database tutte le informazioni da lui inserite.
  *     requestBody:
  *       required: true
@@ -206,6 +208,8 @@ app.put("/api/user/register", async (req, res) => {
  * /api/user/login:
  *   post:
  *     summary: Prende l'IP dell'utente e lo registra assieme al token, se il login ha avuto successo.
+ *     tags:
+ *       - user
  *     requestBody:
  *       required: true
  *       content:
@@ -308,6 +312,8 @@ app.post("/api/user/login", async (req, res) => {
  *   delete:
  *     summary: Effettua il logout.
  *     description: Rimuove il token se l'IP del mittente corrisponde.
+ *     tags:
+ *       - user
  *     parameters:
  *       - in: path
  *         name: token
@@ -357,6 +363,8 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  *   get:
  *     summary: Fa il check del token.
  *     description: Restituisce true se il token e l'IP corrispondono.
+ *     tags:
+ *       - user
  *     parameters:
  *       - in: path
  *         name: token
@@ -489,6 +497,8 @@ app.get("/api/user/profile/:id", async (req, res) => {
  * /api/ads/list/{userId}:
  *   get:
  *     summary: Trova gli annunci scritti da un utente.
+ *     tags:
+ *       - ads
  *     parameters:
  *       - in: path
  *         name: userId
@@ -564,6 +574,8 @@ app.get("/api/ads/list/:userId", async (req, res) => {
  * /api/ads/search/{keywords}:
  *   get:
  *     summary: Cerca gli annunci per titolo con le parole chiave specificate
+ *     tags:
+ *       - ads
  *     parameters:
  *       - in: path
  *         name: keywords
@@ -640,6 +652,8 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  * /api/ads/getAdInfo/{id}:
  *   get:
  *     summary: Restituisce le informazioni di un annuncio.
+ *     tags:
+ *       - ads
  *     parameters:
  *       - in: path
  *         name: id
@@ -825,6 +839,8 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
  * /api/ads/createAd:
  *   post:
  *     summary: Crea un nuovo annuncio.
+ *     tags:
+ *       - ads
  *     requestBody:
  *       required: true
  *       content:
@@ -966,6 +982,8 @@ app.post("/api/ads/createAd", async (req, res) => {
  * /api/reviews/getAdReviews/{adId}:
  *   get:
  *     summary: Fornisce le recensioni dell'annuncio.
+ *     tags:
+ *       - reviews
  *     parameters:
  *       - in: path
  *         name: adId
@@ -1037,6 +1055,8 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
  * /api/reviews/getUserReviews/{userId}:
  *   get:
  *     summary: Fornisce le recensioni dell'insegnante.
+ *     tags:
+ *       - reviews
  *     parameters:
  *       - in: path
  *         name: userId
@@ -1110,6 +1130,8 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
  * /api/reviews/postReview:
  *   post:
  *     summary: Crea una nuova recensione.
+ *     tags:
+ *       - reviews
  *     requestBody:
  *       required: true
  *       content:
@@ -1212,6 +1234,8 @@ app.post("/api/reviews/postReview", async (req, res) => {
  * /api/subscriptions/requestSubscription:
  *   put:
  *     summary: Memorizza una nuova richiesta di iscrizione ad un insegnamento
+ *     tags:
+ *       - subscriptions
  *     requestBody:
  *       required: true
  *       content:
@@ -1313,6 +1337,8 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  * /api/subscriptions/acceptSubscription:
  *   put:
  *     summary: L'insegnante accetta una richiesta di insegnamento
+ *     tags:
+ *       - subscriptions
  *     requestBody:
  *       required: true
  *       content:
@@ -1408,6 +1434,8 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
  * /api/subscriptions/rejectSubscription:
  *   put:
  *     summary: L'insegnante rifiuta una richiesta di insegnamento.
+ *     tags:
+ *       - subscriptions
  *     requestBody:
  *       required: true
  *       content:
@@ -1503,6 +1531,8 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
  * /api/subscriptions/cancelSubscription:
  *   put:
  *     summary: Lo studente annulla una richiesta di insegnamento.
+ *     tags:
+ *       - subscriptions
  *     requestBody:
  *       required: true
  *       content:
@@ -1598,6 +1628,8 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
  * /api/subscriptions/paySubscription:
  *   put:
  *     summary: Lo studente paga un insegnamento.
+ *     tags:
+ *       - subscriptions
  *     requestBody:
  *       required: true
  *       content:
