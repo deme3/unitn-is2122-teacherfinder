@@ -124,9 +124,17 @@ const logout = async () => {
   console.log("logout");
   // Qua andrà una richiesta alla REST api
   // Per il logout
-  document.cookie =
-    "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
-  window.location.replace("/");
+  let logoutResult = await fetch(`/api/user/logout/${userInfo.sessionToken}`, { method: "DELETE" });
+
+  if(logoutResult.ok) {
+    let logoutJSON = await logoutResult.json();
+
+    if(logoutJSON.deletedCount.deletedCount == 1) {
+      document.cookie =
+        "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
+      window.location.replace("/");
+    }
+  }
 };
 
 const cancelEdits = () => {
