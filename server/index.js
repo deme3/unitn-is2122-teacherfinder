@@ -1106,6 +1106,14 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
  *                   type: array
  *                   description: Parametri mancanti
  *                   example: ["sessionToken", "price", "lat"]
+ *                 emptyParameters:
+ *                   type: array
+ *                   description: Parametri vuoti
+ *                   example: ["sessionToken", "type", "description"]
+ *                 invalidParameters:
+ *                   type: array
+ *                   description: Parametri invalidi (price negativo)
+ *                   example: ["price"]
  */
 app.post("/api/ads/createAd", async (req, res) => {
   let requiredParameters = [
@@ -1120,6 +1128,27 @@ app.post("/api/ads/createAd", async (req, res) => {
 
   if (checkParameters(requiredParameters, req.body)) {
     try {
+      let nonEmpty = {
+        title: req.body.title,
+        description: req.body.description,
+        type: req.body.type,
+        sessionToken: req.body.sessionToken,
+      };
+
+      // Verifico di non avere parametri vuoti
+      if(!checkParametersLength(nonEmpty)) {
+        // Se ho dei parametri vuoti annullo
+        let emptyParameters = getEmptyParameters(nonEmpty);
+        res.status(400).json({ emptyParameters });
+        return;
+      }
+
+      // Se il price è negativo annullo
+      if(req.body.price <= 0.0) {
+        res.status(400).json({ invalidParameters: ["price"] });
+        return;
+      }
+
       // Verifico di essere loggato ed ottengo il mio userId
       let currentUserId = await Session.getUserBySession(
         req.body.sessionToken,
