@@ -1,6 +1,7 @@
 <template>
   <div class="tf-box">
     <h1><BackButton /> Nuovo annuncio</h1>
+    <ErrorBox :text="errorBox.text" v-if="errorBox.isVisible" />
     <form method="post" @submit.prevent="onSubmit">
       <div class="two-columns">
         <TextEntry description="Titolo" v-model:text="newAd.title" />
@@ -49,6 +50,7 @@ button:disabled {
 <script setup>
 import TextEntry from "@/components/TextEntry.vue";
 import BackButton from "@/components/BackButton.vue";
+import ErrorBox from "@/components/ErrorBox.vue";
 import { reactive, inject } from "vue";
 import { useRouter } from "vue-router";
 
@@ -61,7 +63,26 @@ const newAd = reactive({
   price: 0.0,
 });
 
+const errorBox = reactive({
+  isVisible: false,
+  text: "Errore",
+  showText: (text) => {
+    errorBox.text = text;
+    errorBox.isVisible = true;
+  },
+});
+
 const onSubmit = async () => {
+  switch (true) {
+    case newAd.title == "":
+    case newAd.description == "":
+      errorBox.showText("Whops, alcuni campi risultano vuoti.");
+      return;
+    case newAd.price <= 0:
+      errorBox.showText("Il prezzo che hai inserito è troppo basso.");
+      return;
+  }
+
   let submitResult = await fetch("/api/ads/createAd", {
     method: "POST",
     headers: {
