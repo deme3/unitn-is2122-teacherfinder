@@ -4,11 +4,7 @@
     <form method="post" @submit.prevent="onSubmit">
       <div class="two-columns">
         <TextEntry description="Titolo" v-model:text="newAd.title" />
-        <TextEntry
-          description="€/ora"
-          v-model:text.number="newAd.price"
-          numeric
-        />
+        <TextEntry description="€/ora" v-model:number="newAd.price" numeric />
       </div>
       <TextEntry
         description="Didascalia"

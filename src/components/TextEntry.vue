@@ -39,6 +39,7 @@ import { computed } from "vue";
 const props = defineProps({
   description: String,
   text: String,
+  number: Number,
   multiline: Boolean,
   password: Boolean,
   numeric: Boolean,
@@ -47,7 +48,7 @@ const props = defineProps({
 const emit = defineEmits(["update:text"]);
 
 const value = computed({
-  get: () => props.text,
+  get: () => props?.text || props?.number,
   set: (val) => emit("update:text", val),
 });
 </script>
