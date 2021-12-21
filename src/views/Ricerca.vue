@@ -1,6 +1,6 @@
 <template>
   <div class="ricerca">
-    <NoResults v-if="props.ads.length === 0" />
+    <SmallBox v-if="props.ads.length === 0" />
     <SearchResult
       v-for="ad in props.ads"
       :key="ad._id"
@@ -15,7 +15,7 @@
 
 <script setup>
 import SearchResult from "@/components/SearchResult.vue"; // @ alias to src
-import NoResults from "@/components/NoResults.vue";
+import SmallBox from "@/components/SmallBox.vue";
 
 document.title = "TeacherFinder";
 const props = defineProps({

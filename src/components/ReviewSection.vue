@@ -1,7 +1,7 @@
 <template>
   <div class="review-section">
     <h1>{{ props.title }}</h1>
-    <NoResults v-if="props.reviews.length === 0" />
+    <SmallBox v-if="props.reviews.length === 0" />
     <Review
       v-for="review in props.reviews"
       :key="review._id"
@@ -16,7 +16,7 @@
 
 <script setup>
 import Review from "@/components/Review.vue";
-import NoResults from "@/components/NoResults.vue";
+import SmallBox from "@/components/SmallBox.vue";
 const props = defineProps({
   title: {
     type: String,
