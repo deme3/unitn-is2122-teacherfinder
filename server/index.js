@@ -465,6 +465,143 @@ app.get("/api/user/checkToken/:token", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/user/profile/{id}:
+ *   get:
+ *     summary: Profilo di un utente
+ *     description: Restituisce l'intero profilo di un utente, tra cui anche le tre migliori recensioni e tutti gli annunci che ha pubblicato.
+ *     tags:
+ *       - user
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *             type: string
+ *             example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *         required: true
+ *         description: ID utente di cui visualizzare il profilo (esadecimale)
+ *     responses:
+ *       200:
+ *         description: L'utente è stato trovato, viene restituito il profilo completo
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: ID utente (esadecimale)
+ *                   example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                 firstName:
+ *                   type: string
+ *                   description: Nome utente
+ *                   example: Mario
+ *                 lastName:
+ *                   type: string
+ *                   description: Cognome utente
+ *                   example: Rossi
+ *                 nickname:
+ *                   type: string
+ *                   description: Nickname utente
+ *                   example: Red
+ *                 biography:
+ *                   type: string
+ *                   description: Biografia utente
+ *                   example: Sono uno studente laureando in matematica di 38 anni, sono scrupoloso, educato e saluto sempre.
+ *                 email:
+ *                   type: string
+ *                   description: E-mail utente
+ *                   example: mariorossi@a.it
+ *                 notifications:
+ *                   type: string
+ *                   description: Impostazioni notifiche utente
+ *                   example: "010110"
+ *                 ads:
+ *                   type: array
+ *                   description: Annunci pubblicati dall'utente
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: ID annuncio (esadecimale)
+ *                         example: cccccccccccccccccccccccc
+ *                       authorId:
+ *                         type: string
+ *                         description: ID proprietario annuncio (esadecimale)
+ *                         example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                       title:
+ *                         type: string
+ *                         description: Titolo annuncio
+ *                         example: Analisi 3
+ *                       description:
+ *                         type: string
+ *                         description: Descrizione annuncio
+ *                         example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                       price:
+ *                         type: number
+ *                         description: Prezzo all'ora
+ *                         example: 5.50
+ *                       type:
+ *                         type: string
+ *                         description: Tipologia annuncio (offline non implementato)
+ *                         example: online
+ *                       lat:
+ *                         type: number
+ *                         description: Latitudine posizione (-1 se type = online)
+ *                         example: -1
+ *                       lon:
+ *                         type: number
+ *                         description: Longitudine posizione (-1 se type = online)
+ *                         example: -1
+ *                       rating:
+ *                         type: number
+ *                         description: Valutazione media arrotondata per eccesso
+ *                         example: 3
+ *                 reviews:
+ *                   type: array
+ *                   description: Le tre migliori recensioni date a questo utente
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: ID recensione (esadecimale)
+ *                         example: cccccccccccccccccccccccc
+ *                       rating:
+ *                         type: number
+ *                         description: Valutazione
+ *                         example: 5
+ *                       explanation:
+ *                         type: string
+ *                         description: Testo recensione
+ *                         example: È molto bravo
+ *                       author:
+ *                         type: object
+ *                         description: Informazioni sull'autore della recensione
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             description: ID utente
+ *                             example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                           firstName:
+ *                             type: string
+ *                             description: Nome utente
+ *                             example: Mario
+ *                           lastName:
+ *                             type: string
+ *                             description: Cognome utente
+ *                             example: Rossi
+ *                           nickname:
+ *                             type: string
+ *                             description: Nickname utente
+ *                             example: Red
+ *                           notifications:
+ *                             type: string
+ *                             description: Impostazioni notifiche utente
+ *                             example: "010110"
+ */
 app.get("/api/user/profile/:id", async (req, res) => {
   if(mongoose.isValidObjectId(req.params.id)) {
     try {
@@ -738,7 +875,7 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  *                     notifications:
  *                       type: string
  *                       description: Impostazioni notifiche dell'utente
- *                       example: 010110
+ *                       example: "010110"
  *                 rating:
  *                   type: number
  *                   description: Valutazione media calcolata su tutte le recensioni dell'annuncio arrotondata per eccesso
