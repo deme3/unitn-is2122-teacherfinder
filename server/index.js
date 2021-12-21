@@ -29,7 +29,7 @@ const swaggerOptions = {
     info: {
       title: "TeacherFinder",
       version: "1.0.0",
-      description: "This is a API application made with Express.",
+      description: "API servite via ExpressJS per l'app TeacherFinder",
       license: {
         name: "MIT License",
         url: "https://raw.githubusercontent.com/deme3/unitn-is2122-teacherfinder/main/LICENSE",
@@ -72,6 +72,19 @@ app.get("/api", (req, res) => {
 // ===============
 
 // Trasmissione naive di credenziali senza sicurezza a scopo dimostrativo
+
+/**
+ * @swagger
+ * tags:
+ *   - name: user
+ *     description: API utente
+ *   - name: ads
+ *     description: API annunci
+ *   - name: reviews
+ *     description: API recensioni
+ *   - name: subscriptions
+ *     description: API iscrizioni
+ */
 
 /**
  * @swagger
