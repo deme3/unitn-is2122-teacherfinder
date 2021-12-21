@@ -1,7 +1,7 @@
 <template>
   <h1>Impostazioni</h1>
   <div class="impostazioni tf-box">
-    <UserCard v-bind="props.userInfo" />
+    <UserCard v-bind="userInfo" />
     <TextEntry description="Nickname" v-model:text="form.nickname" />
     <TextEntry
       description="Biografia"
@@ -68,12 +68,14 @@
 </style>
 
 <script setup>
-import { reactive, watch, computed } from "vue";
+import { reactive, computed, inject } from "vue";
 import UserCard from "@/components/UserCard.vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
 document.title = "TeacherFinder – Impostazioni";
+const userInfo = reactive(inject("userInfo"));
+console.log(userInfo);
 
 const notificationsString = (formObject) => {
   let str = "";
@@ -97,60 +99,24 @@ const notificationsStringToFormObject = (str) => {
 };
 
 const hasChanged = (fieldName) => {
-  return form[fieldName] != props.userInfo[fieldName];
+  return form[fieldName] != userInfo[fieldName];
 };
 
-const props = defineProps({
-  ads: Array,
-  userInfo: {
-    firstName: String,
-    lastName: String,
-    nickname: String,
-    biography: String,
-    notifications: String,
-  },
-});
-
 const form = reactive({
-  nickname: props.userInfo.nickname,
-  biography: props.userInfo.biography,
+  nickname: userInfo.nickname,
+  biography: userInfo.biography,
   notifications: {
-    ...notificationsStringToFormObject(props.userInfo.notifications),
+    ...notificationsStringToFormObject(userInfo.notifications),
   },
 });
-
-watch(
-  () => props.userInfo.nickname,
-  () => {
-    form.nickname = props.userInfo.nickname;
-  }
-);
-
-watch(
-  () => props.userInfo.biography,
-  () => {
-    form.biography = props.userInfo.biography;
-  }
-);
-
-watch(
-  () => props.userInfo.notifications,
-  () => {
-    Object.assign(
-      form.notifications,
-      notificationsStringToFormObject(props.userInfo.notifications)
-    );
-  }
-);
 
 function loadSettings() {
-  if (props.userInfo.nickname !== "") form.nickname = props.userInfo.nickname;
-  if (props.userInfo.biography !== "")
-    form.biography = props.userInfo.biography;
-  if (typeof props.userInfo.notifications?.rifiutato !== "undefined")
+  if (userInfo.nickname !== "") form.nickname = userInfo.nickname;
+  if (userInfo.biography !== "") form.biography = userInfo.biography;
+  if (typeof userInfo.notifications?.rifiutato !== "undefined")
     Object.assign(
       form.notifications,
-      notificationsStringToFormObject(props.userInfo.notifications)
+      notificationsStringToFormObject(userInfo.notifications)
     );
 }
 
@@ -164,19 +130,17 @@ const logout = async () => {
 };
 
 const cancelEdits = () => {
-  form.nickname = props.userInfo.nickname;
-  form.biography = props.userInfo.biography;
+  form.nickname = userInfo.nickname;
+  form.biography = userInfo.biography;
   form.notifications = {
-    ...notificationsStringToFormObject(props.userInfo.notifications),
+    ...notificationsStringToFormObject(userInfo.notifications),
   };
 };
-
-loadSettings();
 
 const saveEdits = async () => {
   // REST api salvataggio modifiche
   let query = {
-    sessionToken: props.userInfo.sessionToken,
+    sessionToken: userInfo.sessionToken,
     updates: {},
   };
   if (hasChanged("nickname")) query.updates.nickname = form.nickname;
@@ -198,26 +162,28 @@ const saveEdits = async () => {
     console.log(res);
 
     if (res.acknowledged && res.modifiedCount >= 1) {
-      window.location.reload();
-      // Non posso aggiornare le prop, quindi aggiorno per ricaricare tutto
+      if (query.updates.nickname) userInfo.nickname = query.updates.nickname;
+      if (query.updates.biography) userInfo.biography = query.updates.biography;
+      if (query.updates.notifications)
+        userInfo.notifications = query.updates.notifications;
     }
   }
 };
 
 const haveNotificationsChanged = () => {
-  return (
-    notificationsString(form.notifications) != props.userInfo.notifications
-  );
+  return notificationsString(form.notifications) != userInfo.notifications;
 };
 
 const settingsModified = computed(() => {
-  console.log(props.userInfo.nickname, form.nickname);
-  console.log(props.userInfo.biography, form.biography);
-  console.log(props.userInfo.notifications, form.notifications);
+  console.log(userInfo.nickname, form.nickname);
+  console.log(userInfo.biography, form.biography);
+  console.log(userInfo.notifications, form.notifications);
   return !(
     hasChanged("nickname") ||
     hasChanged("biography") ||
     haveNotificationsChanged()
   );
 });
+
+loadSettings();
 </script>

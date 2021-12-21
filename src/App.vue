@@ -14,14 +14,20 @@
     <Searchbar @search-offer="searchOffer" />
     <Navbar v-if="sessionToken" />
   </header>
-  <router-view :ads="ads" :userInfo="userInfo" />
+  <router-view
+    :ads="ads"
+    v-if="
+      (getCookie('sessionToken') !== '' && userInfo._id !== '') ||
+      getCookie('sessionToken') == ''
+    "
+  />
 </template>
 
 <script>
 import Searchbar from "@/components/Searchbar.vue";
 import Navbar from "@/components/Navbar.vue";
 
-import { defineComponent, ref, reactive, watch } from "vue";
+import { defineComponent, ref, reactive, watch, provide } from "vue";
 import { useRoute } from "vue-router";
 
 export default defineComponent({
@@ -40,6 +46,7 @@ export default defineComponent({
       biography: "",
       sessionToken: "",
     });
+    provide("userInfo", userInfo);
 
     const searchOffer = async function (searchterms) {
       console.log("Searching for: " + searchterms);
@@ -124,7 +131,14 @@ export default defineComponent({
       },
     ];
 
-    return { searchOffer, sessionToken, showLoginBtn, ads, userInfo };
+    return {
+      searchOffer,
+      sessionToken,
+      showLoginBtn,
+      ads,
+      userInfo,
+      getCookie,
+    };
   },
 });
 </script>
