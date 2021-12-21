@@ -84,6 +84,8 @@ app.get("/api", (req, res) => {
  *     description: API recensioni
  *   - name: subscriptions
  *     description: API iscrizioni
+ *   - name: settings
+ *     description: API impostazioni
  */
 
 /**
@@ -1877,6 +1879,44 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
 
 // Endpoint Impostazioni
 // =====================
+/**
+ * @swagger
+ * /api/settings/change:
+ *   put:
+ *     summary: Cambia le impostazioni specificate
+ *     tags:
+ *       - settings
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sessionToken:
+ *                  type: string
+ *                  description: ID sessione utente
+ *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *               updates:
+ *                  type: object
+ *                  description: Associazione chiave-valore di impostazioni da modificare
+ *                  properties:
+ *                    nickname:
+ *                      type: string
+ *                      description: Nuovo nickname
+ *                      example: Red2
+ *                      required: false
+ *                    biography:
+ *                      type: string
+ *                      description: Nuova biografia
+ *                      example: Sono uno studente fuori corso da 5 anni, ma provo a fare del mio meglio per continuare a pagare le tasse
+ *                      required: false
+ *                    notifications:
+ *                      type: string
+ *                      description: Nuove impostazioni notifiche (111111 = attiva tutte)
+ *                      example: 111111
+ *                      required: false
+ */
 app.put("/api/settings/change", async (req, res) => {
   let requiredParameters = ["sessionToken", "updates"];
   let allowedSettings = ["nickname", "biography", "notifications"];
