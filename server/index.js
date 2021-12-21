@@ -1346,7 +1346,7 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  *                     example: cccccccccccccccccccccccc
  *                  status:
  *                     type: string
- *                     description: Stato attuale dell'iscrizione ("waiting_payment" in questa fase)
+ *                     description: Stato attuale dell'iscrizione ("waiting_payment" dopo questa call)
  *                     example: waiting_payment
  *                  hours:
  *                     type: number
@@ -1365,7 +1365,7 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  *               properties:
  *                   missingParameters:
  *                     type: array
- *                     description: Parametri mancante
+ *                     description: Parametri mancanti
  *                     example: ["sessionToken"]
  */
 app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
@@ -1417,33 +1417,36 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
  *             properties:
  *               sessionToken:
  *                  type: string
- *                  description: Session id.
+ *                  description: ID sessione utente
  *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
  *               subId:
  *                  type: string
- *                  description: Id della richiesta di iscrizione.
+ *                  description: ID della richiesta di iscrizione
  *                  example: eeeeeeeeeeeeeeeeeeeeeeee
  *     responses:
  *       200:
- *         description: Richiesta di insegnamento.
+ *         description: Iscrizione.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                    sessionToken:
- *                       type: string
- *                       description: Session id insegnante.
- *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
- *                    ipAddress:
- *                       type: string
- *                       description: ip address.
- *                       example: 0.0.0.0
- *                    status:
- *                       type: string
- *                       description: stato dell'iscrizione.
- *                       example: tutor_rejected
+ *                  subscriberId:
+ *                     type: string
+ *                     description: ID studente richiedente
+ *                     example: dddddddddddddddddddddddd
+ *                  adId:
+ *                     type: string
+ *                     description: ID annuncio
+ *                     example: cccccccccccccccccccccccc
+ *                  status:
+ *                     type: string
+ *                     description: Stato attuale dell'iscrizione ("tutor_rejected" dopo questa call)
+ *                     example: tutor_rejected
+ *                  hours:
+ *                     type: number
+ *                     description: Ore di insegnamento desiderate
+ *                     example: 4
  *       403:
  *         description: L'utente non è il proprietario dell'annuncio
  *       404:
@@ -1455,11 +1458,10 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 data:
  *                   missingParameters:
- *                     type: string
- *                     description: parametro mancante
- *                     example: sessionToken
+ *                     type: array
+ *                     description: Parametri mancanti
+ *                     example: ["sessionToken"]
  */
 app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "subId"];
@@ -1518,27 +1520,30 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
  *                  example: eeeeeeeeeeeeeeeeeeeeeeee
  *     responses:
  *       200:
- *         description: Richiesta di insegnamento.
+ *         description: Iscrizione.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                    sessionToken:
- *                       type: string
- *                       description: Session id insegnante.
- *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
- *                    ipAddress:
- *                       type: string
- *                       description: ip address.
- *                       example: 0.0.0.0
- *                    status:
- *                       type: string
- *                       description: stato dell'iscrizione.
- *                       example: student_canceled
+ *                  subscriberId:
+ *                     type: string
+ *                     description: ID studente richiedente
+ *                     example: dddddddddddddddddddddddd
+ *                  adId:
+ *                     type: string
+ *                     description: ID annuncio
+ *                     example: cccccccccccccccccccccccc
+ *                  status:
+ *                     type: string
+ *                     description: Stato attuale dell'iscrizione ("student_canceled" dopo questa call)
+ *                     example: student_canceled
+ *                  hours:
+ *                     type: number
+ *                     description: Ore di insegnamento desiderate
+ *                     example: 4
  *       403:
- *         description: L'utente non è iscrittto
+ *         description: L'utente non è proprietario di questa iscrizione.
  *       404:
  *         description: Iscrizione inesistente
  *       400:
@@ -1548,11 +1553,10 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 data:
  *                   missingParameters:
- *                     type: string
- *                     description: parametro mancante
- *                     example: sessionToken
+ *                     type: array
+ *                     description: Parametri mancanti
+ *                     example: ["sessionToken"]
  */
 app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "subId"];
@@ -1574,7 +1578,7 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
         // Se l'update ha funzionato mando la nuova entry
         res.status(200).json(updateOp.result);
       } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
+        // Forbidden: Non sono il proprietario dell'iscrizione
         res.status(403).json(updateOp.result);
       }
     } else {
