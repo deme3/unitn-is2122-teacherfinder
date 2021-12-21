@@ -43,7 +43,9 @@ export default defineComponent({
 
     const searchOffer = async function (searchterms) {
       console.log("Searching for: " + searchterms);
-      let searchResults = await fetch(`/api/ads/search/${encodeURIComponent(searchterms)}`);
+      let searchResults = await fetch(
+        `/api/ads/search/${encodeURIComponent(searchterms)}`
+      );
       if (searchResults.ok) ads.value = await searchResults.json();
     };
 
@@ -61,7 +63,7 @@ export default defineComponent({
       fetch(`/api/user/checkToken/${sessionToken.value}`).then(async (res) => {
         if (res.status == 200) {
           let resJSON = await res.json();
-          
+
           if (resJSON.exists && !resJSON.error && !resJSON.expired) {
             Object.assign(userInfo, resJSON.profile);
             userInfo.sessionToken = sessionToken.value;

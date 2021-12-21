@@ -1,8 +1,15 @@
 <template>
   <div class="review tf-box">
-    <div class="author" @click="$router.push({ name: 'Profilo', params: { userId: props.author._id } });">
+    <div
+      class="author"
+      @click="
+        $router.push({ name: 'Profilo', params: { userId: props.author._id } })
+      "
+    >
       <img src="https://picsum.photos/50" />
-      <h2 style="display: inline">{{ author.firstName }} {{ author.lastName }}</h2>
+      <h2 style="display: inline">
+        {{ author.firstName }} {{ author.lastName }}
+      </h2>
       <RatingStars :rating="props.rating" />
     </div>
     <p>

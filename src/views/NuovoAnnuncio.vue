@@ -17,7 +17,12 @@
       />
     </form>
     <section class="action-buttons">
-      <button :disabled="props.userInfo.sessionToken === ''" @click.prevent="onSubmit">Pubblica</button>
+      <button
+        :disabled="props.userInfo.sessionToken === ''"
+        @click.prevent="onSubmit"
+      >
+        Pubblica
+      </button>
     </section>
   </div>
 </template>

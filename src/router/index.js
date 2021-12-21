@@ -47,7 +47,7 @@ const routes = [
     path: "/pubblica-annuncio",
     name: "Pubblica annuncio",
     component: () => import("../views/NuovoAnnuncio.vue"),
-  }
+  },
 ];
 
 const router = createRouter({

@@ -38,7 +38,9 @@
     </section>
     <section class="action-buttons">
       <button @click="logout">Logout</button>
-      <button @click="cancelEdits" :disabled="settingsModified">Annulla modifiche</button>
+      <button @click="cancelEdits" :disabled="settingsModified">
+        Annulla modifiche
+      </button>
       <button @click="saveEdits" :disabled="settingsModified">Salva</button>
     </section>
   </div>
@@ -76,13 +78,14 @@ document.title = "TeacherFinder – Impostazioni";
 const notificationsString = (formObject) => {
   let str = "";
   for (let notification of Object.values(formObject))
-    str += (notification ? 1 : 0);
-  
+    str += notification ? 1 : 0;
+
   return str;
 };
 
 const notificationsStringToFormObject = (str) => {
-  if(typeof str === "undefined") return notificationsStringToFormObject("000000");
+  if (typeof str === "undefined")
+    return notificationsStringToFormObject("000000");
   return {
     ricevuta: str[0] == "1",
     annullata: str[1] == "1",
@@ -111,36 +114,44 @@ const props = defineProps({
 const form = reactive({
   nickname: props.userInfo.nickname,
   biography: props.userInfo.biography,
-  notifications: { ...notificationsStringToFormObject(props.userInfo.notifications) },
+  notifications: {
+    ...notificationsStringToFormObject(props.userInfo.notifications),
+  },
 });
 
 watch(
   () => props.userInfo.nickname,
   () => {
-  form.nickname = props.userInfo.nickname;
-});
+    form.nickname = props.userInfo.nickname;
+  }
+);
 
 watch(
   () => props.userInfo.biography,
   () => {
-  form.biography = props.userInfo.biography;
-});
+    form.biography = props.userInfo.biography;
+  }
+);
 
 watch(
   () => props.userInfo.notifications,
   () => {
-    Object.assign(form.notifications, notificationsStringToFormObject(
-      props.userInfo.notifications
-    ));
-});
+    Object.assign(
+      form.notifications,
+      notificationsStringToFormObject(props.userInfo.notifications)
+    );
+  }
+);
 
 function loadSettings() {
-  if(props.userInfo.nickname !== "") form.nickname = props.userInfo.nickname;
-  if(props.userInfo.biography !== "") form.biography = props.userInfo.biography;
-  if(typeof props.userInfo.notifications?.rifiutato !== "undefined")
-    Object.assign(form.notifications, notificationsStringToFormObject(
-      props.userInfo.notifications
-    ));
+  if (props.userInfo.nickname !== "") form.nickname = props.userInfo.nickname;
+  if (props.userInfo.biography !== "")
+    form.biography = props.userInfo.biography;
+  if (typeof props.userInfo.notifications?.rifiutato !== "undefined")
+    Object.assign(
+      form.notifications,
+      notificationsStringToFormObject(props.userInfo.notifications)
+    );
 }
 
 const logout = async () => {
@@ -155,7 +166,9 @@ const logout = async () => {
 const cancelEdits = () => {
   form.nickname = props.userInfo.nickname;
   form.biography = props.userInfo.biography;
-  form.notifications = { ...notificationsStringToFormObject(props.userInfo.notifications) };
+  form.notifications = {
+    ...notificationsStringToFormObject(props.userInfo.notifications),
+  };
 };
 
 loadSettings();
@@ -193,10 +206,9 @@ const saveEdits = async () => {
 
 const haveNotificationsChanged = () => {
   return (
-    notificationsString(form.notifications) !=
-    props.userInfo.notifications
+    notificationsString(form.notifications) != props.userInfo.notifications
   );
-}
+};
 
 const settingsModified = computed(() => {
   console.log(props.userInfo.nickname, form.nickname);

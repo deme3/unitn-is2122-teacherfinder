@@ -17,7 +17,9 @@
         <div class="tutor-info" @click.prevent="onTutorInfoClick">
           <img class="propic" src="https://picsum.photos/100" />
           <div class="tutor-contact">
-            <div class="tutor-fullname">{{ adInfo.author.firstName }} {{ adInfo.author.lastName }}</div>
+            <div class="tutor-fullname">
+              {{ adInfo.author.firstName }} {{ adInfo.author.lastName }}
+            </div>
             <div class="tutor-nickname">{{ adInfo.author.nickname }}</div>
           </div>
         </div>
@@ -58,14 +60,16 @@ let adInfo = reactive({
   reviews: [],
 });
 
-let prettyType = computed(() => adInfo.type[0].toUpperCase() + adInfo.type.substr(1));
+let prettyType = computed(
+  () => adInfo.type[0].toUpperCase() + adInfo.type.substr(1)
+);
 
 onMounted(async () => {
   let id = route.params.id;
   console.log("Questo è l'id dell'annuncio: ", id);
 
   let ad = await fetch(`/api/ads/getAdInfo/${id}`);
-  if(ad.status === 200) {
+  if (ad.status === 200) {
     Object.assign(adInfo, await ad.json());
     document.title = `TeacherFinder – ${adInfo.title}`;
   } else {
@@ -76,7 +80,7 @@ onMounted(async () => {
 
 const onTutorInfoClick = () => {
   // Ci andrà il router al tutor profile
-  router.push({ name: 'Profilo', params: { userId: adInfo.author._id } });
+  router.push({ name: "Profilo", params: { userId: adInfo.author._id } });
 };
 </script>
 

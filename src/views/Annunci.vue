@@ -1,7 +1,10 @@
 <template>
   <div class="annunci">
     <h1>I miei annunci</h1>
-    <div class="tf-box hoverable clickable new-ad-btn" @click="router.push({ name: 'Pubblica annuncio' })">
+    <div
+      class="tf-box hoverable clickable new-ad-btn"
+      @click="router.push({ name: 'Pubblica annuncio' })"
+    >
       <div class="plus"></div>
       Nuovo annuncio
     </div>
@@ -44,27 +47,30 @@ const router = useRouter();
 
 const props = defineProps({
   userInfo: {
-    _id: String
+    _id: String,
   },
 });
 
 let ads = ref([]);
 
-watch(() => props.userInfo._id, async () => {
-  if(props.userInfo._id !== "") {
-    await loadAds();
+watch(
+  () => props.userInfo._id,
+  async () => {
+    if (props.userInfo._id !== "") {
+      await loadAds();
+    }
   }
-});
+);
 
 async function loadAds() {
   let adsFetch = await fetch(`/api/ads/list/${props.userInfo._id}`);
 
-  if(adsFetch.ok) {
+  if (adsFetch.ok) {
     ads.value = await adsFetch.json();
   }
 }
 
-if(props.userInfo._id !== "") loadAds();
+if (props.userInfo._id !== "") loadAds();
 
 document.title = "TeacherFinder – I miei annunci";
 </script>
