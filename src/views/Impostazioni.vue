@@ -38,7 +38,7 @@
     </section>
     <section class="action-buttons">
       <button @click="logout">Logout</button>
-      <button @click="cancelEdits">Annulla modifiche</button>
+      <button @click="cancelEdits" :disabled="settingsModified">Annulla modifiche</button>
       <button @click="saveEdits" :disabled="settingsModified">Salva</button>
     </section>
   </div>
@@ -73,6 +73,30 @@ import ToggleEntry from "@/components/ToggleEntry.vue";
 
 document.title = "TeacherFinder – Impostazioni";
 
+const notificationsString = (formObject) => {
+  let str = "";
+  for (let notification of Object.values(formObject))
+    str += (notification ? 1 : 0);
+  
+  return str;
+};
+
+const notificationsStringToFormObject = (str) => {
+  if(typeof str === "undefined") return notificationsStringToFormObject("000000");
+  return {
+    ricevuta: str[0] == "1",
+    annullata: str[1] == "1",
+    pagamentoOK: str[2] == "1",
+    concluso: str[3] == "1",
+    accettato: str[4] == "1",
+    rifiutato: str[5] == "1",
+  };
+};
+
+const hasChanged = (fieldName) => {
+  return form[fieldName] != props.userInfo[fieldName];
+};
+
 const props = defineProps({
   ads: Array,
   userInfo: {
@@ -84,51 +108,40 @@ const props = defineProps({
   },
 });
 
-// Qua andrà una richiesta alla REST api
-// Per le info del profilo utente
-const original = reactive({
-  nickname: props.userInfo.nickname,
-  biography: props.userInfo.biography,
-  notifications: {
-    ricevuta: false,
-    annullata: false,
-    pagamentoOK: false,
-    concluso: false,
-    accettato: false,
-    rifiutato: false,
-  },
-});
-
 const form = reactive({
   nickname: props.userInfo.nickname,
   biography: props.userInfo.biography,
-  notifications: { ...original.notifications },
+  notifications: { ...notificationsStringToFormObject(props.userInfo.notifications) },
 });
 
 watch(
   () => props.userInfo.nickname,
   () => {
-  original.nickname = props.userInfo.nickname;
   form.nickname = props.userInfo.nickname;
 });
 
 watch(
   () => props.userInfo.biography,
   () => {
-  original.biography = props.userInfo.biography;
   form.biography = props.userInfo.biography;
 });
 
 watch(
   () => props.userInfo.notifications,
   () => {
-    Object.assign(original.notifications, notificationsStringToFormObject(
-      props.userInfo.notifications
-    ));
     Object.assign(form.notifications, notificationsStringToFormObject(
       props.userInfo.notifications
     ));
 });
+
+function loadSettings() {
+  if(props.userInfo.nickname !== "") form.nickname = props.userInfo.nickname;
+  if(props.userInfo.biography !== "") form.biography = props.userInfo.biography;
+  if(typeof props.userInfo.notifications?.rifiutato !== "undefined")
+    Object.assign(form.notifications, notificationsStringToFormObject(
+      props.userInfo.notifications
+    ));
+}
 
 const logout = async () => {
   console.log("logout");
@@ -140,10 +153,12 @@ const logout = async () => {
 };
 
 const cancelEdits = () => {
-  form.nickname = original.nickname;
-  form.biography = original.biography;
-  form.notifications = { ...original.notifications };
+  form.nickname = props.userInfo.nickname;
+  form.biography = props.userInfo.biography;
+  form.notifications = { ...notificationsStringToFormObject(props.userInfo.notifications) };
 };
+
+loadSettings();
 
 const saveEdits = async () => {
   // REST api salvataggio modifiche
@@ -176,38 +191,17 @@ const saveEdits = async () => {
   }
 };
 
-const notificationsString = (formObject) => {
-  let str = "";
-  for (let notification of Object.values(formObject))
-    str += (notification ? 1 : 0);
-  
-  return str;
-};
-
-const notificationsStringToFormObject = (str) => {
-  if(typeof str === "undefined") return "000000";
-  return {
-    ricevuta: str[0] == "1",
-    annullata: str[1] == "1",
-    pagamentoOK: str[2] == "1",
-    concluso: str[3] == "1",
-    accettato: str[4] == "1",
-    rifiutato: str[5] == "1",
-  };
-};
-
-const hasChanged = (fieldName) => {
-  return form[fieldName] != original[fieldName];
-};
-
 const haveNotificationsChanged = () => {
   return (
     notificationsString(form.notifications) !=
-    notificationsString(original.notifications)
+    props.userInfo.notifications
   );
 }
 
 const settingsModified = computed(() => {
+  console.log(props.userInfo.nickname, form.nickname);
+  console.log(props.userInfo.biography, form.biography);
+  console.log(props.userInfo.notifications, form.notifications);
   return !(
     hasChanged("nickname") ||
     hasChanged("biography") ||
