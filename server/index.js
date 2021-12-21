@@ -714,8 +714,12 @@ app.get("/api/user/profile/:id", async (req, res) => {
  */
 app.get("/api/ads/list/:userId", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.userId)) {
-    let foundAds = await User.findUserAds(req.params.userId);
-    res.status(200).json(foundAds);
+    try {
+      let foundAds = await Advertisement.getEnrichedAdList(await User.findUserAds(req.params.userId));
+      res.status(200).json(foundAds);
+    } catch {
+      res.sendStatus(500);
+    }
   } else {
     res.status(400).json({ missingParameters: ["userId"] });
   }
