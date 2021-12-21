@@ -82,9 +82,9 @@ const onSubmit = async () => {
       lon: -1,
     }),
   });
-  
+
   let dbResult = await submitResult.json();
-  if(typeof dbResult._id !== "undefined") {
+  if (typeof dbResult._id !== "undefined") {
     router.push({ name: "Annuncio", params: { id: dbResult._id } });
   }
 };

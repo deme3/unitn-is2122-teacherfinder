@@ -51,7 +51,7 @@ h1 {
 
 <script setup>
 import { reactive, ref } from "vue";
-import { useRouter } from "vue-router"
+import { useRouter } from "vue-router";
 import TextEntry from "@/components/TextEntry.vue";
 import ErrorBox from "@/components/ErrorBox.vue";
 import SmallBox from "@/components/SmallBox.vue";
