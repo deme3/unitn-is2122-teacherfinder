@@ -2051,9 +2051,11 @@ app.listen(port, async () => {
     chalk.black.bgGreen("\n FATTO ") + chalk.green(" Avvio completato")
   );
   console.log("\n");
-  console.log("  Applicazione accessibile via:");
-  console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/`));
-  console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/\n`));
+  if (process?.env?.NODE_ENV !== "development") {
+    console.log("  Applicazione accessibile via:");
+    console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/`));
+    console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/\n`));
+  }
   console.log("  Documentazione REST API accessibile via:");
   console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/api/docs`));
   console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/api/docs\n`));
