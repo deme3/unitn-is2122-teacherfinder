@@ -647,7 +647,7 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  *             type: string
  *             example: cccccccccccccccccccccccc
  *         required: true
- *         description: id dell'annuncio
+ *         description: ID dell'annuncio (esadecimale)
  *     responses:
  *       200:
  *         description: Info annuncio.
@@ -656,39 +656,110 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   authorId:
- *                     type: string
- *                     description: user Id insegnante.
- *                     example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                   title:
- *                     type: string
- *                     description: titolo.
- *                     example: Analisi 3
- *                   description:
- *                     type: string
- *                     description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
- *                     example: 0.0.0.0
- *                   price:
- *                     type: number
- *                     description: prezzo all'ora.
- *                     example: 25
- *                   type:
- *                     type: string
- *                     description: tipologia insegnemento.
- *                     example: online
- *                   lat:
- *                     type: number
- *                     description: latitudine posizione.
- *                     example: -1
- *                   lon:
- *                     type: number
- *                     description: longitudine posizione.
- *                     example: -1
+ *                 _id:
+ *                   type: string
+ *                   description: ID annuncio (esadecimale)
+ *                   example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                 authorId:
+ *                   type: string
+ *                   description: ID insegnante autore dell'annuncio (esadecimale)
+ *                   example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                 title:
+ *                   type: string
+ *                   description: Titolo annuncio
+ *                   example: Analisi 3
+ *                 description:
+ *                   type: string
+ *                   description: Descrizione dell'annuncio
+ *                   example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                 price:
+ *                   type: number
+ *                   description: Prezzo all'ora
+ *                   example: 25
+ *                 type:
+ *                   type: string
+ *                   description: Tipologia insegnemento
+ *                   example: online
+ *                 author:
+ *                   type: object
+ *                   description: Dettagli sull'autore dell'annuncio
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: ID utente (esadecimale)
+ *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                     firstName:
+ *                       type: string
+ *                       description: Nome utente
+ *                       example: Mario
+ *                     lastName:
+ *                       type: string
+ *                       description: Cognome utente
+ *                       example: Rossi
+ *                     nickname:
+ *                       type: string
+ *                       description: Nickname utente
+ *                       example: Red
+ *                     biography:
+ *                       type: string
+ *                       description: Biografia utente
+ *                       example: Sono uno studente laureando in matematica di 38 anni, sono scrupoloso, educato e saluto sempre.
+ *                     email:
+ *                       type: string
+ *                       description: Email utente
+ *                       example: mariorossi@a.it
+ *                     notifications:
+ *                       type: string
+ *                       description: Impostazioni notifiche dell'utente
+ *                       example: 010110
+ *                 rating:
+ *                   type: number
+ *                   description: Valutazione media calcolata su tutte le recensioni dell'annuncio arrotondata per eccesso
+ *                   example: 3
+ *                 reviews:
+ *                   type: array
+ *                   description: Recensioni dell'annuncio
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         description: ID autore della recensione (esadecimale)
+ *                         example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                       rating:
+ *                         type: number
+ *                         description: Valutazione associata alla recensione (1-5)
+ *                         example: 5
+ *                       explanation:
+ *                         type: string
+ *                         description: Testo recensione
+ *                         example: È molto bravo
+ *                       author:
+ *                         type: object
+ *                         description: Informazioni sull'autore
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             description: ID utente (esadecimale)
+ *                             example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                           firstName:
+ *                             type: string
+ *                             description: Nome utente
+ *                             example: Mario
+ *                           lastName:
+ *                             type: string
+ *                             description: Cognome utente
+ *                             example: Rossi
+ *                           nickname:
+ *                             type: string
+ *                             description: Nickname utente
+ *                             example: Red
  *       404:
  *         description: Annuncio non trovato
  *       400:
- *         description: Id invalido o assente
+ *         description: ID invalido o assente
+ *       500:
+ *         description: Errore Mongoose
  */
 app.get("/api/ads/getAdInfo/:id", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.id)) {
