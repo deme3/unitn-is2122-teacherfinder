@@ -29,6 +29,11 @@ npm run build
 npm run server
 ```
 
+### Testing API
+```bash
+npm test
+```
+
 ## Development
 
 ### Compiles and hot-reloads frontend (Vue CLI) and server (ExpressJS)
