@@ -235,7 +235,7 @@ app.put("/api/user/register", async (req, res) => {
  *               properties:
  *                 _id:
  *                   type: string
- *                   description: ID della sessione, anche utilizzato come "session token"
+ *                   description: ID della sessione, anche utilizzato come "session token" (esadecimale)
  *                   example: aaaaaaaaaaaaaaaaaaaaaaaa
  *                 userId:
  *                   type: string
@@ -315,7 +315,7 @@ app.post("/api/user/login", async (req, res) => {
  *             type: string
  *             example: aaaaaaaaaaaaaaaaaaaaaaaa
  *         required: true
- *         description: session id
+ *         description: ID sessione da rimuovere (esadecimale)
  *     responses:
  *       200:
  *         description: Il token è stato rimosso e il logout è stato completato.
@@ -364,7 +364,7 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  *             type: string
  *             example: aaaaaaaaaaaaaaaaaaaaaaaa
  *         required: true
- *         description: session id
+ *         description: ID sessione da controllare (esadecimale)
  *     responses:
  *       200:
  *         description: Token e IP corrispondono.
@@ -388,10 +388,10 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  *                   properties:
  *                     _id:
  *                       type: string
- *                       description: ID sessione
+ *                       description: ID sessione (esadecimale)
  *                     userId:
  *                       type: string
- *                       description: ID utente associato alla sessione
+ *                       description: ID utente associato alla sessione (esadecimale)
  *                     createdAt:
  *                       type: string
  *                       description: Data di creazione della sessione
@@ -402,7 +402,7 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  *                   properties:
  *                     _id:
  *                       type: string
- *                       description: ID utente
+ *                       description: ID utente (esadecimale)
  *                     firstName:
  *                       type: string
  *                       description: Nome utente
@@ -496,7 +496,7 @@ app.get("/api/user/profile/:id", async (req, res) => {
  *             type: string
  *             example: bbbbbbbbbbbbbbbbbbbbbbbb
  *         required: true
- *         description: ID Utente su cui fare a ricerca
+ *         description: ID Utente su cui fare a ricerca (esadecimale)
  *     responses:
  *       200:
  *         description: Questi sono gli annunci scritti dall'utente.
@@ -512,7 +512,7 @@ app.get("/api/user/profile/:id", async (req, res) => {
  *                     properties:
  *                       authorId:
  *                         type: string
- *                         description: ID insegnante autore dell'annuncio
+ *                         description: ID insegnante autore dell'annuncio (esadecimale)
  *                         example: bbbbbbbbbbbbbbbbbbbbbbbb
  *                       title:
  *                         type: string
@@ -584,11 +584,11 @@ app.get("/api/ads/list/:userId", async (req, res) => {
  *                 properties:
  *                   _id:
  *                     type: string
- *                     description: ID annuncio
+ *                     description: ID annuncio (esadecimale)
  *                     example: aaaaaaaaaaaaaaaaaaaaaaaa
  *                   authorId:
  *                     type: string
- *                     description: ID insegnante autore dell'annuncio
+ *                     description: ID insegnante autore dell'annuncio (esadecimale)
  *                     example: bbbbbbbbbbbbbbbbbbbbbbbb
  *                   title:
  *                     type: string
