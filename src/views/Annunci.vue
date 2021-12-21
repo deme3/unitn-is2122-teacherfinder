@@ -32,6 +32,12 @@
   vertical-align: text-top;
 }
 
+@media (prefers-color-scheme: dark) {
+  .plus {
+    filter: invert(1);
+  }
+}
+
 .new-ad-btn {
   text-align: center;
   font-weight: bold;

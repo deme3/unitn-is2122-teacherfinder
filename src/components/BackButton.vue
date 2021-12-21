@@ -13,6 +13,12 @@
   background-position: center;
   cursor: pointer;
 }
+
+@media (prefers-color-scheme: dark) {
+  .back-arrow-icon {
+    filter: invert(1);
+  }
+}
 </style>
 
 <script setup>
