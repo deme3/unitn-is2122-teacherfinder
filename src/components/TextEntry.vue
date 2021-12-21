@@ -45,10 +45,13 @@ const props = defineProps({
   numeric: Boolean,
 });
 
-const emit = defineEmits(["update:text"]);
+const emit = defineEmits(["update:text", "update:number"]);
 
 const value = computed({
   get: () => props?.text || props?.number,
-  set: (val) => emit("update:text", val),
+  set: (val) => {
+    if (props?.numeric) emit("update:number", val);
+    else emit("update:text", val);
+  },
 });
 </script>
