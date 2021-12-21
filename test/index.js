@@ -88,3 +88,23 @@ test('[POST] /api/user/login: Faccio il login via e-mail mariorossi@a.it', funct
     });
   });
 });
+
+test('[PUT] /api/user/register: Provo a registrare un utente duplicato', function(assert) {
+  request(app).put('/api/user/register').send({
+    firstName: "Mario",
+    lastName: "Rossi",
+    nickname: "Red",
+    password: "rossimario123",
+    email: "mariorossi@a.it",
+    biography: ""
+  })
+  .expect(500)
+  .expect("Content-Type", /json/)
+  .end((err, res) => {
+    let expectedResult = {
+      error: "DUPLICATE_ENTRY"
+    };
+    assert.same(res.body.error, expectedResult.error, "Errore DUPLICATE_ENTRY");
+    assert.end();
+  });
+});
