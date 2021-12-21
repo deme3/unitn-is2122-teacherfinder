@@ -6,7 +6,7 @@
       @click="router.push({ name: 'Pubblica annuncio' })"
     >
       <div class="plus"></div>
-      Nuovo annuncio
+      <div style="display: inline; vertical-align: middle">Nuovo annuncio</div>
     </div>
     <SearchResult
       v-for="ad in ads"
@@ -29,7 +29,7 @@
   width: 24px;
   height: 24px;
   display: inline-block;
-  vertical-align: middle;
+  vertical-align: text-top;
 }
 
 .new-ad-btn {
