@@ -1,5 +1,5 @@
 <template>
-  <div class="no-results tf-box">{{ props.default }}</div>
+  <div class="no-results tf-box">{{ props.text }}</div>
 </template>
 
 <style scoped>
