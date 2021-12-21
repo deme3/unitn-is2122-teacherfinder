@@ -16,7 +16,10 @@
         <div class="divider"></div>
         <div class="tutor-info" @click.prevent="onTutorInfoClick">
           <img class="propic" src="https://picsum.photos/100" />
-          <div class="tutor-nickname">{{ adInfo.author.nickname }}</div>
+          <div class="tutor-contact">
+            <div class="tutor-fullname">{{ adInfo.author.firstName }} {{ adInfo.author.lastName }}</div>
+            <div class="tutor-nickname">{{ adInfo.author.nickname }}</div>
+          </div>
         </div>
         <div class="richieste">
           <button>Chatta con il tutor</button>
@@ -109,10 +112,14 @@ const onTutorInfoClick = () => {
   width: 50px;
 }
 
-.tutor-nickname {
+.tutor-contact {
   display: inline-block;
   margin: auto;
   vertical-align: middle;
+}
+
+.tutor-fullname {
+  font-weight: bold;
 }
 
 @media only screen and (max-width: 640px) {
