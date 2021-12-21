@@ -1119,59 +1119,61 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
  *             properties:
  *               sessionToken:
  *                  type: string
- *                  description: Session id.
+ *                  description: ID sessione utente
  *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
  *               adId:
  *                  type: string
- *                  description: Id annuncio.
+ *                  description: ID annuncio da recensire
  *                  example: cccccccccccccccccccccccc
  *               rating:
  *                  type: number
- *                  description: Stelline.
+ *                  description: Valutazione
  *                  example: 4
  *               explanation:
  *                  type: string
- *                  description: Rcensione.
+ *                  description: Testo recensione
  *                  example: Molto bravo e competente, ma una volta non mi ha salutato.
  *     responses:
  *       200:
- *         description: Recensione.
+ *         description: Restituisce la recensione appena creata
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                    authorId:
- *                       type: string
- *                       description: Id insegnante.
- *                       example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                    adId:
- *                       type: string
- *                       description: Id dell'annuncio.
- *                       example: cccccccccccccccccccccccc
- *                    rating:
- *                       type: number
- *                       description: Stelline
- *                       example: 4
- *                    explanation:
- *                       type: string
- *                       description: Recensione.
- *                       example: Molto bravo e competente, ma una volta non mi ha salutato.
- *       403:
- *         description: utente non autorizzato perché non registrato
- *       400:
- *         description: Parametro mancante.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   missingParameters:
+ *                  _id:
  *                     type: string
- *                     description: parametro mancante
- *                     example: sessionToken
+ *                     description: ID recensione appena creata
+ *                     example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                  authorId:
+ *                     type: string
+ *                     description: ID autore della recensione
+ *                     example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                  adId:
+ *                     type: string
+ *                     description: ID annuncio recensito
+ *                     example: cccccccccccccccccccccccc
+ *                  rating:
+ *                     type: number
+ *                     description: Valutazione
+ *                     example: 4
+ *                  explanation:
+ *                     type: string
+ *                     description: Testo recensione
+ *                     example: Molto bravo e competente, ma una volta non mi ha salutato.
+ *       403:
+ *         description: Sessione invalida, utente non autorizzato.
+ *       400:
+ *         description: Uno o più parametri mancanti.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 missingParameters:
+ *                   type: array
+ *                   description: Parametri mancanti
+ *                   example: ["sessionToken", "rating"]
  */
 app.post("/api/reviews/postReview", async (req, res) => {
   let requiredParameters = ["sessionToken", "adId", "rating", "explanation"];
