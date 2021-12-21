@@ -1211,7 +1211,7 @@ app.post("/api/reviews/postReview", async (req, res) => {
  * @swagger
  * /api/subscriptions/requestSubscription:
  *   put:
- *     summary: Memorizza una nuova iscrizione ad un insegnamento.
+ *     summary: Memorizza una nuova richiesta di iscrizione ad un insegnamento
  *     requestBody:
  *       required: true
  *       content:
@@ -1220,17 +1220,17 @@ app.post("/api/reviews/postReview", async (req, res) => {
  *             type: object
  *             properties:
  *               sessionToken:
- *                  type: string
- *                  description: Session id.
- *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                 type: string
+ *                 description: ID sessione utente
+ *                 example: aaaaaaaaaaaaaaaaaaaaaaaa
  *               adId:
- *                  type: string
- *                  description: Id annuncio.
- *                  example: cccccccccccccccccccccccc
+ *                 type: string
+ *                 description: ID annuncio a cui iscriversi
+ *                 example: cccccccccccccccccccccccc
  *               hours:
- *                  type: number
- *                  description: Ore di insegnamento programmate.
- *                  example: 12
+ *                 type: number
+ *                 description: Ore di insegnamento desiderate
+ *                 example: 4
  *     responses:
  *       200:
  *         description: Iscrizione.
@@ -1239,27 +1239,35 @@ app.post("/api/reviews/postReview", async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                    subscriberId:
- *                       type: string
- *                       description: Id studente richiedente.
- *                       example: dddddddddddddddddddddddd
- *                    adId:
- *                       type: string
- *                       description: Id dell'annuncio.
- *                       example: cccccccccccccccccccccccc
- *                    status:
- *                       type: string
- *                       description: stato dell'iscrizione.
- *                       example: requested
- *                    hours:
- *                       type: number
- *                       description: Ore di insegnamento programmate.
- *                       example: 12
+ *                  subscriberId:
+ *                     type: string
+ *                     description: ID studente richiedente
+ *                     example: dddddddddddddddddddddddd
+ *                  adId:
+ *                     type: string
+ *                     description: ID annuncio
+ *                     example: cccccccccccccccccccccccc
+ *                  status:
+ *                     type: string
+ *                     description: Stato attuale dell'iscrizione ("requested" in questa fase)
+ *                     example: requested
+ *                  hours:
+ *                     type: number
+ *                     description: Ore di insegnamento desiderate
+ *                     example: 4
  *       403:
- *         description: utente non autorizzato perché non registrato
+ *         description: Sessione invalida, utente non autorizzato.
  *       400:
- *         description: Id invalido o assente
+ *         description: Uno o più parametri mancanti
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 missingParameters:
+ *                   type: array
+ *                   description: Parametri mancanti
+ *                   example: ["sessionToken", "hours"]
  */
 app.put("/api/subscriptions/requestSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "adId", "hours"];
@@ -1304,7 +1312,7 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  * @swagger
  * /api/subscriptions/acceptSubscription:
  *   put:
- *     summary: L'insegnante accetta una richiesta di insegnamento.
+ *     summary: L'insegnante accetta una richiesta di insegnamento
  *     requestBody:
  *       required: true
  *       content:
@@ -1314,33 +1322,36 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  *             properties:
  *               sessionToken:
  *                  type: string
- *                  description: Session id.
+ *                  description: ID sessione utente
  *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
  *               subId:
  *                  type: string
- *                  description: Id della richiesta di iscrizione.
+ *                  description: ID della richiesta di iscrizione
  *                  example: eeeeeeeeeeeeeeeeeeeeeeee
  *     responses:
  *       200:
- *         description: Richiesta di insegnamento.
+ *         description: Iscrizione.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                    sessionToken:
- *                       type: string
- *                       description: Session id insegnante.
- *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
- *                    ipAddress:
- *                       type: string
- *                       description: ip address.
- *                       example: 0.0.0.0
- *                    status:
- *                       type: string
- *                       description: stato dell'iscrizione.
- *                       example: waiting_payment
+ *                  subscriberId:
+ *                     type: string
+ *                     description: ID studente richiedente
+ *                     example: dddddddddddddddddddddddd
+ *                  adId:
+ *                     type: string
+ *                     description: ID annuncio
+ *                     example: cccccccccccccccccccccccc
+ *                  status:
+ *                     type: string
+ *                     description: Stato attuale dell'iscrizione ("waiting_payment" in questa fase)
+ *                     example: waiting_payment
+ *                  hours:
+ *                     type: number
+ *                     description: Ore di insegnamento desiderate
+ *                     example: 4
  *       403:
  *         description: L'utente non è il proprietario dell'annuncio
  *       404:
@@ -1352,11 +1363,10 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 data:
  *                   missingParameters:
- *                     type: string
- *                     description: parametro mancante
- *                     example: sessionToken
+ *                     type: array
+ *                     description: Parametri mancante
+ *                     example: ["sessionToken"]
  */
 app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
   let requiredParameters = ["sessionToken", "subId"];
