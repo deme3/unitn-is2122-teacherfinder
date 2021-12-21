@@ -3,7 +3,7 @@
     <div class="tf-box">
       <div class="container">
         <div class="info">
-          <h1>{{ adInfo.title }}</h1>
+          <h1><BackButton /> {{ adInfo.title }}</h1>
           <RatingStars :rating="adInfo.rating" />
           <div class="ad-info">
             <p>Prezzo: {{ adInfo.price.toFixed(2) }}€/ora</p>
@@ -31,6 +31,7 @@
 <script setup>
 import ReviewSection from "@/components/ReviewSection.vue";
 import RatingStars from "@/components/RatingStars.vue";
+import BackButton from "@/components/BackButton.vue";
 import { onMounted, reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
