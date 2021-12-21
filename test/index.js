@@ -30,9 +30,8 @@ test('[PUT] /api/user/register: Registro Mario Rossi', function(assert) {
   });
 });
 
-
 test('[POST] /api/user/login: Faccio il login via username Red', function(assert) {
-  assert.plan(3);
+  assert.plan(4);
   request(app).post('/api/user/login').send({
     nickname: "Red",
     password: "rossimario123",
@@ -44,6 +43,23 @@ test('[POST] /api/user/login: Faccio il login via username Red', function(assert
     sessionToken = res.body._id ?? "";
     assert.error(err, "Nessun errore");
     assert.ok(res.body._id, "Sessione generata");
+
+    assert.test('[GET] /api/user/profile/' + res.body.userId, function(assert) {
+      assert.plan(6);
+      request(app)
+      .get('/api/user/profile/' + res.body.userId)
+      .expect(200)
+      .expect("Content-Type", /json/)
+      .end((err, res) => {
+        assert.error(err, "Nessun errore");
+        assert.same(res.body.firstName, "Mario", "Nome utente");
+        assert.same(res.body.lastName, "Rossi", "Cognome utente");
+        assert.same(res.body.email, "mariorossi@a.it", "E-mail utente");
+        assert.notOk(res.body.password, "Password non esposta");
+        assert.ok(res.body.ads, "Lista annunci presente");
+        assert.end();
+      });
+    });
 
     assert.test('[DELETE] /api/user/logout: Logout ' + sessionToken, function(assert) {
       assert.plan(2);
