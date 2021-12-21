@@ -559,6 +559,68 @@ app.get("/api/ads/list/:userId", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/ads/search/{keywords}:
+ *   get:
+ *     summary: Cerca gli annunci per titolo con le parole chiave specificate
+ *     parameters:
+ *       - in: path
+ *         name: keywords
+ *         schema:
+ *             type: string
+ *             example: "analisi I"
+ *         required: true
+ *         description: Parole chiave con le quali effettuare la ricerca
+ *     responses:
+ *       200:
+ *         description: Risultato della ricerca
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: ID annuncio
+ *                     example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                   authorId:
+ *                     type: string
+ *                     description: ID insegnante autore dell'annuncio
+ *                     example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                   title:
+ *                     type: string
+ *                     description: Titolo annuncio
+ *                     example: Analisi 3
+ *                   "description":
+ *                     type: string
+ *                     description: Descrizione dell'annuncio
+ *                     example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                   price:
+ *                     type: number
+ *                     description: Prezzo all'ora.
+ *                     example: 25
+ *                   type:
+ *                     type: string
+ *                     description: Tipologia insegnemento.
+ *                     example: online
+ *                   lat:
+ *                     type: number
+ *                     description: Latitudine posizione (se type = offline).
+ *                     example: -1
+ *                   lon:
+ *                     type: number
+ *                     description: Longitudine posizione (se type = offline).
+ *                     example: -1
+ *                   rating:
+ *                     type: number
+ *                     description: Valutazione media calcolata su tutte le recensioni dell'annuncio arrotondata per eccesso
+ *                     example: 3
+ *       500:
+ *         description: Errore Mongoose
+ */
 app.get("/api/ads/search/:keywords", async (req, res) => {
   try {
     let keywords = new RegExp(req.params.keywords?.split(" ").join("|"), "i");
