@@ -54,8 +54,10 @@ button:disabled {
 import TextEntry from "@/components/TextEntry.vue";
 import BackButton from "@/components/BackButton.vue";
 import { reactive, inject } from "vue";
+import { useRouter } from "vue-router";
 
 const userInfo = inject("userInfo");
+const router = useRouter();
 
 const newAd = reactive({
   title: "",
@@ -80,6 +82,10 @@ const onSubmit = async () => {
       lon: -1,
     }),
   });
-  console.log(await submitResult.json());
+  
+  let dbResult = await submitResult.json();
+  if(typeof dbResult._id !== "undefined") {
+    router.push({ name: "Annuncio", params: { id: dbResult._id } });
+  }
 };
 </script>
