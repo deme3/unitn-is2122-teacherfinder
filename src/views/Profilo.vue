@@ -36,6 +36,10 @@
   margin: 2em 1em;
 }
 
+.profile-parameter > div {
+  font-style: italic;
+}
+
 .profile-parameter .parameter-descriptor {
   font-weight: bold;
   font-size: 11pt;
