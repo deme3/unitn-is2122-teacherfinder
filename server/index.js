@@ -154,7 +154,7 @@ app.get("/api", (req, res) => {
  *                   description: Nomi delle colonne duplicate
  *                   example: []
  *       400:
- *         description: Un paramentro non è stato trovato
+ *         description: Parametri richiesti mancanti
  *         content:
  *           application/json:
  *             schema:
@@ -205,7 +205,7 @@ app.put("/api/user/register", async (req, res) => {
  * @swagger
  * /api/user/login:
  *   post:
- *     summary: Prende l'IP dell'utente e lo registra assieme al token.
+ *     summary: Prende l'IP dell'utente e lo registra assieme al token, se il login ha avuto successo.
  *     requestBody:
  *       required: true
  *       content:
@@ -214,37 +214,60 @@ app.put("/api/user/register", async (req, res) => {
  *             type: object
  *             properties:
  *               nickname:
- *                  type: string
- *                  description: Il nickname dell'utente.
- *                  example: Red
+ *                 type: string
+ *                 description: Il nickname dell'utente.
+ *                 example: Red
  *               password:
- *                  type: string
- *                  description: La password dell'account associato all'utente.
- *                  example: 0000
+ *                 type: string
+ *                 description: La password dell'account associato all'utente.
+ *                 example: 123456789
+ *               persistent:
+ *                 type: boolean
+ *                 description: true per far durare la sessione 12 mesi
+ *                 example: true
  *     responses:
  *       200:
- *         description: session Id.
+ *         description: Il login ha avuto successo e la sessione è stata registrata.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   properties:
- *                     _id:
- *                       type: string
- *                       description: Session Id.
- *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
- *                     userId:
- *                       type: string
- *                       description: user Id.
- *                       example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                     ipAddress:
- *                       type: string
- *                       description: ip address.
- *                       example: 0.0.0.0
+ *                 _id:
+ *                   type: string
+ *                   description: ID della sessione, anche utilizzato come "session token"
+ *                   example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                 userId:
+ *                   type: string
+ *                   description: ID Utente associato alla sessione (esadecimale)
+ *                   example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                 ipAddress:
+ *                   type: string
+ *                   description: Indirizzo IPv6 di provenienza, utilizzato per verificare la sessione!
+ *                   example: ::1
+ *                 persistent:
+ *                   type: boolean
+ *                   description: true se la sessione durerà 12 mesi
+ *                   example: true
+ *                 createdAt:
+ *                   type: string
+ *                   description: Timestamp di creazione della sessione
+ *                   example: 2021-12-21T00:00:00.000Z
  *       500:
- *         description: utente già registrato
+ *         description: Errore Mongoose
+ *       401:
+ *         description: Credenziali incorrette
+ *       400:
+ *         description: Parametri richiesti mancanti
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 missingParameters:
+ *                   type: array
+ *                   description: Parametri mancanti
+ *                   example: ["persistent"]
  */
 app.post("/api/user/login", async (req, res) => {
   // Prendo l'IP dell'utente e lo registro assieme al token
