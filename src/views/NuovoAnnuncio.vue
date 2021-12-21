@@ -1,6 +1,6 @@
 <template>
   <div class="tf-box">
-    <h1>Nuovo annuncio</h1>
+    <h1><BackButton /> Nuovo annuncio</h1>
     <form method="post" @submit.prevent="onSubmit">
       <div class="two-columns">
         <TextEntry description="Titolo" v-model:text="newAd.title" />
@@ -47,6 +47,7 @@ button:disabled {
 
 <script setup>
 import TextEntry from "@/components/TextEntry.vue";
+import BackButton from "@/components/BackButton.vue";
 import { reactive } from "vue";
 
 const props = defineProps({
