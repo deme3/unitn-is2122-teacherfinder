@@ -60,9 +60,15 @@ app.use(express.json());
 const checkParameters = (parameters, body) =>
   parameters.every((parameter) => Object.keys(body).includes(parameter));
 
+const checkParametersLength = (parameters) =>
+  Object.values(parameters).every((parameter) => parameter.length > 0);
+
 // Funzione che mi permette di ottenere i parametri mancanti rispetto all'aspettativa dell'endpoint
 const getMissingParameters = (expectation, reality) =>
   expectation.filter((x) => !Object.keys(reality).includes(x));
+
+const getEmptyParameters = (parameters) =>
+  Object.keys(parameters).filter((parameter) => parameters[parameter].trim().length == 0);
 
 app.get("/api", (req, res) => {
   res.send({ works: true });
@@ -181,6 +187,10 @@ app.get("/api", (req, res) => {
  *                   type: array
  *                   description: Parametri mancanti
  *                   example: ["email", "biography"]
+ *                 emptyParameters:
+ *                   type: array
+ *                   description: Parametri vuoti
+ *                   example: ["firstName", "lastName"]
  */
 app.put("/api/user/register", async (req, res) => {
   // Registro le informazioni su questo utente
@@ -195,6 +205,17 @@ app.put("/api/user/register", async (req, res) => {
   ];
 
   if (checkParameters(requiredParameters, req.body)) {
+    if(!checkParametersLength(req.body)) {
+      // Se è la biografia ad essere vuota la ignoro
+      let emptyParameters = getEmptyParameters(req.body);
+      if(!(emptyParameters.length == 1 && emptyParameters[0] == "biography")) {
+        res.status(400).json({
+          emptyParameters
+        });
+        return;
+      }
+    }
+
     try {
       // Inserisco l'utente nel database
       await User.create(req.body);
