@@ -2034,7 +2034,11 @@ const lanIp =
 app.enable("trust proxy");
 // prettier-ignore
 app.listen(port, async () => {
-  console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di deployment...");
+  if (process?.env?.NODE_ENV !== "development")
+    console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di deployment...");
+  else if (process?.env?.NODE_ENV == "development")
+    console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di development...");
+  
   console.log(`Server Express in ascolto su: http://localhost:${port}/`);
 
   process.stdout.write("Caricamento configurazione MongoDB...");
