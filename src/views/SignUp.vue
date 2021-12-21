@@ -1,7 +1,7 @@
 <template>
   <div class="signup-view">
     <h1>Registrati</h1>
-    <div class="tf-box">
+    <div class="tf-box" v-if="!showRegistrazioneCompletata">
       <form method="post" @submit.prevent="submitSignUp">
         <div class="register-header">
           <TextEntry v-model:text="form.firstName" description="Nome" />
@@ -28,6 +28,10 @@
         <div class="register-btn-wrapper"><button>Registrati</button></div>
       </form>
     </div>
+    <SmallBox
+      v-if="showRegistrazioneCompletata"
+      text="Registrazione completata!"
+    />
   </div>
 </template>
 
@@ -47,8 +51,12 @@ h1 {
 
 <script setup>
 import { reactive, ref } from "vue";
+import { useRouter } from "vue-router"
 import TextEntry from "@/components/TextEntry.vue";
 import ErrorBox from "@/components/ErrorBox.vue";
+import SmallBox from "@/components/SmallBox.vue";
+
+const router = useRouter();
 
 document.title = "TeacherFinder – Registrati";
 const form = reactive({
@@ -70,6 +78,7 @@ const errorBox = reactive({
   },
 });
 
+const showRegistrazioneCompletata = ref(false);
 const submitSignUp = async () => {
   if (
     form.firstName === "" ||
@@ -105,6 +114,10 @@ const submitSignUp = async () => {
   if (resp.ok) {
     console.log("La registrazione è andata a buon fine!");
     console.log(await resp.json());
+    showRegistrazioneCompletata.value = true;
+    setTimeout(() => {
+      router.push({ name: "Login" });
+    }, 2000);
   } else {
     console.log(
       `[${resp.status}] Errore nella registrazione!\n`,
