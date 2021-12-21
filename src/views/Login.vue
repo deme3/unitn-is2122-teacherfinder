@@ -2,6 +2,10 @@
   <div class="login-view">
     <h1>Login</h1>
     <div class="tf-box">
+      <div class="tf-box tf-box-err" v-if="showError">
+        Attenzione, il nome utente o la password non sembrano essere corretti.
+        Se non possiedi ancora un account, prova a registrarti.
+      </div>
       <form method="post" @submit.prevent="submitLogin">
         <TextEntry v-model:text="loginForm.nickname" description="Username" />
         <TextEntry
@@ -48,6 +52,7 @@ const loginForm = reactive({
 
 const rememberLogin = ref(false);
 
+const showError = ref(false);
 const submitLogin = async () => {
   const resp = await fetch(`/api/user/login`, {
     method: "POST",
@@ -69,6 +74,7 @@ const submitLogin = async () => {
       `[${resp.status}] Errore nella registrazione!\n`,
       await resp.text()
     );
+    showError.value = true;
     return;
   }
 
@@ -86,3 +92,12 @@ const submitLogin = async () => {
   }
 };
 </script>
+
+<style scoped>
+.tf-box-err {
+  box-shadow: none;
+  border-color: #ff9595;
+  background: #ffd1c9;
+  color: #584e49;
+}
+</style>
