@@ -1,5 +1,5 @@
 <template>
-  <div class="no-results tf-box">Nessun risultato!</div>
+  <div class="no-results tf-box">{{ props.default }}</div>
 </template>
 
 <style scoped>
@@ -9,3 +9,12 @@
   font-weight: bold;
 }
 </style>
+
+<script setup>
+defineProps({
+  text: {
+    default: "Nessun risultato!",
+    type: String,
+  },
+});
+</script>
