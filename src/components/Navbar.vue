@@ -84,16 +84,10 @@ img {
     display: unset;
     height: 30px;
     width: 30px;
+    filter: var(--icons-filters);
   }
   .text {
     display: none;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  /* Dark theme styles go here */
-  img {
-    filter: invert(100%);
   }
 }
 </style>
