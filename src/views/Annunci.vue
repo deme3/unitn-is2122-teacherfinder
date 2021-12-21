@@ -5,6 +5,14 @@
       <div class="plus"></div>
       Nuovo annuncio
     </div>
+    <SearchResult
+      v-for="ad in ads"
+      :key="ad._id"
+      :id="ad._id"
+      :title="ad.title"
+      :price="ad.price"
+      :rating="ad.rating"
+    />
   </div>
 </template>
 
@@ -29,8 +37,34 @@
 </style>
 
 <script setup>
+import SearchResult from "@/components/SearchResult.vue";
+import { watch, ref } from "vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
+
+const props = defineProps({
+  userInfo: {
+    _id: String
+  },
+});
+
+let ads = ref([]);
+
+watch(() => props.userInfo._id, async () => {
+  if(props.userInfo._id !== "") {
+    await loadAds();
+  }
+});
+
+async function loadAds() {
+  let adsFetch = await fetch(`/api/ads/list/${props.userInfo._id}`);
+
+  if(adsFetch.ok) {
+    ads.value = await adsFetch.json();
+  }
+}
+
+if(props.userInfo._id !== "") loadAds();
 
 document.title = "TeacherFinder – I miei annunci";
 </script>
