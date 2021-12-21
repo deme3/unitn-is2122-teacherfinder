@@ -973,38 +973,50 @@ app.post("/api/ads/createAd", async (req, res) => {
  *             type: string
  *             example: cccccccccccccccccccccccc
  *         required: true
- *         description: id dell'annuncio
+ *         description: ID dell'annuncio
  *     responses:
  *       200:
  *         description: Elenco recensioni.
  *         content:
  *           application/json:
  *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                      type: string
+ *                      description: ID recensione
+ *                      example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                   authorId:
+ *                      type: string
+ *                      description: ID autore recensione
+ *                      example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                   adId:
+ *                      type: string
+ *                      description: ID dell'annuncio recensito
+ *                      example: cccccccccccccccccccccccc
+ *                   rating:
+ *                      type: number
+ *                      description: Valutazione
+ *                      example: 4
+ *                   explanation:
+ *                      type: string
+ *                      description: Testo recensione
+ *                      example: Molto bravo e competente, ma una volta non mi ha salutato.
+ *       400:
+ *         description: ID annuncio invalido o assente
+ *         content:
+ *           application/json:
+ *             schema:
  *               type: object
  *               properties:
- *                 data:
+ *                 missingParameters:
  *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       authorId:
- *                          type: string
- *                          description: Id insegnante.
- *                          example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                       adId:
- *                          type: string
- *                          description: Id dell'annuncio.
- *                          example: cccccccccccccccccccccccc
- *                       rating:
- *                          type: number
- *                          description: Stelline
- *                          example: 4
- *                       explanation:
- *                          type: string
- *                          description: Recensione.
- *                          example: Molto bravo e competente, ma una volta non mi ha salutato.
- *       400:
- *         description: Id invalido o assente
+ *                   description: Parametri mancanti
+ *                   example: ["adId"]
+ *       500:
+ *         description: Errore Mongoose
  */
 app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.adId)) {
@@ -1039,31 +1051,41 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                      type: string
+ *                      description: ID recensione
+ *                      example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                   authorId:
+ *                      type: string
+ *                      description: ID autore recensione
+ *                      example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                   adId:
+ *                      type: string
+ *                      description: ID dell'annuncio recensito
+ *                      example: cccccccccccccccccccccccc
+ *                   rating:
+ *                      type: number
+ *                      description: Valutazione
+ *                      example: 4
+ *                   explanation:
+ *                      type: string
+ *                      description: Testo recensione
+ *                      example: Molto bravo e competente, ma una volta non mi ha salutato.
+ *       400:
+ *         description: ID annuncio invalido o assente
+ *         content:
+ *           application/json:
+ *             schema:
  *               type: object
  *               properties:
- *                 data:
+ *                 missingParameters:
  *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       authorId:
- *                          type: string
- *                          description: Id insegnante.
- *                          example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                       adId:
- *                          type: string
- *                          description: Id dell'annuncio.
- *                          example: cccccccccccccccccccccccc
- *                       rating:
- *                          type: number
- *                          description: Stelline
- *                          example: 4
- *                       explanation:
- *                          type: string
- *                          description: Recensione.
- *                          example: Molto bravo e competente, ma una volta non mi ha salutato.
- *       400:
- *         description: Id invalido o assente
+ *                   description: Parametri mancanti
+ *                   example: ["adId"]
  */
 app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.userId)) {
