@@ -101,7 +101,7 @@ app.get("/api", (req, res) => {
  *               password:
  *                  type: string
  *                  description: La password dell'account associato dell'utente.
- *                  example: 0000
+ *                  example: 123456789
  *               email:
  *                  type: string
  *                  description: L'email dell'account associato all'utente.
@@ -118,42 +118,52 @@ app.get("/api", (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   properties:
- *                     firstName:
- *                        type: string
- *                        description: Il nome dell'utente.
- *                        example: Mario
- *                     lastName:
- *                        type: string
- *                        description: Il cognome dell'utente.
- *                        example: Rossi
- *                     nickname:
- *                        type: string
- *                        description: Il nickname dell'utente.
- *                        example: Red
- *                     email:
- *                        type: string
- *                        description: L'email dell'account associato all'utente.
- *                        example: mariorossi@a.it
- *                     biography:
- *                        type: string
- *                        description: Breve descrizione dell'utente.
- *                        example: Sono uno studente laureando in matematica di 38 anni, sono scrupoloso, educato e saluto sempre.
+ *                 firstName:
+ *                    type: string
+ *                    description: Il nome dell'utente.
+ *                    example: Mario
+ *                 lastName:
+ *                    type: string
+ *                    description: Il cognome dell'utente.
+ *                    example: Rossi
+ *                 nickname:
+ *                    type: string
+ *                    description: Il nickname dell'utente.
+ *                    example: Red
+ *                 email:
+ *                    type: string
+ *                    description: L'email dell'account associato all'utente.
+ *                    example: mariorossi@a.it
+ *                 biography:
+ *                    type: string
+ *                    description: Breve descrizione dell'utente.
+ *                    example: Sono uno studente laureando in matematica di 38 anni, sono scrupoloso, educato e saluto sempre.
  *       500:
- *         description: internal server error
- *       400:
- *         description: un paramentro non è stato trovato
+ *         description: Utente già esistente
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   MongoError.DUPLICATE_ENTRY.json(err):
- *                     type: json
- *                     description: errore parametro mancante
- *                     example: email
+ *                 error:
+ *                   type: string
+ *                   description: Codice errore identificato
+ *                   example: DUPLICATE_ENTRY
+ *                 values:
+ *                   type: array
+ *                   description: Nomi delle colonne duplicate
+ *                   example: []
+ *       400:
+ *         description: Un paramentro non è stato trovato
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 missingParameters:
+ *                   type: array
+ *                   description: Parametri mancanti
+ *                   example: ["email", "biography"]
  */
 app.put("/api/user/register", async (req, res) => {
   // Registro le informazioni su questo utente
