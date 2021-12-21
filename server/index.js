@@ -1615,27 +1615,31 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
  *                  example: eeeeeeeeeeeeeeeeeeeeeeee
  *     responses:
  *       200:
- *         description: Insegnamento.
+ *         description: Iscrizione.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                    sessionToken:
- *                       type: string
- *                       description: Session id insegnante.
- *                       example: aaaaaaaaaaaaaaaaaaaaaaaa
- *                    ipAddress:
- *                       type: string
- *                       description: ip address.
- *                       example: 0.0.0.0
- *                    status:
- *                       type: string
- *                       description: stato dell'iscrizione.
- *                       example: paid
+ *                  subscriberId:
+ *                     type: string
+ *                     description: ID studente richiedente
+ *                     example: dddddddddddddddddddddddd
+ *                  adId:
+ *                     type: string
+ *                     description: ID annuncio
+ *                     example: cccccccccccccccccccccccc
+ *                  status:
+ *                     type: string
+ *                     description: Stato attuale dell'iscrizione ("paid" dopo questa call)
+ *                     example: paid
+ *                  hours:
+ *                     type: number
+ *                     description: Ore di insegnamento desiderate
+ *                     example: 4
  *       403:
- *         description: L'utente non è iscritto
+ *         description: L'utente non è il proprietario dell'iscrizione
+ *       404:
  *         description: Iscrizione inesistente
  *       400:
  *         description: Parametri incorretti
@@ -1644,11 +1648,10 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 data:
  *                   missingParameters:
- *                     type: string
- *                     description: parametro mancante
- *                     example: sessionToken
+ *                     type: array
+ *                     description: Parametri mancanti
+ *                     example: ["sessionToken"]
  */
 app.put("/api/subscriptions/paySubscription", async (req, res) => {
   // ...
