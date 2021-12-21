@@ -318,19 +318,20 @@ app.post("/api/user/login", async (req, res) => {
  *         description: session id
  *     responses:
  *       200:
- *         description: il token è stato rimosso
+ *         description: Il token è stato rimosso e il logout è stato completato.
  *       400:
- *         description: il token non è stato trovato
+ *         description: Il token non è stato specificato o è invalido.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   missingParameters:
- *                     type: string
- *                     description: parametro mancante
- *                     example: token
+ *                 missingParameters:
+ *                   type: array
+ *                   description: Parametri mancanti
+ *                   example: ["token"]
+ *       500:
+ *         description: Errore Mongoose
  */
 app.delete("/api/user/logout/:token", async (req, res) => {
   // Rimuovo il token se l'IP del mittente corrisponde
