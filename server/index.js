@@ -376,7 +376,7 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  * @swagger
  * /api/user/checkToken/{token}:
  *   get:
- *     summary: Fa il check del token.
+ *     summary: Verifica la validità del token di sessione.
  *     description: Restituisce true se il token e l'IP corrispondono.
  *     tags:
  *       - user
