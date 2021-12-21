@@ -11,7 +11,7 @@
 </style>
 
 <script setup>
-defineProps({
+const props = defineProps({
   text: {
     default: "Nessun risultato!",
     type: String,
