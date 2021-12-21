@@ -496,7 +496,7 @@ app.get("/api/user/profile/:id", async (req, res) => {
  *             type: string
  *             example: bbbbbbbbbbbbbbbbbbbbbbbb
  *         required: true
- *         description: user id
+ *         description: ID Utente su cui fare a ricerca
  *     responses:
  *       200:
  *         description: Questi sono gli annunci scritti dall'utente.
@@ -512,31 +512,31 @@ app.get("/api/user/profile/:id", async (req, res) => {
  *                     properties:
  *                       authorId:
  *                         type: string
- *                         description: user Id insegnante.
+ *                         description: ID insegnante autore dell'annuncio
  *                         example: bbbbbbbbbbbbbbbbbbbbbbbb
  *                       title:
  *                         type: string
- *                         description: titolo.
+ *                         description: Titolo annuncio
  *                         example: Analisi 3
- *                       description:
+ *                       "description":
  *                         type: string
- *                         description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
- *                         example: 0.0.0.0
+ *                         description: Descrizione dell'annuncio
+ *                         example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
  *                       price:
  *                         type: number
- *                         description: prezzo all'ora.
+ *                         description: Prezzo all'ora.
  *                         example: 25
  *                       type:
  *                         type: string
- *                         description: tipologia insegnemento.
+ *                         description: Tipologia insegnemento.
  *                         example: online
  *                       lat:
  *                         type: number
- *                         description: latitudine posizione.
+ *                         description: Latitudine posizione (se type = offline).
  *                         example: -1
  *                       lon:
  *                         type: number
- *                         description: longitudine posizione.
+ *                         description: Longitudine posizione (se type = offline).
  *                         example: -1
  *       400:
  *         description: Parametro mancante.
@@ -545,11 +545,10 @@ app.get("/api/user/profile/:id", async (req, res) => {
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   missingParameters:
- *                     type: string
- *                     description: parametro mancante
- *                     example: id
+ *                 missingParameters:
+ *                   type: array
+ *                   description: Parametro mancante
+ *                   example: ["userId"]
  */
 app.get("/api/ads/list/:userId", async (req, res) => {
   if (mongoose.isValidObjectId(req.params.userId)) {
