@@ -126,6 +126,7 @@ export default defineComponent({
     --border-unique-strongcolor: #c6c6c6;
     --border-unique-shadow: #00000020;
     --bg-uri: url(assets/bg_pattern_dark.png);
+    --icons-filters: invert(100%) brightness(0.85);
   }
 }
 
@@ -140,6 +141,7 @@ export default defineComponent({
     --border-unique-strongcolor: #000000;
     --border-unique-shadow: #00000020;
     --bg-uri: url(assets/bg_pattern.png);
+    --icons-filters: none;
   }
 }
 

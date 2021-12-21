@@ -1,48 +1,50 @@
 <template>
-  <h1>Impostazioni</h1>
-  <div class="impostazioni tf-box">
-    <UserCard v-bind="userInfo" />
-    <TextEntry description="Nickname" v-model:text="form.nickname" />
-    <TextEntry
-      description="Biografia"
-      v-model:text="form.biography"
-      multiline
-    />
+  <div>
+    <h1>Impostazioni</h1>
+    <div class="impostazioni tf-box">
+      <UserCard v-bind="userInfo" />
+      <TextEntry description="Nickname" v-model:text="form.nickname" />
+      <TextEntry
+        description="Biografia"
+        v-model:text="form.biography"
+        multiline
+      />
 
-    <h2>Notifiche</h2>
-    <section class="notifications">
-      <ToggleEntry
-        v-model:toggle="form.notifications.ricevuta"
-        description="Richiesta insegnamento ricevuta da studente"
-      />
-      <ToggleEntry
-        v-model:toggle="form.notifications.annullata"
-        description="Richiesta insegnamento annullata da studente"
-      />
-      <ToggleEntry
-        v-model:toggle="form.notifications.pagamentoOK"
-        description="Pagamento insegnamento effettuato da studente"
-      />
-      <ToggleEntry
-        v-model:toggle="form.notifications.concluso"
-        description="Uno studente ha segnalato che l'insegnamento è stato portato a termine"
-      />
-      <ToggleEntry
-        v-model:toggle="form.notifications.accettato"
-        description="Un tutor ha accettato la richiesta di insegnamento"
-      />
-      <ToggleEntry
-        v-model:toggle="form.notifications.rifiutato"
-        description="Un tutor ha rifiutato la richiesta di insegnamento"
-      />
-    </section>
-    <section class="action-buttons">
-      <button @click="logout">Logout</button>
-      <button @click="cancelEdits" :disabled="settingsModified">
-        Annulla modifiche
-      </button>
-      <button @click="saveEdits" :disabled="settingsModified">Salva</button>
-    </section>
+      <h2>Notifiche</h2>
+      <section class="notifications">
+        <ToggleEntry
+          v-model:toggle="form.notifications.ricevuta"
+          description="Richiesta insegnamento ricevuta da studente"
+        />
+        <ToggleEntry
+          v-model:toggle="form.notifications.annullata"
+          description="Richiesta insegnamento annullata da studente"
+        />
+        <ToggleEntry
+          v-model:toggle="form.notifications.pagamentoOK"
+          description="Pagamento insegnamento effettuato da studente"
+        />
+        <ToggleEntry
+          v-model:toggle="form.notifications.concluso"
+          description="Uno studente ha segnalato che l'insegnamento è stato portato a termine"
+        />
+        <ToggleEntry
+          v-model:toggle="form.notifications.accettato"
+          description="Un tutor ha accettato la richiesta di insegnamento"
+        />
+        <ToggleEntry
+          v-model:toggle="form.notifications.rifiutato"
+          description="Un tutor ha rifiutato la richiesta di insegnamento"
+        />
+      </section>
+      <section class="action-buttons">
+        <button @click="logout">Logout</button>
+        <button @click="cancelEdits" :disabled="settingsModified">
+          Annulla modifiche
+        </button>
+        <button @click="saveEdits" :disabled="settingsModified">Salva</button>
+      </section>
+    </div>
   </div>
 </template>
 
