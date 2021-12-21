@@ -1916,6 +1916,39 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
  *                      description: Nuove impostazioni notifiche (111111 = attiva tutte)
  *                      example: 111111
  *                      required: false
+ *     responses:
+ *       200:
+ *         description: Aggiornamento impostazioni completato
+ *       400:
+ *         description: Si è verificato un errore con i parametri
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: boolean
+ *                   description: Si è verificato un errore?
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   description: Descrizione testuale dell'errore
+ *                   example: "Invalid settings object."
+ *       403:
+ *         description: Si è verificato un errore con il token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: boolean
+ *                   description: Si è verificato un errore?
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   description: Descrizione testuale dell'errore
+ *                   example: "Invalid token."
  */
 app.put("/api/settings/change", async (req, res) => {
   let requiredParameters = ["sessionToken", "updates"];
