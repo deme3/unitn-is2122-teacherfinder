@@ -122,5 +122,6 @@ test('[PUT] /api/user/register: Provo a registrare un utente duplicato', functio
     };
     assert.same(res.body.error, expectedResult.error, "Errore DUPLICATE_ENTRY");
     assert.end();
+    process.exit(0);
   });
 });
