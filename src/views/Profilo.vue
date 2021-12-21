@@ -1,5 +1,6 @@
 <template>
   <div class="tf-box">
+    <BackButton class="not-inline" />
     <UserCard
       :firstName="userProfile.firstName"
       :lastName="userProfile.lastName"
@@ -26,6 +27,11 @@
 </template>
 
 <style scoped>
+.not-inline {
+  display: block;
+  margin: 1em;
+}
+
 .profile-parameter {
   margin: 2em 1em;
 }
@@ -41,6 +47,7 @@
 import UserCard from "@/components/UserCard.vue";
 import SearchResult from "@/components/SearchResult.vue";
 import ReviewSection from "@/components/ReviewSection.vue";
+import BackButton from "@/components/BackButton.vue";
 import { onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 
