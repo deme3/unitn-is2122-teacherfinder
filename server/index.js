@@ -2069,9 +2069,17 @@ const lanIp =
     .filter((item) => !item.internal && item.family === "IPv4")
     .find(Boolean)?.address || "( LAN IP )";
 
+
+
 // Avvio il server
 app.enable("trust proxy");
 // prettier-ignore
+if(process.env.SHUT_UP) {
+  app.listen(port, async () => {
+    await Database.readConfiguration();
+    await Database.connect();
+  });
+} else
 app.listen(port, async () => {
   if (process?.env?.NODE_ENV !== "development")
     console.log(chalk.black.bgBlue(" INFO ") + " Avvio server di deployment...");
@@ -2103,3 +2111,5 @@ app.listen(port, async () => {
   console.log("  - Locale:   " + chalk.cyan(`http://localhost:${port}/api/docs`));
   console.log("  - Network:  " + chalk.cyan(`http://${lanIp}:${port}/api/docs\n`));
 });
+
+module.exports = app;
