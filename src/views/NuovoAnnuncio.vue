@@ -18,7 +18,7 @@
     </form>
     <section class="action-buttons">
       <button
-        :disabled="props.userInfo.sessionToken === ''"
+        :disabled="userInfo.sessionToken === ''"
         @click.prevent="onSubmit"
       >
         Pubblica
@@ -53,13 +53,9 @@ button:disabled {
 <script setup>
 import TextEntry from "@/components/TextEntry.vue";
 import BackButton from "@/components/BackButton.vue";
-import { reactive } from "vue";
+import { reactive, inject } from "vue";
 
-const props = defineProps({
-  userInfo: {
-    sessionToken: String,
-  },
-});
+const userInfo = inject("userInfo");
 
 const newAd = reactive({
   title: "",
@@ -75,7 +71,7 @@ const onSubmit = async () => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      sessionToken: props.userInfo.sessionToken,
+      sessionToken: userInfo.sessionToken,
       title: newAd.title,
       description: newAd.description,
       price: newAd.price,
