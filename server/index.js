@@ -834,87 +834,85 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
  *             properties:
  *               sessionToken:
  *                  type: string
- *                  description: session id.
+ *                  description: ID sessione (esadecimale)
  *                  example: aaaaaaaaaaaaaaaaaaaaaaaa
- *               authorId:
- *                  type: string
- *                  description: user Id insegnante.
- *                  example: bbbbbbbbbbbbbbbbbbbbbbbb
  *               title:
  *                  type: string
- *                  description: titolo.
+ *                  description: Titolo annuncio
  *                  example: Analisi 3
  *               description:
  *                  type: string
- *                  description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
- *                  example: 0.0.0.0
+ *                  description: Descrizione dell'annuncio
+ *                  example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
  *               price:
  *                  type: number
- *                  description: prezzo all'ora.
+ *                  description: Prezzo all'ora
  *                  example: 25
  *               type:
  *                  type: string
- *                  description: tipologia insegnemento.
+ *                  description: Tipologia insegnemento (offline non implementato)
  *                  example: online
  *               lat:
  *                  type: number
- *                  description: latitudine posizione.
+ *                  description: Latitudine posizione (se type = offline, altrimenti -1)
  *                  example: -1
  *               lon:
  *                  type: number
- *                  description: longitudine posizione.
+ *                  description: Longitudine posizione (se type = offline, altrimenti -1)
  *                  example: -1
  *     responses:
  *       200:
- *         description: annuncio.
+ *         description: Restituisce l'annuncio appena creato
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                    authorId:
- *                       type: string
- *                       description: user Id insegnante.
- *                       example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                    title:
- *                       type: string
- *                       description: titolo.
- *                       example: Analisi 3
- *                    description:
- *                       type: string
- *                       description: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
- *                       example: 0.0.0.0
- *                    price:
- *                       type: number
- *                       description: prezzo all'ora.
- *                       example: 25
- *                    type:
- *                       type: string
- *                       description: tipologia insegnemento.
- *                       example: online
- *                    lat:
- *                       type: number
- *                       description: latitudine posizione.
- *                       example: -1
- *                    lon:
- *                       type: number
- *                       description: longitudine posizione.
- *                       example: -1
+ *                 _id:
+ *                   type: string
+ *                   description: ID nuovo annuncio
+ *                   example: aaaaaaaaaaaaaaaaaaaaaaaa
+ *                 authorId:
+ *                   type: string
+ *                   description: ID autore dell'annuncio
+ *                   example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                 title:
+ *                   type: string
+ *                   description: Titolo annuncio
+ *                   example: Analisi 3
+ *                 description:
+ *                   type: string
+ *                   description: Descrizione dell'annuncio
+ *                   example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                 price:
+ *                   type: number
+ *                   description: Prezzo all'ora
+ *                   example: 25
+ *                 type:
+ *                   type: string
+ *                   description: Tipologia insegnemento (offline non implementato)
+ *                   example: online
+ *                 lat:
+ *                   type: number
+ *                   description: Latitudine posizione (se type = offline, altrimenti -1)
+ *                   example: -1
+ *                 lon:
+ *                   type: number
+ *                   description: Longitudine posizione (se type = offline, altrimenti -1)
+ *                   example: -1
  *       403:
- *         description: utente non autorizzato perché non registrato
+ *         description: Sessione invalida, utente non autorizzato
  *       400:
- *         description: Parametro mancante.
+ *         description: Uno o più parametri assenti.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   missingParameters:
- *                     type: string
- *                     description: parametro mancante
- *                     example: sessionToken
+ *                 missingParameters:
+ *                   type: array
+ *                   description: Parametri mancanti
+ *                   example: ["sessionToken", "price", "lat"]
  */
 app.post("/api/ads/createAd", async (req, res) => {
   let requiredParameters = [
