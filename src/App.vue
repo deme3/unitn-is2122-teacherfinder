@@ -282,8 +282,8 @@ input[type="submit"] {
   padding: 8px 16px;
 }
 
-button:hover,
-input[type="submit"]:hover {
+button:not(:disabled):hover,
+input[type="submit"]:not(:disabled):hover {
   transition: box-shadow 0.1s ease-in-out, transform 0.1s ease-in-out;
   transform: translate(1px, 1px);
   box-shadow: 1px 1px 0 var(--border-unique-shadow);
@@ -300,8 +300,8 @@ input[type="submit"]:hover {
   }
 }
 
-button:active,
-input[type="submit"]:active {
+button:not(:disabled):active,
+input[type="submit"]:not(:disabled):active {
   transition: box-shadow 0s, transform 0s;
   transform: translate(2px, 2px);
   box-shadow: 0px 0px 0 var(--border-unique-shadow);
