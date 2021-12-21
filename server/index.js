@@ -353,7 +353,7 @@ app.delete("/api/user/logout/:token", async (req, res) => {
 
 /**
  * @swagger
- * /api/user/checkToken/{token}/user/{userId}:
+ * /api/user/checkToken/{token}:
  *   get:
  *     summary: Fa il check del token.
  *     description: Restituisce true se il token e l'IP corrispondono.
@@ -365,25 +365,62 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  *             example: aaaaaaaaaaaaaaaaaaaaaaaa
  *         required: true
  *         description: session id
- *       - in: path
- *         name: userId
- *         schema:
- *             type: string
- *             example: bbbbbbbbbbbbbbbbbbbbbbbb
- *         required: true
- *         description: user id
  *     responses:
  *       200:
- *         description: token e IP corrispondono.
+ *         description: Token e IP corrispondono.
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     type: boolean
+ *                 exists:
+ *                   type: boolean
+ *                   description: La sessione esiste se true
+ *                   example: true
+ *                 error:
+ *                   type: boolean
+ *                   description: Si è verificato un errore se true
+ *                   example: false
+ *                 session:
+ *                   type: object
+ *                   description: Si è verificato un errore se true
+ *                   example: { _id: "aaaaaaaaaaaaaaaaaaaaaaaa", userId: "bbbbbbbbbbbbbbbbbbbbbbbb", createdAt: "2021-12-20T19:00:00.000Z" }
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: ID sessione
+ *                     userId:
+ *                       type: string
+ *                       description: ID utente associato alla sessione
+ *                     createdAt:
+ *                       type: string
+ *                       description: Data di creazione della sessione
+ *                 profile:
+ *                   type: object
+ *                   description: Profilo dell'utente associato a questa sessione
+ *                   example: { firstName: "Mario", lastName: "Rossi", nickname: "Red", email: "mariorossi@a.it", biography: "Sono uno studente laureando in matematica di 38 anni, sono scrupoloso, educato e saluto sempre.", notifications: "010110" }
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       description: ID utente
+ *                     firstName:
+ *                       type: string
+ *                       description: Nome utente
+ *                     lastName:
+ *                       type: string
+ *                       description: Cognome utente
+ *                     nickname:
+ *                       type: string
+ *                       description: Nickname utente
+ *                     email:
+ *                       type: string
+ *                       description: E-mail utente
+ *                     biography:
+ *                       type: string
+ *                       description: Biografia utente
+ *                     notifications:
+ *                       type: string
+ *                       description: Codifica delle impostazioni delle notifiche dell'utente
  */
 app.get("/api/user/checkToken/:token", async (req, res) => {
   // Restituisco true se il token e l'IP corrispondono
