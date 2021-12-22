@@ -20,7 +20,7 @@
             <div class="tutor-fullname">
               {{ adInfo.author.firstName }} {{ adInfo.author.lastName }}
             </div>
-            <div class="tutor-nickname">{{ adInfo.author.nickname }}</div>
+            <div class="tutor-nickname">@{{ adInfo.author.nickname }}</div>
           </div>
         </div>
         <div class="richieste">
