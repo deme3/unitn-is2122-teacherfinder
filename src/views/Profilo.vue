@@ -41,6 +41,8 @@
 
 .profile-parameter > div {
   font-style: italic;
+  word-wrap: break-word;
+  white-space: pre-line;
 }
 
 .profile-parameter .parameter-descriptor {
