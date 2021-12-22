@@ -84,11 +84,11 @@ const onTutorInfoClick = () => {
 };
 
 const onBackClick = (preventDefault) => {
-  if(window.history.state.back.includes("pubblica-annunci")) {
+  if (window.history.state.back.includes("pubblica-annunci")) {
     preventDefault();
     router.push({ name: "Annunci" });
   }
-}
+};
 </script>
 
 <style scoped>

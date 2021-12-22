@@ -24,13 +24,13 @@ let prevent = false;
 const emit = defineEmits(["backclick"]);
 
 const onClick = function () {
-  emit('backclick', function preventDefault() {
+  emit("backclick", function preventDefault() {
     prevent = true;
   });
 
   // eseguo next tick
-  setTimeout(function() {
-    if(!prevent) {
+  setTimeout(function () {
+    if (!prevent) {
       router.back();
     }
   }, 0);

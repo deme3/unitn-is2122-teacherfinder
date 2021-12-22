@@ -219,11 +219,15 @@ const haveNotificationsChanged = () => {
 };
 
 const actionDisabled = computed(() => {
-  return !(
-    hasChanged("nickname") ||
-    hasChanged("biography") ||
-    haveNotificationsChanged()
-  ) || (form.biography.trim() == "" || form.nickname.trim() == "");
+  return (
+    !(
+      hasChanged("nickname") ||
+      hasChanged("biography") ||
+      haveNotificationsChanged()
+    ) ||
+    form.biography.trim() == "" ||
+    form.nickname.trim() == ""
+  );
 });
 
 loadSettings();
