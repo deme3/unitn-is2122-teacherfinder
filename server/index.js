@@ -107,7 +107,8 @@ const hoursChain = () => body("hours").isNumeric({ min: 1, max: 500 });
 const subIdChain = () => body("subId").isMongoId();
 
 // Settings
-const notificationsChain = (name = "updates.notifications") => body(name);
+const notificationsChain = (name = "updates.notifications") =>
+  body(name).matches("[10]{6}");
 
 app.get("/api", (req, res) => {
   res.send({ works: true });
