@@ -2380,7 +2380,6 @@ app.put(
     }
 
     try {
-      console.log(req.body.updates);
       let updateResult = await User.updateOne(
         { _id: myToken },
         req.body.updates
