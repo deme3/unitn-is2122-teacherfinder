@@ -48,7 +48,6 @@
 
 <script setup>
 import { ref } from "vue";
-import { defineProps } from "vue";
 
 const pictureURL = ref("https://picsum.photos/100");
 
