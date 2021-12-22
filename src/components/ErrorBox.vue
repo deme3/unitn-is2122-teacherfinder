@@ -1,5 +1,5 @@
 <template>
-  <div class="tf-box tf-box-err" v-if="isShown">
+  <div :class="'tf-box ' + 'tf-box-err ' + animClass" v-if="isShown">
     {{ text }}
   </div>
 </template>
@@ -15,14 +15,21 @@ const props = defineProps({
 
 const isShown = ref(false);
 const text = ref(props.text);
+const animClass = ref("");
+
+const hide = () => (isShown.value = false);
+const show = () => {
+  isShown.value = true;
+  if (animClass.value !== "animate") {
+    animClass.value = "animate";
+    setTimeout(() => (animClass.value = ""), 300);
+  }
+};
 
 const showText = (txt) => {
   text.value = txt;
-  isShown.value = true;
+  show();
 };
-
-const hide = () => (isShown.value = false);
-const show = () => (isShown.value = true);
 
 const isVisible = () => isShown.value;
 
@@ -40,5 +47,23 @@ defineExpose({
   border-color: #ff9595;
   background: #ffd1c9;
   color: #584e49;
+}
+
+.animate {
+  animation: myAnim 300ms ease 0s 1 normal forwards;
+}
+
+@keyframes myAnim {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 </style>
