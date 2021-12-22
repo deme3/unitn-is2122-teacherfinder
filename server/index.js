@@ -216,20 +216,34 @@ app.get("/api", (req, res) => {
  *                   description: Nomi delle colonne duplicate
  *                   example: []
  *       400:
- *         description: Parametri richiesti mancanti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["email", "biography"]
- *                 emptyParameters:
- *                   type: array
- *                   description: Parametri vuoti
- *                   example: ["firstName", "lastName"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "firstName"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.put(
   "/api/user/register",
@@ -317,16 +331,34 @@ app.put(
  *       401:
  *         description: Credenziali incorrette
  *       400:
- *         description: Parametri richiesti mancanti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["persistent"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "nickname"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.post(
   "/api/user/login",
@@ -384,16 +416,34 @@ app.post(
  *       200:
  *         description: Il token è stato rimosso e il logout è stato completato.
  *       400:
- *         description: Il token non è stato specificato o è invalido.
+ *         description: Token mancante o invalido
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["token"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "token"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  *       500:
  *         description: Errore Mongoose
  */
@@ -491,6 +541,35 @@ app.delete(
  *                     notifications:
  *                       type: string
  *                       description: Codifica delle impostazioni delle notifiche dell'utente
+ *       400:
+ *         description: Parametri richiesti mancanti o invalidi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "token"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  */
 app.get(
   "/api/user/checkToken/:token",
@@ -659,6 +738,35 @@ app.get(
  *                             type: string
  *                             description: Impostazioni notifiche utente
  *                             example: "010110"
+ *       400:
+ *         description: Parametri richiesti mancanti o invalidi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "id"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  */
 app.get(
   "/api/user/profile/:id",
@@ -764,16 +872,34 @@ app.get(
  *                         description: Longitudine posizione (se type = offline).
  *                         example: -1
  *       400:
- *         description: Parametro mancante.
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametro mancante
- *                   example: ["userId"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "userId"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  */
 app.get(
   "/api/ads/list/:userId",
@@ -997,7 +1123,34 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  *       404:
  *         description: Annuncio non trovato
  *       400:
- *         description: ID invalido o assente
+ *         description: Parametri richiesti mancanti o invalidi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "id"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  *       500:
  *         description: Errore Mongoose
  */
@@ -1154,24 +1307,34 @@ app.get(
  *       403:
  *         description: Sessione invalida, utente non autorizzato
  *       400:
- *         description: Uno o più parametri assenti.
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["sessionToken", "price", "lat"]
- *                 emptyParameters:
- *                   type: array
- *                   description: Parametri vuoti
- *                   example: ["sessionToken", "type", "description"]
- *                 invalidParameters:
- *                   type: array
- *                   description: Parametri invalidi (price negativo)
- *                   example: ["price"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "-5"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "price"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.post(
   "/api/ads/createAd",
@@ -1264,16 +1427,34 @@ app.post(
  *                      description: Testo recensione
  *                      example: Molto bravo e competente, ma una volta non mi ha salutato.
  *       400:
- *         description: ID annuncio invalido o assente
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["adId"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "adId"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  *       500:
  *         description: Errore Mongoose
  */
@@ -1342,16 +1523,34 @@ app.get(
  *                      description: Testo recensione
  *                      example: Molto bravo e competente, ma una volta non mi ha salutato.
  *       400:
- *         description: ID annuncio invalido o assente
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["adId"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "userId"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  */
 app.get(
   "/api/reviews/getUserReviews/:userId",
@@ -1437,16 +1636,34 @@ app.get(
  *       403:
  *         description: Sessione invalida, utente non autorizzato.
  *       400:
- *         description: Uno o più parametri mancanti.
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["sessionToken", "rating"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.post(
   "/api/reviews/postReview",
@@ -1537,16 +1754,34 @@ app.post(
  *       403:
  *         description: Sessione invalida, utente non autorizzato.
  *       400:
- *         description: Uno o più parametri mancanti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["sessionToken", "hours"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.put(
   "/api/subscriptions/requestSubscription",
@@ -1632,16 +1867,34 @@ app.put(
  *       404:
  *         description: Iscrizione inesistente
  *       400:
- *         description: Parametri incorretti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                   missingParameters:
- *                     type: array
- *                     description: Parametri mancanti
- *                     example: ["sessionToken"]
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.put(
   "/api/subscriptions/acceptSubscription",
@@ -1726,16 +1979,34 @@ app.put(
  *       404:
  *         description: Iscrizione inesistente
  *       400:
- *         description: Parametri incorretti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                   missingParameters:
- *                     type: array
- *                     description: Parametri mancanti
- *                     example: ["sessionToken"]
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.put(
   "/api/subscriptions/rejectSubscription",
@@ -1819,16 +2090,34 @@ app.put(
  *       404:
  *         description: Iscrizione inesistente
  *       400:
- *         description: Parametri incorretti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                   missingParameters:
- *                     type: array
- *                     description: Parametri mancanti
- *                     example: ["sessionToken"]
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.put(
   "/api/subscriptions/cancelSubscription",
@@ -1913,16 +2202,34 @@ app.put(
  *       404:
  *         description: Iscrizione inesistente
  *       400:
- *         description: Parametri incorretti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                   missingParameters:
- *                     type: array
- *                     description: Parametri mancanti
- *                     example: ["sessionToken"]
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
 app.put(
   "/api/subscriptions/paySubscription",
@@ -2001,20 +2308,34 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
  *       200:
  *         description: Aggiornamento impostazioni completato
  *       400:
- *         description: Si è verificato un errore con i parametri
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 error:
- *                   type: boolean
- *                   description: Si è verificato un errore?
- *                   example: true
- *                 message:
- *                   type: string
- *                   description: Descrizione testuale dell'errore
- *                   example: "Invalid settings object."
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  *       403:
  *         description: Si è verificato un errore con il token
  *         content:
