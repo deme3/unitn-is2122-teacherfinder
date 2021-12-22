@@ -24,7 +24,7 @@ const MongoError = require("./database/MongoError.js");
 const app = express();
 const port = 8080;
 
-//moduli per generare la documentazione delle API
+// Opzioni per generare la documentazione delle API.
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
@@ -54,11 +54,10 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// BodyParser per JSON
+// BodyParser per JSON.
 app.use(express.json());
 
-// Chain di validazione sanitizing per express-validator
-
+// Chain di validazione sanitizing per express-validator:
 // User
 const firstNameChain = () =>
   body("firstName").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
@@ -80,8 +79,9 @@ const emailChain = () => body("email").trim().isEmail().normalizeEmail();
 const biographyChain = (name = "biography") =>
   body(name).trim().stripLow().escape();
 const persistentChain = () => body("persistent").isBoolean();
-const tokenChain = () => check("token").isMongoId();
 const sessionTokenChain = () => body("sessionToken").isMongoId();
+
+const tokenChain = () => check("token").isMongoId();
 const idChain = () => check("id").isMongoId();
 const userIdChain = () => check("userId").isMongoId();
 
@@ -331,7 +331,7 @@ app.put(
  */
 app.post(
   "/api/user/login",
-  nicknameChain(),
+  body("nickname").exists(), // Il login può essere fatto sia per nickname che per email.
   passwordChain(),
   persistentChain(),
 
@@ -340,19 +340,19 @@ app.post(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Prendo l'IP dell'utente e lo registro assieme al token
+    // Controllo se esiste l'utente.
     let myUser = await User.findOne({
       $or: [
-        { nickname: req.body.nickname, password: req.body.password }, // match per nickname
-        { email: req.body.nickname, password: req.body.password }, // match per e-mail
+        { nickname: req.body.nickname, password: req.body.password }, // match per nickname.
+        { email: req.body.nickname, password: req.body.password }, // match per e-mail.
       ],
     }).exec();
-
     if (myUser === null) {
       res.sendStatus(401);
       return;
     }
 
+    // Prendo l'IP dell'utente e lo registro assieme al token.
     try {
       let mySession = await Session.create({
         userId: myUser._id,
@@ -408,7 +408,7 @@ app.delete(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Rimuovo il token se l'IP del mittente corrisponde
+    // Rimuovo il token se l'IP del mittente corrisponde.
     try {
       let deletedCount = await Session.deleteOne({
         _id: req.params.token,
@@ -503,10 +503,8 @@ app.get(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Restituisco true se il token e l'IP corrispondono
-    // Session.checkToken fa type checking degli ID al suo interno!
+    // Controllo se la sessione associata all'ip esiste.
     let sessionExists = await Session.checkToken(req.params.token, req.ip);
-
     if (!sessionExists.exists || sessionExists.expired) {
       res.status(200).json({ ...sessionExists });
       return;
@@ -1020,7 +1018,7 @@ app.get(
           localField: "authorId",
           foreignField: "_id",
           as: "author",
-          pipeline: [{ $project: { password: 0 } }], // escludo la password dall'autore
+          pipeline: [{ $project: { password: 0 } }], // Escludo la password dall'autore.
         })
         .project({
           title: 1,
@@ -1190,14 +1188,14 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
 
     try {
-      // Verifico di essere loggato ed ottengo il mio userId
+      // Verifico di essere loggato ed ottengo il mio userId.
       let currentUserId = await Session.getUserBySession(
         req.body.sessionToken,
         req.ip
       );
 
       if (currentUserId !== null) {
-        // Se sono loggato uso il mio ID per creare un annuncio
+        // Se sono loggato allora uso il mio ID per creare un annuncio.
         let myNewAd = await Advertisement.create({
           authorId: currentUserId,
           title: req.body.title,
@@ -1364,11 +1362,11 @@ app.get(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Trovo tutti gli annunci dell'utente
+    // Trovo tutti gli annunci dell'utente.
     let userAds = await User.findUserAds(req.params.userId);
     let reviews = [];
 
-    // Per ogni annuncio aggiungo alla lista tutte le recensioni
+    // Per ogni annuncio aggiungo alla lista tutte le recensioni.
     for (let ad of userAds) {
       reviews.push(...(await Review.find({ adId: ad._id }).exec()));
     }
@@ -1462,8 +1460,7 @@ app.post(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Verifico di essere un utente loggato e ottengo il mio userId
-    // Session.getUserBySession fa già type checking!
+    // Verifico di essere un utente loggato e ottengo il mio userId.
     let authorId = await Session.getUserBySession(
       req.body.sessionToken,
       req.ip
@@ -1473,7 +1470,7 @@ app.post(
       return;
     }
 
-    // Creo la recensione con il mio ID
+    // Creo la recensione con il mio ID.
     let myNewReview = await Review.create({
       authorId,
       adId: req.body.adId,
@@ -1657,7 +1654,7 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Not Found: Non posso aggiornare un'iscrizione inesistente
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription === null) {
       res.sendStatus(404);
@@ -1671,10 +1668,10 @@ app.put(
     );
 
     if (updateOp.success) {
-      // Se l'update ha funzionato mando la nuova entry
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
       res.status(200).json(updateOp.result);
     } else {
-      // Forbidden: Non sono il proprietario dell'annuncio
+      // Forbidden: Non sono il proprietario dell'annuncio.
       res.status(403).json(updateOp.result);
     }
   }
@@ -1751,7 +1748,7 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Not Found: Non posso aggiornare un'iscrizione inesistente
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription === null) {
       res.sendStatus(404);
@@ -1765,10 +1762,10 @@ app.put(
     );
 
     if (updateOp.success) {
-      // Se l'update ha funzionato mando la nuova entry
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
       res.status(200).json(updateOp.result);
     } else {
-      // Forbidden: Non sono il proprietario dell'annuncio
+      // Forbidden: Non sono il proprietario dell'annuncio.
       res.status(403).json(updateOp.result);
     }
   }
@@ -1846,7 +1843,7 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Not Found: Non posso aggiornare un'iscrizione inesistente
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription === null) {
       res.sendStatus(404);
@@ -1860,10 +1857,10 @@ app.put(
     );
 
     if (updateOp.success) {
-      // Se l'update ha funzionato mando la nuova entry
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
       res.status(200).json(updateOp.result);
     } else {
-      // Forbidden: Non sono il proprietario dell'iscrizione
+      // Forbidden: Non sono il proprietario dell'iscrizione.
       res.status(403).json(updateOp.result);
     }
   }
@@ -1941,7 +1938,7 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Not Found: Non posso aggiornare un'iscrizione inesistente
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription === null) {
       res.sendStatus(404);
@@ -1955,10 +1952,10 @@ app.put(
     );
 
     if (updateOp.success) {
-      // Se l'update ha funzionato mando la nuova entry
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
       res.status(200).json(updateOp.result);
     } else {
-      // Forbidden: Non sono il proprietario dell'annuncio
+      // Forbidden: Non sono il proprietario dell'annuncio.
       res.sendStatus(403);
     }
   }
@@ -2072,9 +2069,8 @@ app.put(
   }
 );
 
-// Permetto a Vue.js di gestire le path single-page con Vue Router
-// Sul front-end compilato!
-// Solo in deployment.
+// Permetto a Vue.js di gestire le path single-page con Vue Router, sul front-end compilato!
+// Servo il frontend solo se non sono in development mode.
 if (process?.env?.NODE_ENV !== "development") {
   app.use(history());
   app.use("/", express.static(path.join(__dirname, "..", "dist")));
@@ -2088,6 +2084,7 @@ const lanIp =
 
 // Avvio il server
 app.enable("trust proxy");
+
 // prettier-ignore
 if(process.env.SHUT_UP) {
   app.listen(port, async () => {
