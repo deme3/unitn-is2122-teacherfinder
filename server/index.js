@@ -96,7 +96,7 @@ const priceChain = () => body("price").isNumeric({ min: 1, max: 500 });
 const typeChain = () => body("type").exists();
 const latChain = () => body("lat").exists();
 const lonChain = () => body("lon").exists();
-const adIdChain = () => body("adIdChain").isMongoId();
+const adIdChain = () => body("adId").isMongoId();
 
 // Review
 const ratingChain = () => body("rating").isNumeric({ min: 1, max: 5 });
@@ -104,7 +104,7 @@ const explanationChain = () => body("explanation").trim().stripLow().escape();
 
 // Subscription
 const hoursChain = () => body("hours").isNumeric({ min: 1, max: 500 });
-const subIdChain = () => body("subIdChain").isMongoId();
+const subIdChain = () => body("subId").isMongoId();
 
 // Settings
 const notificationsChain = (name = "updates.notifications") => body(name);
