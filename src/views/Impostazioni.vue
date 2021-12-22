@@ -3,7 +3,7 @@
     <h1>Impostazioni</h1>
     <div class="impostazioni tf-box">
       <UserCard v-bind="userInfo" />
-      <ErrorBox :text="errorBox.text" v-if="errorBox.isVisible" />
+      <ErrorBox ref="errorBox" />
       <TextEntry description="Nickname" v-model:text="form.nickname" />
       <TextEntry
         description="Biografia"
@@ -71,12 +71,13 @@
 </style>
 
 <script setup>
-import { reactive, computed, inject } from "vue";
+import { reactive, computed, inject, ref } from "vue";
 import ErrorBox from "@/components/ErrorBox.vue";
 import UserCard from "@/components/UserCard.vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
 
+const errorBox = ref(null); // ErrorBox component
 document.title = "TeacherFinder – Impostazioni";
 const userInfo = reactive(inject("userInfo"));
 console.log(userInfo);
@@ -88,15 +89,6 @@ const notificationsString = (formObject) => {
 
   return str;
 };
-
-const errorBox = reactive({
-  isVisible: false,
-  text: "Errore",
-  showText: (text) => {
-    errorBox.text = text;
-    errorBox.isVisible = true;
-  },
-});
 
 const notificationsStringToFormObject = (str) => {
   if (typeof str === "undefined")
@@ -168,6 +160,8 @@ const cancelEdits = () => {
   form.notifications = {
     ...notificationsStringToFormObject(userInfo.notifications),
   };
+
+  errorBox.value.hide();
 };
 
 const saveEdits = async () => {
@@ -195,9 +189,11 @@ const saveEdits = async () => {
       let res = await saveResults.json();
       console.log(res);
       if (res.error === "DUPLICATE_ENTRY")
-        errorBox.showText("Il nickname che hai inserito non è disponibile.");
-    } finally {
-      errorBox.showText("Errore nel salvataggio delle impostazioni.");
+        errorBox.value.showText(
+          "Il nickname che hai inserito non è disponibile."
+        );
+    } catch (e) {
+      errorBox.value.showText("Errore nel salvataggio delle impostazioni.");
       console.log(saveResults.text);
     }
     return;
@@ -211,6 +207,8 @@ const saveEdits = async () => {
     if (query.updates.biography) userInfo.biography = query.updates.biography;
     if (query.updates.notifications)
       userInfo.notifications = query.updates.notifications;
+    
+    errorBox.value.hide();
   }
 };
 

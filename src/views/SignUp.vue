@@ -23,7 +23,7 @@
             description="Ripeti password"
             password
           />
-          <ErrorBox v-if="errorBox.isVisible" :text="errorBox.text" />
+          <ErrorBox ref="errorBox" />
         </div>
         <div class="register-btn-wrapper"><button>Registrati</button></div>
       </form>
@@ -57,6 +57,7 @@ import ErrorBox from "@/components/ErrorBox.vue";
 import SmallBox from "@/components/SmallBox.vue";
 
 const router = useRouter();
+const errorBox = ref(null); // definito nel template.
 
 document.title = "TeacherFinder – Registrati";
 const form = reactive({
@@ -69,15 +70,6 @@ const form = reactive({
 });
 const passRepeat = ref("");
 
-const errorBox = reactive({
-  isVisible: false,
-  text: "Errore",
-  showText: (text) => {
-    errorBox.text = text;
-    errorBox.isVisible = true;
-  },
-});
-
 const showRegistrazioneCompletata = ref(false);
 const submitSignUp = async () => {
   if (
@@ -89,14 +81,14 @@ const submitSignUp = async () => {
   ) {
     console.log("[!] Campi mancanti");
 
-    errorBox.showText("Ups, alcuni campi sono vuoti.");
+    errorBox.value.showText("Ups, alcuni campi sono vuoti.");
     return;
   }
 
   if (form.password != passRepeat.value) {
     console.log("[!] Le password non combaciano");
 
-    errorBox.showText("Oops, le password non combaciano.");
+    errorBox.value.showText("Oops, le password non combaciano.");
     return;
   }
 
@@ -123,7 +115,7 @@ const submitSignUp = async () => {
       `[${resp.status}] Errore nella registrazione!\n`,
       await resp.text()
     );
-    errorBox.showText(
+    errorBox.value.showText(
       "Esite già un utente con quel nome utente o quella email. Usa un nome utente o un'email diversa."
     );
   }
