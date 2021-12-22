@@ -686,41 +686,38 @@ app.get("/api/user/profile/:id", async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       authorId:
- *                         type: string
- *                         description: ID insegnante autore dell'annuncio (esadecimale)
- *                         example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                       title:
- *                         type: string
- *                         description: Titolo annuncio
- *                         example: Analisi 3
- *                       "description":
- *                         type: string
- *                         description: Descrizione dell'annuncio
- *                         example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
- *                       price:
- *                         type: number
- *                         description: Prezzo all'ora.
- *                         example: 25
- *                       type:
- *                         type: string
- *                         description: Tipologia insegnemento.
- *                         example: online
- *                       lat:
- *                         type: number
- *                         description: Latitudine posizione (se type = offline).
- *                         example: -1
- *                       lon:
- *                         type: number
- *                         description: Longitudine posizione (se type = offline).
- *                         example: -1
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   authorId:
+ *                     type: string
+ *                     description: ID insegnante autore dell'annuncio (esadecimale)
+ *                     example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                   title:
+ *                     type: string
+ *                     description: Titolo annuncio
+ *                     example: Analisi 3
+ *                   "description":
+ *                     type: string
+ *                     description: Descrizione dell'annuncio
+ *                     example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                   price:
+ *                     type: number
+ *                     description: Prezzo all'ora.
+ *                     example: 25
+ *                   type:
+ *                     type: string
+ *                     description: Tipologia insegnemento.
+ *                     example: online
+ *                   lat:
+ *                     type: number
+ *                     description: Latitudine posizione (se type = offline).
+ *                     example: -1
+ *                   lon:
+ *                     type: number
+ *                     description: Longitudine posizione (se type = offline).
+ *                     example: -1
  *       400:
  *         description: Parametro mancante.
  *         content:
