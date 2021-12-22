@@ -181,10 +181,6 @@ body {
   justify-content: right;
 }
 
-#logo #logo-text {
-  width: 100%;
-}
-
 #logo-text {
   height: 32px;
   transform: scale(1.1);
