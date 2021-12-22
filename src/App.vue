@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div id="logo">
+    <div id="logo" @click.prevent="$router.push({ name: 'Ricerca' })">
       <div></div>
       <img src="@/assets/logo.svg" id="logo-text" />
       <div id="user-info">
@@ -279,6 +279,10 @@ input[type="submit"]:not(:disabled):active {
   input[type="submit"]:not(:disabled):active {
     transform: translate(1px, 1px);
   }
+}
+
+button:disabled {
+  opacity: 0.5;
 }
 
 .edit-icon {
