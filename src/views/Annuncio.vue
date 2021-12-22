@@ -146,6 +146,10 @@ const onReviewSubmit = (newReview) => {
   font-weight: bold;
 }
 
+.info h1, .ad-desc {
+  word-wrap: break-word;
+}
+
 @media only screen and (max-width: 640px) {
 }
 </style>
