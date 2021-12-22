@@ -184,6 +184,7 @@ body {
 #logo-text {
   height: 32px;
   transform: scale(1.1);
+  filter: var(--icons-filters);
 }
 
 #app {
