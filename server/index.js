@@ -995,8 +995,8 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
       
       let rating = 0;
       
-      if(reviews !== null && reviews.length > 0)
-        rating = Math.round(reviews.reduce((prev, curr) => { return prev.rating + curr.rating; }) / reviews.length);
+      if(reviews !== null && reviews.length > 0) 
+        rating = Math.round(reviews.reduce((prev, curr) => { return prev + curr.rating; }, 0) / reviews.length);
       
       if (foundAd !== null) {
         res.status(200).json({ ...foundAd[0], rating, reviews });
