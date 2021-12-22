@@ -160,6 +160,8 @@ const cancelEdits = () => {
   form.notifications = {
     ...notificationsStringToFormObject(userInfo.notifications),
   };
+
+  errorBox.value.hide();
 };
 
 const saveEdits = async () => {
