@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-    <PostReviewForm :adId="adInfo.id" @reviewSubmit="onReviewSubmit" />
+    <PostReviewForm :adId="adInfo.id" @reviewSubmit="onReviewSubmit" v-if="userInfo.sessionToken !== ''" />
     <ReviewSection :reviews="adInfo.reviews" />
   </div>
 </template>
