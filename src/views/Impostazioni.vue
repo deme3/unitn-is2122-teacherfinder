@@ -64,10 +64,6 @@
 .action-buttons button:first-child {
   margin-right: auto;
 }
-
-.action-buttons :disabled {
-  opacity: 0.5;
-}
 </style>
 
 <script setup>
@@ -170,7 +166,14 @@ const saveEdits = async () => {
     sessionToken: userInfo.sessionToken,
     updates: {},
   };
-  if (hasChanged("nickname")) query.updates.nickname = form.nickname;
+  if (hasChanged("nickname")) {
+    if (form.nickname.length < 3) {
+      errorBox.value.showText("Il nickname che hai scelto è troppo corto.");
+      return;
+    }
+
+    query.updates.nickname = form.nickname;
+  }
   if (hasChanged("biography")) query.updates.biography = form.biography;
   if (haveNotificationsChanged())
     query.updates.notifications = notificationsString(form.notifications);
@@ -184,21 +187,35 @@ const saveEdits = async () => {
     body: JSON.stringify(query),
   });
 
-  if (!saveResults?.ok) {
-    try {
-      let res = await saveResults.json();
-      console.log(res);
-      if (res.error === "DUPLICATE_ENTRY")
+  if (!saveResults.ok) {
+    switch (saveResults.status) {
+      case 400: // BAD REQUEST
+        errorBox.value.showText("I campi che hai inserito non sono validi.");
+        break;
+      case 403: // FORBIDDEN
         errorBox.value.showText(
-          "Il nickname che hai inserito non è disponibile."
+          "Oh no! La tua sessione ha un problema, prova a loggarti di nuovo."
         );
-    } catch (e) {
-      errorBox.value.showText("Errore nel salvataggio delle impostazioni.");
-      console.log(saveResults.text);
+        break;
+      case 500: // SERVER ERROR
+        try {
+          let res = await saveResults.json();
+          console.log(res);
+          if (res.error === "DUPLICATE_ENTRY")
+            errorBox.value.showText(
+              "Ops, Il nickname che hai inserito non è disponibile."
+            );
+        } catch (e) {
+          errorBox.value.showText(
+            "Errore del server durante il salvataggio delle impostazioni."
+          );
+          console.log(await saveResults.text);
+        }
     }
     return;
   }
 
+  // TUTTO OK
   let res = await saveResults.json();
   console.log(res);
 
@@ -207,8 +224,10 @@ const saveEdits = async () => {
     if (query.updates.biography) userInfo.biography = query.updates.biography;
     if (query.updates.notifications)
       userInfo.notifications = query.updates.notifications;
-    
+
     errorBox.value.hide();
+  } else {
+    errorBox.value.showText("Errore nel salvataggio delle impostazioni.");
   }
 };
 

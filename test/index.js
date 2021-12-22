@@ -9,7 +9,7 @@ test('[PUT] /api/user/register: Registro Mario Rossi', function(assert) {
   request(app).put('/api/user/register').send({
     firstName: "Mario",
     lastName: "Rossi",
-    nickname: "Red",
+    nickname: "red",
     password: "rossimario123",
     email: "mariorossi@a.it",
     biography: ""
@@ -20,7 +20,7 @@ test('[PUT] /api/user/register: Registro Mario Rossi', function(assert) {
     let expectedResult = {
       firstName: "Mario",
       lastName: "Rossi",
-      nickname: "Red",
+      nickname: "red",
       email: "mariorossi@a.it",
       biography: "",
     };
@@ -33,7 +33,7 @@ test('[PUT] /api/user/register: Registro Mario Rossi', function(assert) {
 test('[POST] /api/user/login: Faccio il login via username Red', function(assert) {
   assert.plan(4);
   request(app).post('/api/user/login').send({
-    nickname: "Red",
+    nickname: "red",
     password: "rossimario123",
     persistent: true,
   })
@@ -109,7 +109,7 @@ test('[PUT] /api/user/register: Provo a registrare un utente duplicato', functio
   request(app).put('/api/user/register').send({
     firstName: "Mario",
     lastName: "Rossi",
-    nickname: "Red",
+    nickname: "red",
     password: "rossimario123",
     email: "mariorossi@a.it",
     biography: ""

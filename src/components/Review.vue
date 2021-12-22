@@ -6,13 +6,15 @@
         $router.push({ name: 'Profilo', params: { userId: props.author._id } })
       "
     >
-      <img src="https://picsum.photos/50" />
-      <h2 style="display: inline">
-        {{ author.firstName }} {{ author.lastName }}
-      </h2>
+      <div class="img-and-name">
+        <img src="https://picsum.photos/50" />
+        <h2 style="display: inline">
+          {{ author.firstName }} {{ author.lastName }}
+        </h2>
+      </div>
       <RatingStars :rating="props.rating" />
     </div>
-    <p>
+    <p v-if="explanation">
       {{ explanation }}
     </p>
   </div>
@@ -25,17 +27,28 @@
   display: flex;
   align-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.author > img {
+img {
   width: 50px;
   height: 50px;
   border-radius: 100%;
+  margin-right: 10px;
 }
 
-.review > p {
+p {
   word-wrap: break-word;
   white-space: pre-line;
+}
+
+.img-and-name > * {
+  vertical-align: middle;
+}
+
+.author {
+  vertical-align: middle;
 }
 </style>
 

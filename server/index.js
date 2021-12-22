@@ -5,6 +5,8 @@ const history = require("connect-history-api-fallback");
 const chalk = require("chalk");
 const os = require("os");
 
+const { check, body, oneOf, validationResult } = require("express-validator");
+
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -22,14 +24,14 @@ const MongoError = require("./database/MongoError.js");
 const app = express();
 const port = 8080;
 
-//moduli per generare la documentazione delle API
+// Opzioni per generare la documentazione delle API.
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
     info: {
       title: "TeacherFinder",
       version: "1.0.0",
-      description: "API servite via ExpressJS per l'app TeacherFinder",
+      description: "API servita via ExpressJS per l'app TeacherFinder",
       license: {
         name: "MIT License",
         url: "https://raw.githubusercontent.com/deme3/unitn-is2122-teacherfinder/main/LICENSE",
@@ -52,23 +54,61 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// BodyParser per JSON
+// BodyParser per JSON.
 app.use(express.json());
 
-// Definisco endpoint API lato server
-// Funzione che mi permette di verificare che tutti i parametri richiesti siano presenti
-const checkParameters = (parameters, body) =>
-  parameters.every((parameter) => Object.keys(body).includes(parameter));
+// Chain di validazione sanitizing per express-validator:
+// User
+const firstNameChain = () =>
+  body("firstName").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
 
-const checkParametersLength = (parameters) =>
-  Object.values(parameters).every((parameter) => parameter.length > 0);
+const lastNameChain = () =>
+  body("lastName").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
 
-// Funzione che mi permette di ottenere i parametri mancanti rispetto all'aspettativa dell'endpoint
-const getMissingParameters = (expectation, reality) =>
-  expectation.filter((x) => !Object.keys(reality).includes(x));
+const nicknameChain = (name = "nickname") =>
+  body(name)
+    .trim()
+    .stripLow()
+    .toLowerCase()
+    .isLength({ min: 3, max: 50 })
+    .escape()
+    .matches("^[a-z0-9_]+$");
 
-const getEmptyParameters = (parameters) =>
-  Object.keys(parameters).filter((parameter) => parameters[parameter].trim().length == 0);
+const passwordChain = () => body("password").not().isEmpty();
+const emailChain = () => body("email").trim().isEmail().normalizeEmail();
+const biographyChain = (name = "biography") =>
+  body(name).trim().stripLow().escape();
+const persistentChain = () => body("persistent").isBoolean();
+const sessionTokenChain = () => body("sessionToken").isMongoId();
+
+const tokenChain = () => check("token").isMongoId();
+const idChain = () => check("id").isMongoId();
+const userIdChain = () => check("userId").isMongoId();
+
+// Annunci
+const titleChain = () =>
+  body("title").trim().stripLow().isLength({ min: 1, max: 200 }).escape();
+
+const descriptionChain = () =>
+  body("description").trim().stripLow().isLength({ min: 1, max: 1500 }).escape();
+
+const priceChain = () => body("price").isFloat({ min: 1, max: 500 });
+const typeChain = () => body("type").exists();
+const latChain = () => body("lat").exists();
+const lonChain = () => body("lon").exists();
+const adIdChain = () => body("adId").isMongoId();
+
+// Review
+const ratingChain = () => body("rating").isInt({ min: 1, max: 5 });
+const explanationChain = () => body("explanation").trim().stripLow().isLength({ min: 0, max: 500 }).escape();
+
+// Subscription
+const hoursChain = () => body("hours").isInt({ min: 1, max: 12 });
+const subIdChain = () => body("subId").isMongoId();
+
+// Settings
+const notificationsChain = (name = "updates.notifications") =>
+  body(name).matches("[10]{6}");
 
 app.get("/api", (req, res) => {
   res.send({ works: true });
@@ -177,67 +217,61 @@ app.get("/api", (req, res) => {
  *                   description: Nomi delle colonne duplicate
  *                   example: []
  *       400:
- *         description: Parametri richiesti mancanti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["email", "biography"]
- *                 emptyParameters:
- *                   type: array
- *                   description: Parametri vuoti
- *                   example: ["firstName", "lastName"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "firstName"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.put("/api/user/register", async (req, res) => {
-  // Registro le informazioni su questo utente
-  // Nome, cognome, nickname, password, conferma password, e-mail
-  let requiredParameters = [
-    "firstName",
-    "lastName",
-    "nickname",
-    "password",
-    "email",
-    "biography",
-  ];
+app.put(
+  "/api/user/register",
+  firstNameChain(),
+  lastNameChain(),
+  nicknameChain(),
+  passwordChain(),
+  emailChain(),
+  biographyChain(),
 
-  if (checkParameters(requiredParameters, req.body)) {
-    if(!checkParametersLength(req.body)) {
-      // Se è la biografia ad essere vuota la ignoro
-      let emptyParameters = getEmptyParameters(req.body);
-      if(!(emptyParameters.length == 1 && emptyParameters[0] == "biography")) {
-        res.status(400).json({
-          emptyParameters
-        });
-        return;
-      }
-    }
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
     try {
-      // Inserisco l'utente nel database
       await User.create(req.body);
 
-      // Rimuovo la password dalla risposta
       delete req.body.password;
       res.status(200).json(req.body);
     } catch (err) {
-      if (err.code == MongoError.DUPLICATE_ENTRY.code) {
-        // Se l'errore è causato da un valore univoco duplicato invio la causa
+      if (err.code == MongoError.DUPLICATE_ENTRY.code)
         res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
-      } else {
-        // Altrimenti invio solo Internal Server Error
-        res.sendStatus(500);
-      }
+      else res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 /**
  * @swagger
@@ -298,49 +332,71 @@ app.put("/api/user/register", async (req, res) => {
  *       401:
  *         description: Credenziali incorrette
  *       400:
- *         description: Parametri richiesti mancanti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["persistent"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "nickname"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.post("/api/user/login", async (req, res) => {
-  // Prendo l'IP dell'utente e lo registro assieme al token
-  let requiredFields = ["nickname", "password", "persistent"];
+app.post(
+  "/api/user/login",
+  body("nickname").exists(), // Il login può essere fatto sia per nickname che per email.
+  passwordChain(),
+  persistentChain(),
 
-  if (checkParameters(requiredFields, req.body)) {
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Controllo se esiste l'utente.
     let myUser = await User.findOne({
       $or: [
-        { nickname: req.body.nickname, password: req.body.password }, // match per nickname
-        { email: req.body.nickname, password: req.body.password }, // match per e-mail
+        { nickname: req.body.nickname, password: req.body.password }, // match per nickname.
+        { email: req.body.nickname, password: req.body.password }, // match per e-mail.
       ],
     }).exec();
-
-    if (myUser !== null) {
-      try {
-        let mySession = await Session.create({
-          userId: myUser._id,
-          ipAddress: req.ip,
-          persistent: req.body.persistent,
-        });
-        res.status(200).json(mySession);
-      } catch {
-        res.sendStatus(500);
-      }
-    } else {
+    if (myUser === null) {
       res.sendStatus(401);
+      return;
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredFields, req.body)
-    });
+
+    // Prendo l'IP dell'utente e lo registro assieme al token.
+    try {
+      let mySession = await Session.create({
+        userId: myUser._id,
+        ipAddress: req.ip,
+        persistent: req.body.persistent,
+      });
+      res.status(200).json(mySession);
+    } catch {
+      res.sendStatus(500);
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -362,23 +418,47 @@ app.post("/api/user/login", async (req, res) => {
  *       200:
  *         description: Il token è stato rimosso e il logout è stato completato.
  *       400:
- *         description: Il token non è stato specificato o è invalido.
+ *         description: Token mancante o invalido
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["token"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "token"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  *       500:
  *         description: Errore Mongoose
  */
-app.delete("/api/user/logout/:token", async (req, res) => {
-  // Rimuovo il token se l'IP del mittente corrisponde
+app.delete(
+  "/api/user/logout/:token",
+  tokenChain(),
 
-  if (mongoose.isValidObjectId(req.params.token)) {
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Rimuovo il token se l'IP del mittente corrisponde.
     try {
       let deletedCount = await Session.deleteOne({
         _id: req.params.token,
@@ -388,10 +468,8 @@ app.delete("/api/user/logout/:token", async (req, res) => {
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({ missingParameters: ["token"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -465,28 +543,64 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  *                     notifications:
  *                       type: string
  *                       description: Codifica delle impostazioni delle notifiche dell'utente
+ *       400:
+ *         description: Parametri richiesti mancanti o invalidi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "token"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  */
-app.get("/api/user/checkToken/:token", async (req, res) => {
-  // Restituisco true se il token e l'IP corrispondono
-  // Session.checkToken fa type checking degli ID al suo interno!
-  let sessionExists = await Session.checkToken(req.params.token, req.ip);
+app.get(
+  "/api/user/checkToken/:token",
+  tokenChain(),
 
-  if (sessionExists.exists && !sessionExists.expired) {
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Controllo se la sessione associata all'ip esiste.
+    let sessionExists = await Session.checkToken(req.params.token, req.ip);
+    if (!sessionExists.exists || sessionExists.expired) {
+      res.status(200).json({ ...sessionExists });
+      return;
+    }
+
     try {
-      let profile = await User.findById(sessionExists.session.userId).select("-password").exec();
+      let profile = await User.findById(sessionExists.session.userId)
+        .select("-password")
+        .exec();
 
-      if (profile !== null) {
-        res.status(200).json({ ...sessionExists, profile });
-      } else {
-        res.status(200).json({ ...sessionExists, profile: false });
-      }
+      if (profile !== null) res.status(200).json({ ...sessionExists, profile });
+      else res.status(200).json({ ...sessionExists, profile: false });
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(200).json({ ...sessionExists });
   }
-});
+);
 
 /**
  * @swagger
@@ -624,16 +738,54 @@ app.get("/api/user/checkToken/:token", async (req, res) => {
  *                             type: string
  *                             description: Impostazioni notifiche utente
  *                             example: "010110"
+ *       400:
+ *         description: Parametri richiesti mancanti o invalidi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "id"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  */
-app.get("/api/user/profile/:id", async (req, res) => {
-  if(mongoose.isValidObjectId(req.params.id)) {
+app.get(
+  "/api/user/profile/:id",
+  idChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     try {
       let user = await User.findById(req.params.id).select("-password").exec();
       let ads = await Advertisement.getEnrichedAdList(
         await Advertisement.find({ authorId: req.params.id }).exec()
       );
       let reviews = await Review.aggregate()
-        .match({ adId: { $in: ads.map(x => new mongoose.Types.ObjectId(x._id)) } })
+        .match({
+          adId: { $in: ads.map((x) => new mongoose.Types.ObjectId(x._id)) },
+        })
         .lookup({
           from: "users",
           localField: "authorId",
@@ -645,22 +797,20 @@ app.get("/api/user/profile/:id", async (req, res) => {
           explanation: 1,
           rating: 1,
           author: {
-            $arrayElemAt: [ "$author", 0 ]
+            $arrayElemAt: ["$author", 0],
           },
         })
         .sort({ rating: "desc" })
         .limit(3)
         .exec();
 
-      if(user !== null) res.status(200).json({ ...user._doc, ads, reviews });
+      if (user !== null) res.status(200).json({ ...user._doc, ads, reviews });
       else res.sendStatus(404);
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.sendStatus(400);
   }
-});
+);
 
 // Endpoint Annunci
 // ================
@@ -719,29 +869,54 @@ app.get("/api/user/profile/:id", async (req, res) => {
  *                     description: Longitudine posizione (se type = offline).
  *                     example: -1
  *       400:
- *         description: Parametro mancante.
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametro mancante
- *                   example: ["userId"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "userId"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  */
-app.get("/api/ads/list/:userId", async (req, res) => {
-  if (mongoose.isValidObjectId(req.params.userId)) {
+app.get(
+  "/api/ads/list/:userId",
+  userIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     try {
-      let foundAds = await Advertisement.getEnrichedAdList(await User.findUserAds(req.params.userId));
+      let foundAds = await Advertisement.getEnrichedAdList(
+        await User.findUserAds(req.params.userId)
+      );
       res.status(200).json(foundAds);
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({ missingParameters: ["userId"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -945,12 +1120,46 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  *       404:
  *         description: Annuncio non trovato
  *       400:
- *         description: ID invalido o assente
+ *         description: Parametri richiesti mancanti o invalidi
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "id"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  *       500:
  *         description: Errore Mongoose
  */
-app.get("/api/ads/getAdInfo/:id", async (req, res) => {
-  if (mongoose.isValidObjectId(req.params.id)) {
+app.get(
+  "/api/ads/getAdInfo/:id",
+  idChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     try {
       let foundAd = await Advertisement.aggregate()
         .match({ _id: new mongoose.Types.ObjectId(req.params.id) })
@@ -959,7 +1168,7 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
           localField: "authorId",
           foreignField: "_id",
           as: "author",
-          pipeline: [{ $project: { password: 0 } }], // escludo la password dall'autore
+          pipeline: [{ $project: { password: 0 } }], // Escludo la password dall'autore.
         })
         .project({
           title: 1,
@@ -967,7 +1176,7 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
           price: 1,
           type: 1,
           author: {
-            $arrayElemAt: [ "$author", 0 ],
+            $arrayElemAt: ["$author", 0],
           },
         })
         .exec();
@@ -990,24 +1199,30 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
           explanation: 1,
           rating: 1,
           author: {
-            $arrayElemAt: [ "$author", 0 ],
+            $arrayElemAt: ["$author", 0],
           },
         })
         .exec();
-      
+
       let rating = 0;
-      
-      if(reviews !== null && reviews.length > 0) 
-        rating = Math.round(reviews.reduce((prev, curr) => { return prev + curr.rating; }, 0) / reviews.length);
-      
-      res.status(200).json({ ...foundAd[0], rating, reviews });
+
+      if (reviews !== null && reviews.length > 0)
+        rating = Math.round(
+          reviews.reduce((prev, curr) => {
+            return prev + curr.rating;
+          }, 0) / reviews.length
+        );
+
+      if (foundAd !== null) {
+        res.status(200).json({ ...foundAd[0], rating, reviews });
+      } else {
+        res.status(404).json({});
+      }
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({ missingParameters: ["id"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -1094,67 +1309,58 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
  *       403:
  *         description: Sessione invalida, utente non autorizzato
  *       400:
- *         description: Uno o più parametri assenti.
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["sessionToken", "price", "lat"]
- *                 emptyParameters:
- *                   type: array
- *                   description: Parametri vuoti
- *                   example: ["sessionToken", "type", "description"]
- *                 invalidParameters:
- *                   type: array
- *                   description: Parametri invalidi (price negativo)
- *                   example: ["price"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: -5
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "price"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.post("/api/ads/createAd", async (req, res) => {
-  let requiredParameters = [
-    "sessionToken",
-    "title",
-    "description",
-    "price",
-    "type",
-    "lat",
-    "lon",
-  ];
+app.post(
+  "/api/ads/createAd",
+  sessionTokenChain(),
+  titleChain(),
+  descriptionChain(),
+  priceChain(),
+  typeChain(),
+  latChain(),
+  lonChain(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
-  if (checkParameters(requiredParameters, req.body)) {
     try {
-      let nonEmpty = {
-        title: req.body.title,
-        description: req.body.description,
-        type: req.body.type,
-        sessionToken: req.body.sessionToken,
-      };
-
-      // Verifico di non avere parametri vuoti
-      if(!checkParametersLength(nonEmpty)) {
-        // Se ho dei parametri vuoti annullo
-        let emptyParameters = getEmptyParameters(nonEmpty);
-        res.status(400).json({ emptyParameters });
-        return;
-      }
-
-      // Se il price è negativo annullo
-      if(req.body.price <= 0.0) {
-        res.status(400).json({ invalidParameters: ["price"] });
-        return;
-      }
-
-      // Verifico di essere loggato ed ottengo il mio userId
+      // Verifico di essere loggato ed ottengo il mio userId.
       let currentUserId = await Session.getUserBySession(
         req.body.sessionToken,
         req.ip
       );
 
       if (currentUserId !== null) {
-        // Se sono loggato uso il mio ID per creare un annuncio
+        // Se sono loggato allora uso il mio ID per creare un annuncio.
         let myNewAd = await Advertisement.create({
           authorId: currentUserId,
           title: req.body.title,
@@ -1171,12 +1377,8 @@ app.post("/api/ads/createAd", async (req, res) => {
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 // Endpoint Recensioni
 // ===================
@@ -1227,21 +1429,46 @@ app.post("/api/ads/createAd", async (req, res) => {
  *                      description: Testo recensione
  *                      example: Molto bravo e competente, ma una volta non mi ha salutato.
  *       400:
- *         description: ID annuncio invalido o assente
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["adId"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "adId"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  *       500:
  *         description: Errore Mongoose
  */
-app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
-  if (mongoose.isValidObjectId(req.params.adId)) {
+app.get(
+  "/api/reviews/getAdReviews/:adId",
+  adIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     try {
       let reviews = await Review.find({ adId: req.params.adId }).exec();
       if (reviews !== null) res.status(200).json(reviews);
@@ -1249,10 +1476,8 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({ missingParameters: ["adId"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -1300,34 +1525,57 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
  *                      description: Testo recensione
  *                      example: Molto bravo e competente, ma una volta non mi ha salutato.
  *       400:
- *         description: ID annuncio invalido o assente
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["adId"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: ""
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "userId"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "params"
  */
-app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
-  if (mongoose.isValidObjectId(req.params.userId)) {
-    // Trovo tutti gli annunci dell'utente
+app.get(
+  "/api/reviews/getUserReviews/:userId",
+  userIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Trovo tutti gli annunci dell'utente.
     let userAds = await User.findUserAds(req.params.userId);
     let reviews = [];
 
-    // Per ogni annuncio aggiungo alla lista tutte le recensioni
+    // Per ogni annuncio aggiungo alla lista tutte le recensioni.
     for (let ad of userAds) {
       reviews.push(...(await Review.find({ adId: ad._id }).exec()));
     }
 
     if (reviews !== null) res.status(200).json(reviews);
     else res.status(200).json({});
-  } else {
-    res.status(400).json({ missingParameters: ["userId"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -1390,45 +1638,67 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
  *       403:
  *         description: Sessione invalida, utente non autorizzato.
  *       400:
- *         description: Uno o più parametri mancanti.
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["sessionToken", "rating"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.post("/api/reviews/postReview", async (req, res) => {
-  let requiredParameters = ["sessionToken", "adId", "rating", "explanation"];
+app.post(
+  "/api/reviews/postReview",
+  sessionTokenChain(),
+  adIdChain(),
+  ratingChain(),
+  explanationChain(),
 
-  if (checkParameters(requiredParameters, req.body)) {
-    // Verifico di essere un utente loggato e ottengo il mio userId
-    // Session.getUserBySession fa già type checking!
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Verifico di essere un utente loggato e ottengo il mio userId.
     let authorId = await Session.getUserBySession(
       req.body.sessionToken,
       req.ip
     );
-    if (authorId !== null) {
-      // Se sono loggato creo la recensione con il mio ID
-      let myNewReview = await Review.create({
-        authorId,
-        adId: req.body.adId,
-        rating: req.body.rating,
-        explanation: req.body.explanation,
-      });
-      res.status(200).json(myNewReview);
-    } else {
+    if (authorId === null) {
       res.sendStatus(403);
+      return;
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
+
+    // Creo la recensione con il mio ID.
+    let myNewReview = await Review.create({
+      authorId,
+      adId: req.body.adId,
+      rating: req.body.rating,
+      explanation: req.body.explanation,
     });
+    res.status(200).json(myNewReview);
   }
-});
+);
 
 // Endpoint Iscrizioni
 // ===================
@@ -1486,55 +1756,68 @@ app.post("/api/reviews/postReview", async (req, res) => {
  *       403:
  *         description: Sessione invalida, utente non autorizzato.
  *       400:
- *         description: Uno o più parametri mancanti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 missingParameters:
+ *                 errors:
  *                   type: array
- *                   description: Parametri mancanti
- *                   example: ["sessionToken", "hours"]
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.put("/api/subscriptions/requestSubscription", async (req, res) => {
-  let requiredParameters = ["sessionToken", "adId", "hours"];
+app.put(
+  "/api/subscriptions/requestSubscription",
+  sessionTokenChain(),
+  adIdChain(),
+  hoursChain(),
 
-  if (checkParameters(requiredParameters, req.body)) {
-    // controllo di ricevere un ID valido (ObjectId con length 24)
-    // e controllo di avere un numero come quantità di ore richieste, per non rompere l'integrità del db
-    if (
-      mongoose.isValidObjectId(req.body.adId) &&
-      typeof req.body.hours === "number"
-    ) {
-      let subscriberId = await Session.getUserBySession(
-        req.body.sessionToken,
-        req.ip
-      );
-      if (subscriberId !== null) {
-        try {
-          let myNewSubscription = await Subscription.create({
-            subscriberId,
-            adId: req.body.adId,
-            status: "requested",
-            hours: req.body.hours,
-          });
-          res.status(200).json(myNewSubscription);
-        } catch {
-          res.sendStatus(500);
-        }
-      } else {
-        res.sendStatus(403);
-      }
-    } else {
-      res.sendStatus(400);
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    let subscriberId = await Session.getUserBySession(
+      req.body.sessionToken,
+      req.ip
+    );
+    if (subscriberId === null) {
+      res.sendStatus(403);
+      return;
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
+
+    try {
+      let myNewSubscription = await Subscription.create({
+        subscriberId,
+        adId: req.body.adId,
+        status: "requested",
+        hours: req.body.hours,
+      });
+      res.status(200).json(myNewSubscription);
+    } catch {
+      res.sendStatus(500);
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -1587,51 +1870,67 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  *       404:
  *         description: Iscrizione inesistente
  *       400:
- *         description: Parametri incorretti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                   missingParameters:
- *                     type: array
- *                     description: Parametri mancanti
- *                     example: ["sessionToken"]
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
-  let requiredParameters = ["sessionToken", "subId"];
-  // tutor
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.subId) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
-    let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "waiting_payment"
-      );
+app.put(
+  "/api/subscriptions/acceptSubscription",
+  sessionTokenChain(),
+  subIdChain(),
 
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
+    let subscription = await Subscription.findById(req.body.subId);
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
     }
-  } else {
-    // Bad Request: parametri incorretti
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "waiting_payment"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio.
+      res.status(403).json(updateOp.result);
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -1684,51 +1983,66 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
  *       404:
  *         description: Iscrizione inesistente
  *       400:
- *         description: Parametri incorretti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                   missingParameters:
- *                     type: array
- *                     description: Parametri mancanti
- *                     example: ["sessionToken"]
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
-  let requiredParameters = ["sessionToken", "subId"];
-  // tutor
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.subId) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
-    let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "tutor_rejected"
-      );
+app.put(
+  "/api/subscriptions/rejectSubscription",
+  sessionTokenChain(),
+  subIdChain(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
+    let subscription = await Subscription.findById(req.body.subId);
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
     }
-  } else {
-    // Bad Request: parametri incorretti
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "tutor_rejected"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio.
+      res.status(403).json(updateOp.result);
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -1781,51 +2095,67 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
  *       404:
  *         description: Iscrizione inesistente
  *       400:
- *         description: Parametri incorretti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                   missingParameters:
- *                     type: array
- *                     description: Parametri mancanti
- *                     example: ["sessionToken"]
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
-  let requiredParameters = ["sessionToken", "subId"];
-  // tutor
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.subId) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
-    let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "student_canceled"
-      );
+app.put(
+  "/api/subscriptions/cancelSubscription",
+  sessionTokenChain(),
+  subIdChain(),
 
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'iscrizione
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
+    let subscription = await Subscription.findById(req.body.subId);
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
     }
-  } else {
-    // Bad Request: parametri incorretti
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "student_canceled"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'iscrizione.
+      res.status(403).json(updateOp.result);
+    }
   }
-});
+);
 
 /**
  * @swagger
@@ -1878,54 +2208,67 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
  *       404:
  *         description: Iscrizione inesistente
  *       400:
- *         description: Parametri incorretti
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                   missingParameters:
- *                     type: array
- *                     description: Parametri mancanti
- *                     example: ["sessionToken"]
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  */
-app.put("/api/subscriptions/paySubscription", async (req, res) => {
-  // ...
-  // elaborazione pagamento
-  // ...
-  let requiredParameters = ["sessionToken", "subId"];
-  // tutor
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.subId) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
-    let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "paid"
-      );
+app.put(
+  "/api/subscriptions/paySubscription",
+  sessionTokenChain(),
+  subIdChain(),
 
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.sendStatus(403);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
+    let subscription = await Subscription.findById(req.body.subId);
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
     }
-  } else {
-    // Bad Request: parametri incorretti
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "paid"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio.
+      res.sendStatus(403);
+    }
   }
-});
+);
 
 app.get("/api/subscriptions/list/:userId", async (req, res) => {});
 
@@ -1972,20 +2315,34 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
  *       200:
  *         description: Aggiornamento impostazioni completato
  *       400:
- *         description: Si è verificato un errore con i parametri
+ *         description: Parametri richiesti mancanti o invalidi
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 error:
- *                   type: boolean
- *                   description: Si è verificato un errore?
- *                   example: true
- *                 message:
- *                   type: string
- *                   description: Descrizione testuale dell'errore
- *                   example: "Invalid settings object."
+ *                 errors:
+ *                   type: array
+ *                   description: Errori di validazione degli input
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       value:
+ *                         type: string
+ *                         description: Il valore del parametro che ha scatenato l'errore di validazione
+ *                         example: "zzzz"
+ *                       msg:
+ *                         type: string
+ *                         description: Descrizione dell'errore
+ *                         example: "Invalid value"
+ *                       param:
+ *                         type: string
+ *                         description: Il parametro che ha scatenato l'errore di validazione
+ *                         example: "sessionToken"
+ *                       location:
+ *                         type: string
+ *                         description: L'oggetto della richiesta che ha scatenato l'errore di validazione
+ *                         example: "body"
  *       403:
  *         description: Si è verificato un errore con il token
  *         content:
@@ -2002,60 +2359,42 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
  *                   description: Descrizione testuale dell'errore
  *                   example: "Invalid token."
  */
-app.put("/api/settings/change", async (req, res) => {
-  let requiredParameters = ["sessionToken", "updates"];
-  let allowedSettings = ["nickname", "biography", "notifications"];
+app.put(
+  "/api/settings/change",
+  sessionTokenChain(),
+  body("updates").exists(),
+  oneOf([
+    nicknameChain("updates.nickname").optional({ nullable: true }),
+    biographyChain("updates.biography").optional({ nullable: true }),
+    notificationsChain("updates.notifications").optional({ nullable: true }),
+  ]),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
     let myToken = await Session.getUserBySession(req.body.sessionToken, req.ip);
     if (myToken === null) {
       res.status(403).json({ error: true, message: "Invalid token." });
       return;
     }
 
-    if (typeof req.body.updates !== "object") {
-      res.status(400).json({ error: true, message: "Invalid settings object." });
-      return;
+    try {
+      let updateResult = await User.updateOne(
+        { _id: myToken },
+        req.body.updates
+      );
+      res.status(200).json(updateResult);
+    } catch (err) {
+      if (err.code == MongoError.DUPLICATE_ENTRY.code)
+        res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
+      else res.sendStatus(500);
     }
-    
-    let updateKeys = Object.keys(req.body.updates);
-    if (updateKeys.length > 0) {
-      for (let updateKey of updateKeys) {
-        if(!allowedSettings.includes(updateKey)) {
-          res.status(400).json({ error: true, message: `Invalid setting: ${updateKey}.` });
-          return;
-        }
-      }
-
-      try {
-        let updateResult = await User.updateOne({ _id: myToken }, req.body.updates);
-        res.status(200).json(updateResult);
-      } catch (err) {
-        if (err.code == MongoError.DUPLICATE_ENTRY.code) {
-          // Se l'errore è causato da un valore univoco duplicato invio la causa
-          res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
-        } else {
-          // Altrimenti invio solo Internal Server Error
-          res.sendStatus(500);
-        }
-      }
-    } else {
-      res.status(400).json({ error: true, message: "No changes." });
-    }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-      validToken: mongoose.isValidObjectId(req.body.sessionToken),
-    });
   }
-});
+);
 
-// Permetto a Vue.js di gestire le path single-page con Vue Router
-// Sul front-end compilato!
-// Solo in deployment.
+// Permetto a Vue.js di gestire le path single-page con Vue Router, sul front-end compilato!
+// Servo il frontend solo se non sono in development mode.
 if (process?.env?.NODE_ENV !== "development") {
   app.use(history());
   app.use("/", express.static(path.join(__dirname, "..", "dist")));
@@ -2067,10 +2406,9 @@ const lanIp =
     .filter((item) => !item.internal && item.family === "IPv4")
     .find(Boolean)?.address || "( LAN IP )";
 
-
-
 // Avvio il server
 app.enable("trust proxy");
+
 // prettier-ignore
 if(process.env.SHUT_UP) {
   app.listen(port, async () => {

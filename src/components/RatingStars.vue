@@ -16,7 +16,7 @@
 
 <style scoped>
 .star-rating {
-  margin-top: 10px;
+  white-space: nowrap;
 }
 
 .star {
