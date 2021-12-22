@@ -1,6 +1,16 @@
 <template>
-  <div :class="ratingClass">
-    <div class="star" v-for="n in 5" :key="n" />
+  <div
+    :class="ratingClass"
+    @mouseleave="onMouseLeave"
+    @mouseenter="onMouseEnter"
+  >
+    <div
+      class="star"
+      v-for="n in 5"
+      :key="n"
+      @mouseover="starOnMouseOver(n)"
+      @click="starOnClick(n)"
+    />
   </div>
 </template>
 
@@ -22,6 +32,10 @@
   margin-left: 0;
 }
 
+.star-rating.interactive .star {
+  cursor: pointer;
+}
+
 .star-rating.star-0 .star {
   display: none;
 }
@@ -36,20 +50,52 @@
 .star-rating.star-1 .star:not(:first-child),
 .star-rating.star-2 .star:not(:first-child, :nth-child(2)),
 .star-rating.star-3 .star:not(:first-child, :nth-child(2), :nth-child(3)),
-.star-rating.star-4 .star:nth-child(4),
-.star-rating .star-4 .star:last-child {
+.star-rating.star-4 .star:nth-child(5) {
   opacity: 0.2;
 }
 </style>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 const props = defineProps({
   rating: Number,
+  interactive: {
+    type: Boolean,
+    default: false,
+  },
 });
 
+let rating = ref(props.rating);
+let defrating = ref(props.rating);
+let hovering = ref(false);
+
 const ratingClass = computed(() => {
-  return "star-rating star-" + props.rating;
+  if (!props.interactive) {
+    return `star-rating star-${props.rating}`;
+  } else {
+    if (hovering.value) return `star-rating star-${rating.value} interactive`;
+    else return `star-rating star-${defrating.value} interactive`;
+  }
 });
+
+const onMouseEnter = function () {
+  hovering.value = true;
+};
+
+const onMouseLeave = function () {
+  hovering.value = false;
+};
+
+const starOnMouseOver = function (n) {
+  if (props.interactive) {
+    rating.value = n;
+  }
+};
+
+const starOnClick = function (n) {
+  if (props.interactive) {
+    defrating.value = n;
+  }
+};
 </script>
