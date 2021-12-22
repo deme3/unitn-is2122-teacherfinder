@@ -1324,7 +1324,7 @@ app.get(
  *                       value:
  *                         type: string
  *                         description: Il valore del parametro che ha scatenato l'errore di validazione
- *                         example: "-5"
+ *                         example: -5
  *                       msg:
  *                         type: string
  *                         description: Descrizione dell'errore
