@@ -2364,18 +2364,9 @@ app.put(
   sessionTokenChain(),
   body("updates").exists(),
   oneOf([
-    oneOf([
-      nicknameChain("updates.nickname"),
-      body("updates.nickname").isEmpty(),
-    ]),
-    oneOf([
-      biographyChain("updates.biography"),
-      body("updates.biography").isEmpty(),
-    ]),
-    oneOf([
-      notificationsChain("updates.notifications"),
-      body("updates.notifications").isEmpty(),
-    ]),
+    nicknameChain("updates.nickname").optional({ nullable: true }),
+    biographyChain("updates.biography").optional({ nullable: true }),
+    notificationsChain("updates.notifications").optional({ nullable: true }),
   ]),
   async (req, res) => {
     const errors = validationResult(req);
@@ -2389,6 +2380,7 @@ app.put(
     }
 
     try {
+      console.log(req.body.updates);
       let updateResult = await User.updateOne(
         { _id: myToken },
         req.body.updates
