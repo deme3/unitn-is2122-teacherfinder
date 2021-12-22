@@ -1,8 +1,12 @@
 <template>
   <header>
-    <div id="logo" @click.prevent="$router.push({ name: 'Ricerca' })">
+    <div id="logo">
       <div></div>
-      <img src="@/assets/logo.svg" id="logo-text" />
+      <img
+        src="@/assets/logo.svg"
+        id="logo-text"
+        @click.prevent="$router.push({ name: 'Ricerca' })"
+      />
       <div id="user-info">
         <div id="user-login" v-if="sessionToken === '' && showLoginBtn">
           <button @click.prevent="$router.push({ name: 'Login' })">
@@ -28,12 +32,13 @@ import Searchbar from "@/components/Searchbar.vue";
 import Navbar from "@/components/Navbar.vue";
 
 import { defineComponent, ref, reactive, watch, provide } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
   components: { Searchbar, Navbar },
   setup() {
     const route = useRoute();
+    const router = useRouter();
 
     const ads = ref([]);
     const sessionToken = ref("");
@@ -88,6 +93,12 @@ export default defineComponent({
         console.log(`Nav: ${previousParams} > ${toParams}`);
         if (toParams == "Login") showLoginBtn.value = false;
         else showLoginBtn.value = true;
+
+        sessionToken.value = getCookie("sessionToken");
+        if (sessionToken.value.trim() === "" && toParams === "Impostazioni") {
+          router.push({ name: "Login" });
+          console.log("Forbidden, niente sessionToken");
+        }
       }
     );
 
