@@ -5,6 +5,8 @@ const history = require("connect-history-api-fallback");
 const chalk = require("chalk");
 const os = require("os");
 
+const { check, body, validationResult } = require("express-validator");
+
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
@@ -55,20 +57,57 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // BodyParser per JSON
 app.use(express.json());
 
-// Definisco endpoint API lato server
-// Funzione che mi permette di verificare che tutti i parametri richiesti siano presenti
-const checkParameters = (parameters, body) =>
-  parameters.every((parameter) => Object.keys(body).includes(parameter));
+// Chain di validazione sanitizing per express-validator
 
-const checkParametersLength = (parameters) =>
-  Object.values(parameters).every((parameter) => parameter.length > 0);
+// User
+const firstNameChain = () =>
+  body("firstName").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
 
-// Funzione che mi permette di ottenere i parametri mancanti rispetto all'aspettativa dell'endpoint
-const getMissingParameters = (expectation, reality) =>
-  expectation.filter((x) => !Object.keys(reality).includes(x));
+const lastNameChain = () =>
+  body("lastName").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
 
-const getEmptyParameters = (parameters) =>
-  Object.keys(parameters).filter((parameter) => parameters[parameter].trim().length == 0);
+const nicknameChain = (name = "nickname") =>
+  body(name)
+    .trim()
+    .stripLow()
+    .toLowerCase()
+    .isLength({ min: 3, max: 50 })
+    .escape()
+    .matches("[a-z0-9_]");
+
+const passwordChain = () => body("password").not().isEmpty();
+const emailChain = () => body("email").trim().isEmail().normalizeEmail();
+const biographyChain = (name = "biography") =>
+  body(name).trim().stripLow().escape();
+const persistentChain = () => body("persistent").isBoolean();
+const tokenChain = () => check("token").isMongoId();
+const sessionTokenChain = () => body("sessionToken").isMongoId();
+const idChain = () => check("id").isMongoId();
+const userIdChain = () => check("userId").isMongoId();
+
+// Annunci
+const titleChain = () =>
+  body("title").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
+
+const descriptionChain = () =>
+  body("description").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
+
+const priceChain = () => body("price").isNumeric({ min: 1, max: 500 });
+const typeChain = () => body("type").exists();
+const latChain = () => body("lat").exists();
+const lonChain = () => body("lon").exists();
+const adIdChain = () => body("adIdChain").isMongoId();
+
+// Review
+const ratingChain = () => body("rating").isNumeric({ min: 1, max: 5 });
+const explanationChain = () => body("explanation").trim().stripLow().escape();
+
+// Subscription
+const hoursChain = () => body("hours").isNumeric({ min: 1, max: 500 });
+const subIdChain = () => body("subIdChain").isMongoId();
+
+// Settings
+const notificationsChain = (name = "updates.notifications") => body(name);
 
 app.get("/api", (req, res) => {
   res.send({ works: true });
@@ -192,52 +231,32 @@ app.get("/api", (req, res) => {
  *                   description: Parametri vuoti
  *                   example: ["firstName", "lastName"]
  */
-app.put("/api/user/register", async (req, res) => {
-  // Registro le informazioni su questo utente
-  // Nome, cognome, nickname, password, conferma password, e-mail
-  let requiredParameters = [
-    "firstName",
-    "lastName",
-    "nickname",
-    "password",
-    "email",
-    "biography",
-  ];
+app.put(
+  "/api/user/register",
+  firstNameChain(),
+  lastNameChain(),
+  nicknameChain(),
+  passwordChain(),
+  emailChain(),
+  biographyChain(),
 
-  if (checkParameters(requiredParameters, req.body)) {
-    if(!checkParametersLength(req.body)) {
-      // Se è la biografia ad essere vuota la ignoro
-      let emptyParameters = getEmptyParameters(req.body);
-      if(!(emptyParameters.length == 1 && emptyParameters[0] == "biography")) {
-        res.status(400).json({
-          emptyParameters
-        });
-        return;
-      }
-    }
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
     try {
-      // Inserisco l'utente nel database
       await User.create(req.body);
 
-      // Rimuovo la password dalla risposta
       delete req.body.password;
       res.status(200).json(req.body);
     } catch (err) {
-      if (err.code == MongoError.DUPLICATE_ENTRY.code) {
-        // Se l'errore è causato da un valore univoco duplicato invio la causa
+      if (err.code == MongoError.DUPLICATE_ENTRY.code)
         res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
-      } else {
-        // Altrimenti invio solo Internal Server Error
-        res.sendStatus(500);
-      }
+      else res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 /**
  * @swagger
@@ -309,11 +328,18 @@ app.put("/api/user/register", async (req, res) => {
  *                   description: Parametri mancanti
  *                   example: ["persistent"]
  */
-app.post("/api/user/login", async (req, res) => {
-  // Prendo l'IP dell'utente e lo registro assieme al token
-  let requiredFields = ["nickname", "password", "persistent"];
+app.post(
+  "/api/user/login",
+  nicknameChain(),
+  passwordChain(),
+  persistentChain(),
 
-  if (checkParameters(requiredFields, req.body)) {
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Prendo l'IP dell'utente e lo registro assieme al token
     let myUser = await User.findOne({
       $or: [
         { nickname: req.body.nickname, password: req.body.password }, // match per nickname
@@ -335,12 +361,8 @@ app.post("/api/user/login", async (req, res) => {
     } else {
       res.sendStatus(401);
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredFields, req.body)
-    });
   }
-});
+);
 
 /**
  * @swagger
@@ -375,10 +397,16 @@ app.post("/api/user/login", async (req, res) => {
  *       500:
  *         description: Errore Mongoose
  */
-app.delete("/api/user/logout/:token", async (req, res) => {
-  // Rimuovo il token se l'IP del mittente corrisponde
+app.delete(
+  "/api/user/logout/:token",
+  tokenChain(),
 
-  if (mongoose.isValidObjectId(req.params.token)) {
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    // Rimuovo il token se l'IP del mittente corrisponde
     try {
       let deletedCount = await Session.deleteOne({
         _id: req.params.token,
@@ -388,10 +416,8 @@ app.delete("/api/user/logout/:token", async (req, res) => {
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({ missingParameters: ["token"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -466,27 +492,36 @@ app.delete("/api/user/logout/:token", async (req, res) => {
  *                       type: string
  *                       description: Codifica delle impostazioni delle notifiche dell'utente
  */
-app.get("/api/user/checkToken/:token", async (req, res) => {
-  // Restituisco true se il token e l'IP corrispondono
-  // Session.checkToken fa type checking degli ID al suo interno!
-  let sessionExists = await Session.checkToken(req.params.token, req.ip);
+app.get(
+  "/api/user/checkToken/:token",
+  tokenChain(),
 
-  if (sessionExists.exists && !sessionExists.expired) {
-    try {
-      let profile = await User.findById(sessionExists.session.userId).select("-password").exec();
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
-      if (profile !== null) {
-        res.status(200).json({ ...sessionExists, profile });
-      } else {
-        res.status(200).json({ ...sessionExists, profile: false });
+    // Restituisco true se il token e l'IP corrispondono
+    // Session.checkToken fa type checking degli ID al suo interno!
+    let sessionExists = await Session.checkToken(req.params.token, req.ip);
+
+    if (sessionExists.exists && !sessionExists.expired) {
+      try {
+        let profile = await User.findById(sessionExists.session.userId)
+          .select("-password")
+          .exec();
+
+        if (profile !== null)
+          res.status(200).json({ ...sessionExists, profile });
+        else res.status(200).json({ ...sessionExists, profile: false });
+      } catch {
+        res.sendStatus(500);
       }
-    } catch {
-      res.sendStatus(500);
+    } else {
+      res.status(200).json({ ...sessionExists });
     }
-  } else {
-    res.status(200).json({ ...sessionExists });
   }
-});
+);
 
 /**
  * @swagger
@@ -625,15 +660,24 @@ app.get("/api/user/checkToken/:token", async (req, res) => {
  *                             description: Impostazioni notifiche utente
  *                             example: "010110"
  */
-app.get("/api/user/profile/:id", async (req, res) => {
-  if(mongoose.isValidObjectId(req.params.id)) {
+app.get(
+  "/api/user/profile/:id",
+  idChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     try {
       let user = await User.findById(req.params.id).select("-password").exec();
       let ads = await Advertisement.getEnrichedAdList(
         await Advertisement.find({ authorId: req.params.id }).exec()
       );
       let reviews = await Review.aggregate()
-        .match({ adId: { $in: ads.map(x => new mongoose.Types.ObjectId(x._id)) } })
+        .match({
+          adId: { $in: ads.map((x) => new mongoose.Types.ObjectId(x._id)) },
+        })
         .lookup({
           from: "users",
           localField: "authorId",
@@ -645,22 +689,20 @@ app.get("/api/user/profile/:id", async (req, res) => {
           explanation: 1,
           rating: 1,
           author: {
-            $arrayElemAt: [ "$author", 0 ]
+            $arrayElemAt: ["$author", 0],
           },
         })
         .sort({ rating: "desc" })
         .limit(3)
         .exec();
 
-      if(user !== null) res.status(200).json({ ...user._doc, ads, reviews });
+      if (user !== null) res.status(200).json({ ...user._doc, ads, reviews });
       else res.sendStatus(404);
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.sendStatus(400);
   }
-});
+);
 
 // Endpoint Annunci
 // ================
@@ -733,18 +775,25 @@ app.get("/api/user/profile/:id", async (req, res) => {
  *                   description: Parametro mancante
  *                   example: ["userId"]
  */
-app.get("/api/ads/list/:userId", async (req, res) => {
-  if (mongoose.isValidObjectId(req.params.userId)) {
+app.get(
+  "/api/ads/list/:userId",
+  userIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     try {
-      let foundAds = await Advertisement.getEnrichedAdList(await User.findUserAds(req.params.userId));
+      let foundAds = await Advertisement.getEnrichedAdList(
+        await User.findUserAds(req.params.userId)
+      );
       res.status(200).json(foundAds);
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({ missingParameters: ["userId"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -952,8 +1001,15 @@ app.get("/api/ads/search/:keywords", async (req, res) => {
  *       500:
  *         description: Errore Mongoose
  */
-app.get("/api/ads/getAdInfo/:id", async (req, res) => {
-  if (mongoose.isValidObjectId(req.params.id)) {
+app.get(
+  "/api/ads/getAdInfo/:id",
+  idChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     try {
       let foundAd = await Advertisement.aggregate()
         .match({ _id: new mongoose.Types.ObjectId(req.params.id) })
@@ -970,7 +1026,7 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
           price: 1,
           type: 1,
           author: {
-            $arrayElemAt: [ "$author", 0 ],
+            $arrayElemAt: ["$author", 0],
           },
         })
         .exec();
@@ -988,16 +1044,20 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
           explanation: 1,
           rating: 1,
           author: {
-            $arrayElemAt: [ "$author", 0 ],
+            $arrayElemAt: ["$author", 0],
           },
         })
         .exec();
-      
+
       let rating = 0;
-      
-      if(reviews !== null && reviews.length > 0) 
-        rating = Math.round(reviews.reduce((prev, curr) => { return prev + curr.rating; }, 0) / reviews.length);
-      
+
+      if (reviews !== null && reviews.length > 0)
+        rating = Math.round(
+          reviews.reduce((prev, curr) => {
+            return prev + curr.rating;
+          }, 0) / reviews.length
+        );
+
       if (foundAd !== null) {
         res.status(200).json({ ...foundAd[0], rating, reviews });
       } else {
@@ -1006,10 +1066,8 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({ missingParameters: ["id"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -1115,40 +1173,21 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
  *                   description: Parametri invalidi (price negativo)
  *                   example: ["price"]
  */
-app.post("/api/ads/createAd", async (req, res) => {
-  let requiredParameters = [
-    "sessionToken",
-    "title",
-    "description",
-    "price",
-    "type",
-    "lat",
-    "lon",
-  ];
+app.post(
+  "/api/ads/createAd",
+  sessionTokenChain(),
+  titleChain(),
+  descriptionChain(),
+  priceChain(),
+  typeChain(),
+  latChain(),
+  lonChain(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
 
-  if (checkParameters(requiredParameters, req.body)) {
     try {
-      let nonEmpty = {
-        title: req.body.title,
-        description: req.body.description,
-        type: req.body.type,
-        sessionToken: req.body.sessionToken,
-      };
-
-      // Verifico di non avere parametri vuoti
-      if(!checkParametersLength(nonEmpty)) {
-        // Se ho dei parametri vuoti annullo
-        let emptyParameters = getEmptyParameters(nonEmpty);
-        res.status(400).json({ emptyParameters });
-        return;
-      }
-
-      // Se il price è negativo annullo
-      if(req.body.price <= 0.0) {
-        res.status(400).json({ invalidParameters: ["price"] });
-        return;
-      }
-
       // Verifico di essere loggato ed ottengo il mio userId
       let currentUserId = await Session.getUserBySession(
         req.body.sessionToken,
@@ -1173,12 +1212,8 @@ app.post("/api/ads/createAd", async (req, res) => {
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 // Endpoint Recensioni
 // ===================
@@ -1242,8 +1277,15 @@ app.post("/api/ads/createAd", async (req, res) => {
  *       500:
  *         description: Errore Mongoose
  */
-app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
-  if (mongoose.isValidObjectId(req.params.adId)) {
+app.get(
+  "/api/reviews/getAdReviews/:adId",
+  adIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     try {
       let reviews = await Review.find({ adId: req.params.adId }).exec();
       if (reviews !== null) res.status(200).json(reviews);
@@ -1251,10 +1293,8 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
     } catch {
       res.sendStatus(500);
     }
-  } else {
-    res.status(400).json({ missingParameters: ["adId"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -1313,8 +1353,15 @@ app.get("/api/reviews/getAdReviews/:adId", async (req, res) => {
  *                   description: Parametri mancanti
  *                   example: ["adId"]
  */
-app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
-  if (mongoose.isValidObjectId(req.params.userId)) {
+app.get(
+  "/api/reviews/getUserReviews/:userId",
+  userIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     // Trovo tutti gli annunci dell'utente
     let userAds = await User.findUserAds(req.params.userId);
     let reviews = [];
@@ -1326,10 +1373,8 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
 
     if (reviews !== null) res.status(200).json(reviews);
     else res.status(200).json({});
-  } else {
-    res.status(400).json({ missingParameters: ["userId"] });
   }
-});
+);
 
 /**
  * @swagger
@@ -1403,10 +1448,18 @@ app.get("/api/reviews/getUserReviews/:userId", async (req, res) => {
  *                   description: Parametri mancanti
  *                   example: ["sessionToken", "rating"]
  */
-app.post("/api/reviews/postReview", async (req, res) => {
-  let requiredParameters = ["sessionToken", "adId", "rating", "explanation"];
+app.post(
+  "/api/reviews/postReview",
+  sessionTokenChain(),
+  adIdChain(),
+  ratingChain(),
+  explanationChain(),
 
-  if (checkParameters(requiredParameters, req.body)) {
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     // Verifico di essere un utente loggato e ottengo il mio userId
     // Session.getUserBySession fa già type checking!
     let authorId = await Session.getUserBySession(
@@ -1425,12 +1478,8 @@ app.post("/api/reviews/postReview", async (req, res) => {
     } else {
       res.sendStatus(403);
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 // Endpoint Iscrizioni
 // ===================
@@ -1499,44 +1548,38 @@ app.post("/api/reviews/postReview", async (req, res) => {
  *                   description: Parametri mancanti
  *                   example: ["sessionToken", "hours"]
  */
-app.put("/api/subscriptions/requestSubscription", async (req, res) => {
-  let requiredParameters = ["sessionToken", "adId", "hours"];
+app.put(
+  "/api/subscriptions/requestSubscription",
+  sessionTokenChain(),
+  adIdChain(),
+  hoursChain(),
 
-  if (checkParameters(requiredParameters, req.body)) {
-    // controllo di ricevere un ID valido (ObjectId con length 24)
-    // e controllo di avere un numero come quantità di ore richieste, per non rompere l'integrità del db
-    if (
-      mongoose.isValidObjectId(req.body.adId) &&
-      typeof req.body.hours === "number"
-    ) {
-      let subscriberId = await Session.getUserBySession(
-        req.body.sessionToken,
-        req.ip
-      );
-      if (subscriberId !== null) {
-        try {
-          let myNewSubscription = await Subscription.create({
-            subscriberId,
-            adId: req.body.adId,
-            status: "requested",
-            hours: req.body.hours,
-          });
-          res.status(200).json(myNewSubscription);
-        } catch {
-          res.sendStatus(500);
-        }
-      } else {
-        res.sendStatus(403);
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
+    let subscriberId = await Session.getUserBySession(
+      req.body.sessionToken,
+      req.ip
+    );
+    if (subscriberId !== null) {
+      try {
+        let myNewSubscription = await Subscription.create({
+          subscriberId,
+          adId: req.body.adId,
+          status: "requested",
+          hours: req.body.hours,
+        });
+        res.status(200).json(myNewSubscription);
+      } catch {
+        res.sendStatus(500);
       }
     } else {
-      res.sendStatus(400);
+      res.sendStatus(403);
     }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 /**
  * @swagger
@@ -1600,14 +1643,16 @@ app.put("/api/subscriptions/requestSubscription", async (req, res) => {
  *                     description: Parametri mancanti
  *                     example: ["sessionToken"]
  */
-app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
-  let requiredParameters = ["sessionToken", "subId"];
-  // tutor
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.subId) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
+app.put(
+  "/api/subscriptions/acceptSubscription",
+  sessionTokenChain(),
+  subIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription !== null) {
       let updateOp = await subscription.updateStatus(
@@ -1627,13 +1672,8 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
       // Not Found: Non posso aggiornare un'iscrizione inesistente
       res.sendStatus(404);
     }
-  } else {
-    // Bad Request: parametri incorretti
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 /**
  * @swagger
@@ -1697,14 +1737,15 @@ app.put("/api/subscriptions/acceptSubscription", async (req, res) => {
  *                     description: Parametri mancanti
  *                     example: ["sessionToken"]
  */
-app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
-  let requiredParameters = ["sessionToken", "subId"];
-  // tutor
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.subId) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
+app.put(
+  "/api/subscriptions/rejectSubscription",
+  sessionTokenChain(),
+  subIdChain(),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription !== null) {
       let updateOp = await subscription.updateStatus(
@@ -1724,13 +1765,8 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
       // Not Found: Non posso aggiornare un'iscrizione inesistente
       res.sendStatus(404);
     }
-  } else {
-    // Bad Request: parametri incorretti
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 /**
  * @swagger
@@ -1794,14 +1830,16 @@ app.put("/api/subscriptions/rejectSubscription", async (req, res) => {
  *                     description: Parametri mancanti
  *                     example: ["sessionToken"]
  */
-app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
-  let requiredParameters = ["sessionToken", "subId"];
-  // tutor
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.subId) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
+app.put(
+  "/api/subscriptions/cancelSubscription",
+  sessionTokenChain(),
+  subIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription !== null) {
       let updateOp = await subscription.updateStatus(
@@ -1821,13 +1859,8 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
       // Not Found: Non posso aggiornare un'iscrizione inesistente
       res.sendStatus(404);
     }
-  } else {
-    // Bad Request: parametri incorretti
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 /**
  * @swagger
@@ -1891,17 +1924,16 @@ app.put("/api/subscriptions/cancelSubscription", async (req, res) => {
  *                     description: Parametri mancanti
  *                     example: ["sessionToken"]
  */
-app.put("/api/subscriptions/paySubscription", async (req, res) => {
-  // ...
-  // elaborazione pagamento
-  // ...
-  let requiredParameters = ["sessionToken", "subId"];
-  // tutor
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.subId) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
+app.put(
+  "/api/subscriptions/paySubscription",
+  sessionTokenChain(),
+  subIdChain(),
+
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     let subscription = await Subscription.findById(req.body.subId);
     if (subscription !== null) {
       let updateOp = await subscription.updateStatus(
@@ -1921,13 +1953,8 @@ app.put("/api/subscriptions/paySubscription", async (req, res) => {
       // Not Found: Non posso aggiornare un'iscrizione inesistente
       res.sendStatus(404);
     }
-  } else {
-    // Bad Request: parametri incorretti
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-    });
   }
-});
+);
 
 app.get("/api/subscriptions/list/:userId", async (req, res) => {});
 
@@ -2004,56 +2031,38 @@ app.get("/api/subscriptions/list/:userId", async (req, res) => {});
  *                   description: Descrizione testuale dell'errore
  *                   example: "Invalid token."
  */
-app.put("/api/settings/change", async (req, res) => {
-  let requiredParameters = ["sessionToken", "updates"];
-  let allowedSettings = ["nickname", "biography", "notifications"];
+app.put(
+  "/api/settings/change",
+  sessionTokenChain(),
+  body("updates").exists(),
+  nicknameChain("updates.nickname"),
+  biographyChain("updates.biography"),
+  notificationsChain("updates.notifications"),
 
-  if (
-    checkParameters(requiredParameters, req.body) &&
-    mongoose.isValidObjectId(req.body.sessionToken)
-  ) {
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty())
+      return res.status(400).json({ errors: errors.array() });
+
     let myToken = await Session.getUserBySession(req.body.sessionToken, req.ip);
     if (myToken === null) {
       res.status(403).json({ error: true, message: "Invalid token." });
       return;
     }
 
-    if (typeof req.body.updates !== "object") {
-      res.status(400).json({ error: true, message: "Invalid settings object." });
-      return;
+    try {
+      let updateResult = await User.updateOne(
+        { _id: myToken },
+        req.body.updates
+      );
+      res.status(200).json(updateResult);
+    } catch (err) {
+      if (err.code == MongoError.DUPLICATE_ENTRY.code)
+        res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
+      else res.sendStatus(500);
     }
-    
-    let updateKeys = Object.keys(req.body.updates);
-    if (updateKeys.length > 0) {
-      for (let updateKey of updateKeys) {
-        if(!allowedSettings.includes(updateKey)) {
-          res.status(400).json({ error: true, message: `Invalid setting: ${updateKey}.` });
-          return;
-        }
-      }
-
-      try {
-        let updateResult = await User.updateOne({ _id: myToken }, req.body.updates);
-        res.status(200).json(updateResult);
-      } catch (err) {
-        if (err.code == MongoError.DUPLICATE_ENTRY.code) {
-          // Se l'errore è causato da un valore univoco duplicato invio la causa
-          res.status(500).json(MongoError.DUPLICATE_ENTRY.json(err));
-        } else {
-          // Altrimenti invio solo Internal Server Error
-          res.sendStatus(500);
-        }
-      }
-    } else {
-      res.status(400).json({ error: true, message: "No changes." });
-    }
-  } else {
-    res.status(400).json({
-      missingParameters: getMissingParameters(requiredParameters, req.body),
-      validToken: mongoose.isValidObjectId(req.body.sessionToken),
-    });
   }
-});
+);
 
 // Permetto a Vue.js di gestire le path single-page con Vue Router
 // Sul front-end compilato!
@@ -2068,8 +2077,6 @@ const lanIp =
     .flat()
     .filter((item) => !item.internal && item.family === "IPv4")
     .find(Boolean)?.address || "( LAN IP )";
-
-
 
 // Avvio il server
 app.enable("trust proxy");
