@@ -32,6 +32,10 @@
   height: 50px;
   border-radius: 100%;
 }
+
+.review > p {
+  word-wrap: break-word;
+}
 </style>
 
 <script setup>
