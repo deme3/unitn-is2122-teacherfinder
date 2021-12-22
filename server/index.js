@@ -348,19 +348,20 @@ app.post(
       ],
     }).exec();
 
-    if (myUser !== null) {
-      try {
-        let mySession = await Session.create({
-          userId: myUser._id,
-          ipAddress: req.ip,
-          persistent: req.body.persistent,
-        });
-        res.status(200).json(mySession);
-      } catch {
-        res.sendStatus(500);
-      }
-    } else {
+    if (myUser === null) {
       res.sendStatus(401);
+      return;
+    }
+
+    try {
+      let mySession = await Session.create({
+        userId: myUser._id,
+        ipAddress: req.ip,
+        persistent: req.body.persistent,
+      });
+      res.status(200).json(mySession);
+    } catch {
+      res.sendStatus(500);
     }
   }
 );
@@ -506,20 +507,20 @@ app.get(
     // Session.checkToken fa type checking degli ID al suo interno!
     let sessionExists = await Session.checkToken(req.params.token, req.ip);
 
-    if (sessionExists.exists && !sessionExists.expired) {
-      try {
-        let profile = await User.findById(sessionExists.session.userId)
-          .select("-password")
-          .exec();
-
-        if (profile !== null)
-          res.status(200).json({ ...sessionExists, profile });
-        else res.status(200).json({ ...sessionExists, profile: false });
-      } catch {
-        res.sendStatus(500);
-      }
-    } else {
+    if (!sessionExists.exists || sessionExists.expired) {
       res.status(200).json({ ...sessionExists });
+      return;
+    }
+
+    try {
+      let profile = await User.findById(sessionExists.session.userId)
+        .select("-password")
+        .exec();
+
+      if (profile !== null) res.status(200).json({ ...sessionExists, profile });
+      else res.status(200).json({ ...sessionExists, profile: false });
+    } catch {
+      res.sendStatus(500);
     }
   }
 );
@@ -1467,18 +1468,19 @@ app.post(
       req.body.sessionToken,
       req.ip
     );
-    if (authorId !== null) {
-      // Se sono loggato creo la recensione con il mio ID
-      let myNewReview = await Review.create({
-        authorId,
-        adId: req.body.adId,
-        rating: req.body.rating,
-        explanation: req.body.explanation,
-      });
-      res.status(200).json(myNewReview);
-    } else {
+    if (authorId === null) {
       res.sendStatus(403);
+      return;
     }
+
+    // Creo la recensione con il mio ID
+    let myNewReview = await Review.create({
+      authorId,
+      adId: req.body.adId,
+      rating: req.body.rating,
+      explanation: req.body.explanation,
+    });
+    res.status(200).json(myNewReview);
   }
 );
 
@@ -1564,20 +1566,21 @@ app.put(
       req.body.sessionToken,
       req.ip
     );
-    if (subscriberId !== null) {
-      try {
-        let myNewSubscription = await Subscription.create({
-          subscriberId,
-          adId: req.body.adId,
-          status: "requested",
-          hours: req.body.hours,
-        });
-        res.status(200).json(myNewSubscription);
-      } catch {
-        res.sendStatus(500);
-      }
-    } else {
+    if (subscriberId === null) {
       res.sendStatus(403);
+      return;
+    }
+
+    try {
+      let myNewSubscription = await Subscription.create({
+        subscriberId,
+        adId: req.body.adId,
+        status: "requested",
+        hours: req.body.hours,
+      });
+      res.status(200).json(myNewSubscription);
+    } catch {
+      res.sendStatus(500);
     }
   }
 );
@@ -1654,24 +1657,25 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
+    // Not Found: Non posso aggiornare un'iscrizione inesistente
     let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "waiting_payment"
-      );
-
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
+    }
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "waiting_payment"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato mando la nuova entry
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio
+      res.status(403).json(updateOp.result);
     }
   }
 );
@@ -1747,24 +1751,25 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
+    // Not Found: Non posso aggiornare un'iscrizione inesistente
     let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "tutor_rejected"
-      );
-
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
+    }
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "tutor_rejected"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato mando la nuova entry
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio
+      res.status(403).json(updateOp.result);
     }
   }
 );
@@ -1841,24 +1846,25 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
+    // Not Found: Non posso aggiornare un'iscrizione inesistente
     let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "student_canceled"
-      );
-
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'iscrizione
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
+    }
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "student_canceled"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato mando la nuova entry
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'iscrizione
+      res.status(403).json(updateOp.result);
     }
   }
 );
@@ -1935,24 +1941,25 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
+    // Not Found: Non posso aggiornare un'iscrizione inesistente
     let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "paid"
-      );
-
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.sendStatus(403);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
+    }
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "paid"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato mando la nuova entry
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio
+      res.sendStatus(403);
     }
   }
 );
