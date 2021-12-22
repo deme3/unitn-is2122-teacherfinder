@@ -87,7 +87,7 @@ const userIdChain = () => check("userId").isMongoId();
 
 // Annunci
 const titleChain = () =>
-  body("title").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
+  body("title").trim().stripLow().isLength({ min: 1, max: 200 }).escape();
 
 const descriptionChain = () =>
   body("description").trim().stripLow().isLength({ min: 1, max: 1500 }).escape();
@@ -99,11 +99,11 @@ const lonChain = () => body("lon").exists();
 const adIdChain = () => body("adId").isMongoId();
 
 // Review
-const ratingChain = () => body("rating").isNumeric({ min: 1, max: 5 });
-const explanationChain = () => body("explanation").trim().stripLow().escape();
+const ratingChain = () => body("rating").isInt({ min: 1, max: 5 });
+const explanationChain = () => body("explanation").trim().stripLow().isLength({ min: 0, max: 500 }).escape();
 
 // Subscription
-const hoursChain = () => body("hours").isNumeric({ min: 1, max: 500 });
+const hoursChain = () => body("hours").isInt({ min: 1, max: 12 });
 const subIdChain = () => body("subId").isMongoId();
 
 // Settings
