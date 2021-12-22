@@ -70,7 +70,7 @@ const emit = defineEmits(["update:rating"]);
 let rating = ref(props.rating);
 let value = computed({
   get: () => props.rating,
-  set: (value) => emit("update:rating", value)
+  set: (value) => emit("update:rating", value),
 });
 let hovering = ref(false);
 

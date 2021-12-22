@@ -29,12 +29,14 @@
         </div>
       </div>
     </div>
+    <PostReviewForm :adId="adInfo.id" />
     <ReviewSection :reviews="adInfo.reviews" />
   </div>
 </template>
 
 <script setup>
 import ReviewSection from "@/components/ReviewSection.vue";
+import PostReviewForm from "@/components/PostReviewForm.vue";
 import RatingStars from "@/components/RatingStars.vue";
 import BackButton from "@/components/BackButton.vue";
 import { onMounted, reactive, computed } from "vue";
