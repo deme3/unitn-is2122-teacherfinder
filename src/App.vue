@@ -2,7 +2,7 @@
   <header>
     <div id="logo">
       <div></div>
-      <div id="logo-text">TeacherFinder</div>
+      <img src="@/assets/logo.svg" id="logo-text" />
       <div id="user-info">
         <div id="user-login" v-if="sessionToken === '' && showLoginBtn">
           <button @click.prevent="$router.push({ name: 'Login' })">
@@ -183,6 +183,11 @@ body {
 
 #logo #logo-text {
   width: 100%;
+}
+
+#logo-text {
+  height: 32px;
+  transform: scale(1.1);
 }
 
 #app {
