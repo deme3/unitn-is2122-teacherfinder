@@ -5,7 +5,7 @@ const history = require("connect-history-api-fallback");
 const chalk = require("chalk");
 const os = require("os");
 
-const { check, body, validationResult } = require("express-validator");
+const { check, body, oneOf, validationResult } = require("express-validator");
 
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -24,14 +24,14 @@ const MongoError = require("./database/MongoError.js");
 const app = express();
 const port = 8080;
 
-//moduli per generare la documentazione delle API
+// Opzioni per generare la documentazione delle API.
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
     info: {
       title: "TeacherFinder",
       version: "1.0.0",
-      description: "API servite via ExpressJS per l'app TeacherFinder",
+      description: "API servita via ExpressJS per l'app TeacherFinder",
       license: {
         name: "MIT License",
         url: "https://raw.githubusercontent.com/deme3/unitn-is2122-teacherfinder/main/LICENSE",
@@ -54,11 +54,10 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// BodyParser per JSON
+// BodyParser per JSON.
 app.use(express.json());
 
-// Chain di validazione sanitizing per express-validator
-
+// Chain di validazione sanitizing per express-validator:
 // User
 const firstNameChain = () =>
   body("firstName").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
@@ -80,8 +79,9 @@ const emailChain = () => body("email").trim().isEmail().normalizeEmail();
 const biographyChain = (name = "biography") =>
   body(name).trim().stripLow().escape();
 const persistentChain = () => body("persistent").isBoolean();
-const tokenChain = () => check("token").isMongoId();
 const sessionTokenChain = () => body("sessionToken").isMongoId();
+
+const tokenChain = () => check("token").isMongoId();
 const idChain = () => check("id").isMongoId();
 const userIdChain = () => check("userId").isMongoId();
 
@@ -107,7 +107,8 @@ const hoursChain = () => body("hours").isNumeric({ min: 1, max: 500 });
 const subIdChain = () => body("subId").isMongoId();
 
 // Settings
-const notificationsChain = (name = "updates.notifications") => body(name);
+const notificationsChain = (name = "updates.notifications") =>
+  body(name).matches("[10]{6}");
 
 app.get("/api", (req, res) => {
   res.send({ works: true });
@@ -362,7 +363,7 @@ app.put(
  */
 app.post(
   "/api/user/login",
-  nicknameChain(),
+  body("nickname").exists(), // Il login può essere fatto sia per nickname che per email.
   passwordChain(),
   persistentChain(),
 
@@ -371,27 +372,28 @@ app.post(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Prendo l'IP dell'utente e lo registro assieme al token
+    // Controllo se esiste l'utente.
     let myUser = await User.findOne({
       $or: [
-        { nickname: req.body.nickname, password: req.body.password }, // match per nickname
-        { email: req.body.nickname, password: req.body.password }, // match per e-mail
+        { nickname: req.body.nickname, password: req.body.password }, // match per nickname.
+        { email: req.body.nickname, password: req.body.password }, // match per e-mail.
       ],
     }).exec();
-
-    if (myUser !== null) {
-      try {
-        let mySession = await Session.create({
-          userId: myUser._id,
-          ipAddress: req.ip,
-          persistent: req.body.persistent,
-        });
-        res.status(200).json(mySession);
-      } catch {
-        res.sendStatus(500);
-      }
-    } else {
+    if (myUser === null) {
       res.sendStatus(401);
+      return;
+    }
+
+    // Prendo l'IP dell'utente e lo registro assieme al token.
+    try {
+      let mySession = await Session.create({
+        userId: myUser._id,
+        ipAddress: req.ip,
+        persistent: req.body.persistent,
+      });
+      res.status(200).json(mySession);
+    } catch {
+      res.sendStatus(500);
     }
   }
 );
@@ -456,7 +458,7 @@ app.delete(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Rimuovo il token se l'IP del mittente corrisponde
+    // Rimuovo il token se l'IP del mittente corrisponde.
     try {
       let deletedCount = await Session.deleteOne({
         _id: req.params.token,
@@ -580,24 +582,22 @@ app.get(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Restituisco true se il token e l'IP corrispondono
-    // Session.checkToken fa type checking degli ID al suo interno!
+    // Controllo se la sessione associata all'ip esiste.
     let sessionExists = await Session.checkToken(req.params.token, req.ip);
-
-    if (sessionExists.exists && !sessionExists.expired) {
-      try {
-        let profile = await User.findById(sessionExists.session.userId)
-          .select("-password")
-          .exec();
-
-        if (profile !== null)
-          res.status(200).json({ ...sessionExists, profile });
-        else res.status(200).json({ ...sessionExists, profile: false });
-      } catch {
-        res.sendStatus(500);
-      }
-    } else {
+    if (!sessionExists.exists || sessionExists.expired) {
       res.status(200).json({ ...sessionExists });
+      return;
+    }
+
+    try {
+      let profile = await User.findById(sessionExists.session.userId)
+        .select("-password")
+        .exec();
+
+      if (profile !== null) res.status(200).json({ ...sessionExists, profile });
+      else res.status(200).json({ ...sessionExists, profile: false });
+    } catch {
+      res.sendStatus(500);
     }
   }
 );
@@ -836,41 +836,38 @@ app.get(
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 data:
- *                   type: array
- *                   items:
- *                     type: object
- *                     properties:
- *                       authorId:
- *                         type: string
- *                         description: ID insegnante autore dell'annuncio (esadecimale)
- *                         example: bbbbbbbbbbbbbbbbbbbbbbbb
- *                       title:
- *                         type: string
- *                         description: Titolo annuncio
- *                         example: Analisi 3
- *                       "description":
- *                         type: string
- *                         description: Descrizione dell'annuncio
- *                         example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
- *                       price:
- *                         type: number
- *                         description: Prezzo all'ora.
- *                         example: 25
- *                       type:
- *                         type: string
- *                         description: Tipologia insegnemento.
- *                         example: online
- *                       lat:
- *                         type: number
- *                         description: Latitudine posizione (se type = offline).
- *                         example: -1
- *                       lon:
- *                         type: number
- *                         description: Longitudine posizione (se type = offline).
- *                         example: -1
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   authorId:
+ *                     type: string
+ *                     description: ID insegnante autore dell'annuncio (esadecimale)
+ *                     example: bbbbbbbbbbbbbbbbbbbbbbbb
+ *                   title:
+ *                     type: string
+ *                     description: Titolo annuncio
+ *                     example: Analisi 3
+ *                   "description":
+ *                     type: string
+ *                     description: Descrizione dell'annuncio
+ *                     example: Impartisco lezioni di Anlisi 3 su tutto il programma, qualsiasi cosa esso comprenda.
+ *                   price:
+ *                     type: number
+ *                     description: Prezzo all'ora.
+ *                     example: 25
+ *                   type:
+ *                     type: string
+ *                     description: Tipologia insegnemento.
+ *                     example: online
+ *                   lat:
+ *                     type: number
+ *                     description: Latitudine posizione (se type = offline).
+ *                     example: -1
+ *                   lon:
+ *                     type: number
+ *                     description: Longitudine posizione (se type = offline).
+ *                     example: -1
  *       400:
  *         description: Parametri richiesti mancanti o invalidi
  *         content:
@@ -1171,7 +1168,7 @@ app.get(
           localField: "authorId",
           foreignField: "_id",
           as: "author",
-          pipeline: [{ $project: { password: 0 } }], // escludo la password dall'autore
+          pipeline: [{ $project: { password: 0 } }], // Escludo la password dall'autore.
         })
         .project({
           title: 1,
@@ -1183,6 +1180,11 @@ app.get(
           },
         })
         .exec();
+
+      if (foundAd === null || foundAd.length === 0) {
+        res.status(404).json({});
+        return;
+      }
 
       let reviews = await Review.aggregate()
         .match({ adId: foundAd[0]._id })
@@ -1351,14 +1353,14 @@ app.post(
       return res.status(400).json({ errors: errors.array() });
 
     try {
-      // Verifico di essere loggato ed ottengo il mio userId
+      // Verifico di essere loggato ed ottengo il mio userId.
       let currentUserId = await Session.getUserBySession(
         req.body.sessionToken,
         req.ip
       );
 
       if (currentUserId !== null) {
-        // Se sono loggato uso il mio ID per creare un annuncio
+        // Se sono loggato allora uso il mio ID per creare un annuncio.
         let myNewAd = await Advertisement.create({
           authorId: currentUserId,
           title: req.body.title,
@@ -1561,11 +1563,11 @@ app.get(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Trovo tutti gli annunci dell'utente
+    // Trovo tutti gli annunci dell'utente.
     let userAds = await User.findUserAds(req.params.userId);
     let reviews = [];
 
-    // Per ogni annuncio aggiungo alla lista tutte le recensioni
+    // Per ogni annuncio aggiungo alla lista tutte le recensioni.
     for (let ad of userAds) {
       reviews.push(...(await Review.find({ adId: ad._id }).exec()));
     }
@@ -1677,24 +1679,24 @@ app.post(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
-    // Verifico di essere un utente loggato e ottengo il mio userId
-    // Session.getUserBySession fa già type checking!
+    // Verifico di essere un utente loggato e ottengo il mio userId.
     let authorId = await Session.getUserBySession(
       req.body.sessionToken,
       req.ip
     );
-    if (authorId !== null) {
-      // Se sono loggato creo la recensione con il mio ID
-      let myNewReview = await Review.create({
-        authorId,
-        adId: req.body.adId,
-        rating: req.body.rating,
-        explanation: req.body.explanation,
-      });
-      res.status(200).json(myNewReview);
-    } else {
+    if (authorId === null) {
       res.sendStatus(403);
+      return;
     }
+
+    // Creo la recensione con il mio ID.
+    let myNewReview = await Review.create({
+      authorId,
+      adId: req.body.adId,
+      rating: req.body.rating,
+      explanation: req.body.explanation,
+    });
+    res.status(200).json(myNewReview);
   }
 );
 
@@ -1798,20 +1800,21 @@ app.put(
       req.body.sessionToken,
       req.ip
     );
-    if (subscriberId !== null) {
-      try {
-        let myNewSubscription = await Subscription.create({
-          subscriberId,
-          adId: req.body.adId,
-          status: "requested",
-          hours: req.body.hours,
-        });
-        res.status(200).json(myNewSubscription);
-      } catch {
-        res.sendStatus(500);
-      }
-    } else {
+    if (subscriberId === null) {
       res.sendStatus(403);
+      return;
+    }
+
+    try {
+      let myNewSubscription = await Subscription.create({
+        subscriberId,
+        adId: req.body.adId,
+        status: "requested",
+        hours: req.body.hours,
+      });
+      res.status(200).json(myNewSubscription);
+    } catch {
+      res.sendStatus(500);
     }
   }
 );
@@ -1906,24 +1909,25 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
     let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "waiting_payment"
-      );
-
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
+    }
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "waiting_payment"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio.
+      res.status(403).json(updateOp.result);
     }
   }
 );
@@ -2017,24 +2021,25 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
     let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "tutor_rejected"
-      );
-
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
+    }
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "tutor_rejected"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio.
+      res.status(403).json(updateOp.result);
     }
   }
 );
@@ -2129,24 +2134,25 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
     let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "student_canceled"
-      );
-
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'iscrizione
-        res.status(403).json(updateOp.result);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
+    }
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "student_canceled"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'iscrizione.
+      res.status(403).json(updateOp.result);
     }
   }
 );
@@ -2241,24 +2247,25 @@ app.put(
     if (!errors.isEmpty())
       return res.status(400).json({ errors: errors.array() });
 
+    // Not Found: Non posso aggiornare un'iscrizione inesistente.
     let subscription = await Subscription.findById(req.body.subId);
-    if (subscription !== null) {
-      let updateOp = await subscription.updateStatus(
-        req.body.sessionToken,
-        req.ip,
-        "paid"
-      );
-
-      if (updateOp.success) {
-        // Se l'update ha funzionato mando la nuova entry
-        res.status(200).json(updateOp.result);
-      } else {
-        // Forbidden: Non sono il proprietario dell'annuncio
-        res.sendStatus(403);
-      }
-    } else {
-      // Not Found: Non posso aggiornare un'iscrizione inesistente
+    if (subscription === null) {
       res.sendStatus(404);
+      return;
+    }
+
+    let updateOp = await subscription.updateStatus(
+      req.body.sessionToken,
+      req.ip,
+      "paid"
+    );
+
+    if (updateOp.success) {
+      // Se l'update ha funzionato, allora restituisco la nuova entry.
+      res.status(200).json(updateOp.result);
+    } else {
+      // Forbidden: Non sono il proprietario dell'annuncio.
+      res.sendStatus(403);
     }
   }
 );
@@ -2356,10 +2363,20 @@ app.put(
   "/api/settings/change",
   sessionTokenChain(),
   body("updates").exists(),
-  nicknameChain("updates.nickname"),
-  biographyChain("updates.biography"),
-  notificationsChain("updates.notifications"),
-
+  oneOf([
+    oneOf([
+      nicknameChain("updates.nickname"),
+      body("updates.nickname").isEmpty(),
+    ]),
+    oneOf([
+      biographyChain("updates.biography"),
+      body("updates.biography").isEmpty(),
+    ]),
+    oneOf([
+      notificationsChain("updates.notifications"),
+      body("updates.notifications").isEmpty(),
+    ]),
+  ]),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
@@ -2385,9 +2402,8 @@ app.put(
   }
 );
 
-// Permetto a Vue.js di gestire le path single-page con Vue Router
-// Sul front-end compilato!
-// Solo in deployment.
+// Permetto a Vue.js di gestire le path single-page con Vue Router, sul front-end compilato!
+// Servo il frontend solo se non sono in development mode.
 if (process?.env?.NODE_ENV !== "development") {
   app.use(history());
   app.use("/", express.static(path.join(__dirname, "..", "dist")));
@@ -2401,6 +2417,7 @@ const lanIp =
 
 // Avvio il server
 app.enable("trust proxy");
+
 // prettier-ignore
 if(process.env.SHUT_UP) {
   app.listen(port, async () => {

@@ -39,12 +39,17 @@
 }
 
 .action-bar {
+  display: flex;
   text-align: right;
+  gap: 1.5em;
+  flex-wrap: wrap;
+  justify-content: right;
+  align-content: center;
+  align-items: center;
 }
 
 .action-bar > * {
   display: inline-block;
-  margin-left: 1em;
 }
 
 .user-info-label,
