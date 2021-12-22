@@ -205,6 +205,8 @@ const saveEdits = async () => {
     if (query.updates.biography) userInfo.biography = query.updates.biography;
     if (query.updates.notifications)
       userInfo.notifications = query.updates.notifications;
+    
+    errorBox.value.hide();
   }
 };
 
