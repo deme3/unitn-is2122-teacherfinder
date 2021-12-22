@@ -55,7 +55,7 @@ let adInfo = reactive({
   author: {
     _id: "",
     firstName: "Caricamento...",
-    lastName: "Caricamento...",
+    lastName: "",
     nickname: "Caricamento...",
     email: "Caricamento...",
   },
