@@ -7,7 +7,10 @@
       :nickname="userProfile.nickname"
       pictureURL="https://picsum.photos/100"
     />
-    <div class="profile-parameter" v-if="userProfile.biography !== NOTFOUND">
+    <div
+      class="profile-parameter"
+      v-if="userProfile.biography !== NOTFOUND && userProfile.biography != ''"
+    >
       <div class="parameter-descriptor">Biografia</div>
       <div class="parameter-content">{{ userProfile.biography }}</div>
     </div>
