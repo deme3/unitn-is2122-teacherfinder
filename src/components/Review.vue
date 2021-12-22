@@ -35,6 +35,7 @@
 
 .review > p {
   word-wrap: break-word;
+  white-space: pre-line;
 }
 </style>
 
