@@ -47,20 +47,15 @@
 </style>
 
 <script setup>
-//import { ref } from "vue";
+import { ref } from "vue";
 import { defineProps } from "vue";
 
-/*const pictureURL = ref("https://picsum.photos/100");
-const firstName = ref("Francesca");
-const lastName = ref("Mancini");
-const nickname = ref("framcesca");*/
-//const bio = ref("");
+const pictureURL = ref("https://picsum.photos/100");
 
 defineProps({
   pictureURL: String,
   firstName: String,
   lastName: String,
   nickname: String,
-  //  bio: String,
 });
 </script>
