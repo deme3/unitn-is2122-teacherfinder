@@ -256,22 +256,27 @@ input[type="submit"]:not(:disabled):hover {
   cursor: pointer;
 }
 
-@media (pointer: coarse) {
-  button:hover,
-  input[type="submit"]:hover {
-    -webkit-transform: none;
-    -moz-transform: none;
-    -ms-transform: none;
-    transform: none;
-  }
-}
-
 button:not(:disabled):active,
 input[type="submit"]:not(:disabled):active {
   transition: box-shadow 0s, transform 0s;
   transform: translate(2px, 2px);
   box-shadow: 0px 0px 0 var(--border-unique-shadow);
   cursor: pointer;
+}
+
+@media (hover: none) {
+  button:not(:disabled):hover,
+  input[type="submit"]:not(:disabled):hover {
+    transition: none;
+    -webkit-transition: none;
+    transform: none;
+    -webkit-transform: none;
+  }
+
+  button:not(:disabled):active,
+  input[type="submit"]:not(:disabled):active {
+    transform: translate(1px, 1px);
+  }
 }
 
 .edit-icon {
