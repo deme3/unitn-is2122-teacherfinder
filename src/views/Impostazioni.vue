@@ -180,22 +180,27 @@ const saveEdits = async () => {
     body: JSON.stringify(query),
   });
 
-  if (saveResults !== null) {
-    let res = await saveResults.json();
-    console.log(res);
-
-    if (res.error === "DUPLICATE_ENTRY") {
-      errorBox.showText("Il nickname che hai inserito non è disponibile.");
-      return;
+  if (!saveResults?.ok) {
+    try {
+      let res = await saveResults.json();
+      console.log(res);
+      if (res.error === "DUPLICATE_ENTRY")
+        errorBox.showText("Il nickname che hai inserito non è disponibile.");
+    } catch (e) {
+      errorBox.showText("Errore nel salvataggio delle impostazioni.");
+      console.log(saveResults.text);
     }
-    errorBox.isVisible = false;
+    return;
+  }
 
-    if (res.acknowledged && res.modifiedCount >= 1) {
-      if (query.updates.nickname) userInfo.nickname = query.updates.nickname;
-      if (query.updates.biography) userInfo.biography = query.updates.biography;
-      if (query.updates.notifications)
-        userInfo.notifications = query.updates.notifications;
-    }
+  let res = await saveResults.json();
+  console.log(res);
+
+  if (res.acknowledged && res.modifiedCount >= 1) {
+    if (query.updates.nickname) userInfo.nickname = query.updates.nickname;
+    if (query.updates.biography) userInfo.biography = query.updates.biography;
+    if (query.updates.notifications)
+      userInfo.notifications = query.updates.notifications;
   }
 };
 
