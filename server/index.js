@@ -5,7 +5,7 @@ const history = require("connect-history-api-fallback");
 const chalk = require("chalk");
 const os = require("os");
 
-const { check, body, validationResult } = require("express-validator");
+const { check, body, oneOf, validationResult } = require("express-validator");
 
 const swaggerJsDoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -31,7 +31,7 @@ const swaggerOptions = {
     info: {
       title: "TeacherFinder",
       version: "1.0.0",
-      description: "API servite via ExpressJS per l'app TeacherFinder",
+      description: "API servita via ExpressJS per l'app TeacherFinder",
       license: {
         name: "MIT License",
         url: "https://raw.githubusercontent.com/deme3/unitn-is2122-teacherfinder/main/LICENSE",
@@ -2040,10 +2040,20 @@ app.put(
   "/api/settings/change",
   sessionTokenChain(),
   body("updates").exists(),
-  nicknameChain("updates.nickname"),
-  biographyChain("updates.biography"),
-  notificationsChain("updates.notifications"),
-
+  oneOf([
+    oneOf([
+      nicknameChain("updates.nickname"),
+      body("updates.nickname").isEmpty(),
+    ]),
+    oneOf([
+      biographyChain("updates.biography"),
+      body("updates.biography").isEmpty(),
+    ]),
+    oneOf([
+      nicknameChain("updates.notifications"),
+      body("updates.notifications").isEmpty(),
+    ]),
+  ]),
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
