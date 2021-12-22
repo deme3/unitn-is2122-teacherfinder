@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div id="logo">
+    <div id="logo" @click.prevent="$router.push({ name: 'Ricerca' })">
       <div></div>
       <img src="@/assets/logo.svg" id="logo-text" />
       <div id="user-info">
