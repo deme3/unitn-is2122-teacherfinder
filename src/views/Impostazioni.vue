@@ -145,7 +145,11 @@ const logout = async () => {
     console.log("Errore durante il logout", await logoutResult.text());
 
     // Probabilmente non l'utente si è sloggato in un'altra sessione
-    if (logoutResult.status == 404) window.location.replace("/");
+    if (logoutResult.status == 404) {
+      window.location.replace("/");
+      document.cookie =
+        "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
+    }
     return;
   }
 
