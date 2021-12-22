@@ -1,5 +1,5 @@
 <template>
-  <div class="back-arrow-icon" @click="router.back()"></div>
+  <div class="back-arrow-icon" @click="onClick"></div>
 </template>
 
 <style scoped>
@@ -19,4 +19,20 @@
 <script setup>
 import { useRouter } from "vue-router";
 const router = useRouter();
+let prevent = false;
+
+const emit = defineEmits(["backclick"]);
+
+const onClick = function () {
+  emit('backclick', function preventDefault() {
+    prevent = true;
+  });
+
+  // eseguo next tick
+  setTimeout(function() {
+    if(!prevent) {
+      router.back();
+    }
+  }, 0);
+};
 </script>

@@ -3,7 +3,7 @@
     <div class="tf-box">
       <div class="container">
         <div class="info">
-          <h1><BackButton /> {{ adInfo.title }}</h1>
+          <h1><BackButton @backclick="onBackClick" /> {{ adInfo.title }}</h1>
           <RatingStars :rating="adInfo.rating" />
           <div class="ad-info">
             <p>Prezzo: {{ adInfo.price.toFixed(2) }}€/ora</p>
@@ -82,6 +82,13 @@ const onTutorInfoClick = () => {
   // Ci andrà il router al tutor profile
   router.push({ name: "Profilo", params: { userId: adInfo.author._id } });
 };
+
+const onBackClick = (preventDefault) => {
+  if(window.history.state.back.includes("pubblica-annunci")) {
+    preventDefault();
+    router.push({ name: "Annunci" });
+  }
+}
 </script>
 
 <style scoped>
