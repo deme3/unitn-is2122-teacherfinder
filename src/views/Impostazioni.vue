@@ -3,6 +3,7 @@
     <h1>Impostazioni</h1>
     <div class="impostazioni tf-box">
       <UserCard v-bind="userInfo" />
+      <ErrorBox :text="errorBox.text" v-if="errorBox.isVisible" />
       <TextEntry description="Nickname" v-model:text="form.nickname" />
       <TextEntry
         description="Biografia"
@@ -71,6 +72,7 @@
 
 <script setup>
 import { reactive, computed, inject } from "vue";
+import ErrorBox from "@/components/ErrorBox.vue";
 import UserCard from "@/components/UserCard.vue";
 import TextEntry from "@/components/TextEntry.vue";
 import ToggleEntry from "@/components/ToggleEntry.vue";
@@ -86,6 +88,15 @@ const notificationsString = (formObject) => {
 
   return str;
 };
+
+const errorBox = reactive({
+  isVisible: false,
+  text: "Errore",
+  showText: (text) => {
+    errorBox.text = text;
+    errorBox.isVisible = true;
+  },
+});
 
 const notificationsStringToFormObject = (str) => {
   if (typeof str === "undefined")
@@ -172,6 +183,12 @@ const saveEdits = async () => {
   if (saveResults !== null) {
     let res = await saveResults.json();
     console.log(res);
+
+    if (res.error === "DUPLICATE_ENTRY") {
+      errorBox.showText("Il nickname che hai inserito non è disponibile.");
+      return;
+    }
+    errorBox.isVisible = false;
 
     if (res.acknowledged && res.modifiedCount >= 1) {
       if (query.updates.nickname) userInfo.nickname = query.updates.nickname;
