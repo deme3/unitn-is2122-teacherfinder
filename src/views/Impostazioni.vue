@@ -64,10 +64,6 @@
 .action-buttons button:first-child {
   margin-right: auto;
 }
-
-.action-buttons :disabled {
-  opacity: 0.5;
-}
 </style>
 
 <script setup>

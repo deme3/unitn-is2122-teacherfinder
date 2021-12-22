@@ -281,6 +281,10 @@ input[type="submit"]:not(:disabled):active {
   }
 }
 
+button:disabled {
+  opacity: 0.5;
+}
+
 .edit-icon {
   display: inline-block;
   width: 16px;
