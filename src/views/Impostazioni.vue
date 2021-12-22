@@ -40,10 +40,10 @@
       </section>
       <section class="action-buttons">
         <button @click="logout">Logout</button>
-        <button @click="cancelEdits" :disabled="settingsModified">
+        <button @click="cancelEdits" :disabled="actionDisabled">
           Annulla modifiche
         </button>
-        <button @click="saveEdits" :disabled="settingsModified">Salva</button>
+        <button @click="saveEdits" :disabled="actionDisabled">Salva</button>
       </section>
     </div>
   </div>
@@ -218,15 +218,12 @@ const haveNotificationsChanged = () => {
   return notificationsString(form.notifications) != userInfo.notifications;
 };
 
-const settingsModified = computed(() => {
-  console.log(userInfo.nickname, form.nickname);
-  console.log(userInfo.biography, form.biography);
-  console.log(userInfo.notifications, form.notifications);
+const actionDisabled = computed(() => {
   return !(
     hasChanged("nickname") ||
     hasChanged("biography") ||
     haveNotificationsChanged()
-  );
+  ) || (form.biography.trim() == "" || form.nickname.trim() == "");
 });
 
 loadSettings();
