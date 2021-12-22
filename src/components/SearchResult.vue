@@ -5,7 +5,13 @@
     <RatingStars :rating="props.rating" />
   </div>
 </template>
-
+<style scoped>
+.sr-title {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+</style>
 <script setup>
 import { useRouter } from "vue-router";
 import RatingStars from "@/components/RatingStars.vue";
