@@ -113,6 +113,7 @@ export default defineComponent({
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
   --toggle-active-color: #00b87cb5;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 @media (prefers-color-scheme: dark) {
