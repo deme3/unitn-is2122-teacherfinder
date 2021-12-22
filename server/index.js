@@ -2050,7 +2050,7 @@ app.put(
       body("updates.biography").isEmpty(),
     ]),
     oneOf([
-      nicknameChain("updates.notifications"),
+      notificationsChain("updates.notifications"),
       body("updates.notifications").isEmpty(),
     ]),
   ]),
