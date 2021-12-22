@@ -29,7 +29,7 @@
         </div>
       </div>
     </div>
-    <PostReviewForm :adId="adInfo.id" />
+    <PostReviewForm :adId="adInfo.id" @reviewSubmit="onReviewSubmit" />
     <ReviewSection :reviews="adInfo.reviews" />
   </div>
 </template>
@@ -39,11 +39,12 @@ import ReviewSection from "@/components/ReviewSection.vue";
 import PostReviewForm from "@/components/PostReviewForm.vue";
 import RatingStars from "@/components/RatingStars.vue";
 import BackButton from "@/components/BackButton.vue";
-import { onMounted, reactive, computed } from "vue";
+import { onMounted, reactive, computed, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
+const userInfo = inject("userInfo");
 
 let adInfo = reactive({
   title: "Caricamento...",
@@ -90,6 +91,16 @@ const onBackClick = (preventDefault) => {
     preventDefault();
     router.push({ name: "Annunci" });
   }
+};
+
+const onReviewSubmit = (newReview) => {
+  newReview.author = {
+    _id: userInfo._id,
+    firstName: userInfo.firstName,
+    lastName: userInfo.lastName,
+    nickname: userInfo.nickname
+  };
+  adInfo.reviews.push(newReview);
 };
 </script>
 

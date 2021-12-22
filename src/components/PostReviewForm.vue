@@ -70,8 +70,6 @@ const props = defineProps({
 const emit = defineEmits(["reviewSubmit"]);
 
 const onSubmit = async () => {
-  emit("reviewSubmit", review);
-
   let postResult = await fetch(`/api/reviews/postReview`, {
     method: "POST",
     headers: {
@@ -87,8 +85,10 @@ const onSubmit = async () => {
   });
 
   if (postResult.ok) {
+    let postJSON = await postResult.json();
     review.rating = 1;
     review.explanation = "";
+    emit("reviewSubmit", postJSON);
   } else {
     // TO-DO : Error
   }
