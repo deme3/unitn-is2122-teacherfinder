@@ -150,6 +150,10 @@ const onReviewSubmit = (newReview) => {
   word-wrap: break-word;
 }
 
+.ad-desc {
+  white-space: pre-line;
+}
+
 @media only screen and (max-width: 640px) {
 }
 </style>
