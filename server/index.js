@@ -972,6 +972,11 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
         })
         .exec();
 
+      if (foundAd === null || foundAd.length === 0) {
+        res.status(404).json({});
+        return;
+      }
+
       let reviews = await Review.aggregate()
         .match({ adId: foundAd[0]._id })
         .lookup({
@@ -995,11 +1000,7 @@ app.get("/api/ads/getAdInfo/:id", async (req, res) => {
       if(reviews !== null && reviews.length > 0) 
         rating = Math.round(reviews.reduce((prev, curr) => { return prev + curr.rating; }, 0) / reviews.length);
       
-      if (foundAd !== null) {
-        res.status(200).json({ ...foundAd[0], rating, reviews });
-      } else {
-        res.status(404).json({});
-      }
+      res.status(200).json({ ...foundAd[0], rating, reviews });
     } catch {
       res.sendStatus(500);
     }
