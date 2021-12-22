@@ -1,12 +1,36 @@
 <template>
-  <div class="tf-box tf-box-err">
-    {{ props.text }}
+  <div class="tf-box tf-box-err" v-if="isShown">
+    {{ text }}
   </div>
 </template>
 
 <script setup>
+import { ref } from "vue";
 const props = defineProps({
-  text: String,
+  text: {
+    type: String,
+    default: "Errore generico.",
+  },
+});
+
+const isShown = ref(false);
+const text = ref(props.text);
+
+const showText = (txt) => {
+  text.value = txt;
+  isShown.value = true;
+};
+
+const hide = () => (isShown.value = false);
+const show = () => (isShown.value = true);
+
+const isVisible = () => isShown.value;
+
+defineExpose({
+  showText,
+  hide,
+  show,
+  isVisible,
 });
 </script>
 

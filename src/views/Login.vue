@@ -5,7 +5,7 @@
       <ErrorBox
         text="Attenzione, il nome utente o la password non sembrano essere corretti.
         Se non possiedi ancora un account, prova a registrarti."
-        v-if="showError"
+        ref="errorBox"
       />
       <form method="post" @submit.prevent="submitLogin">
         <TextEntry v-model:text="loginForm.nickname" description="Username" />
@@ -54,7 +54,7 @@ const loginForm = reactive({
 
 const rememberLogin = ref(false);
 
-const showError = ref(false);
+const errorBox = ref(null);
 const submitLogin = async () => {
   const resp = await fetch(`/api/user/login`, {
     method: "POST",
@@ -76,7 +76,7 @@ const submitLogin = async () => {
       `[${resp.status}] Errore nella registrazione!\n`,
       await resp.text()
     );
-    showError.value = true;
+    errorBox.value.show();
     return;
   }
 

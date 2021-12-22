@@ -1,7 +1,7 @@
 <template>
   <div class="tf-box">
     <h1><BackButton /> Nuovo annuncio</h1>
-    <ErrorBox :text="errorBox.text" v-if="errorBox.isVisible" />
+    <ErrorBox ref="errorBox"/>
     <form method="post" @submit.prevent="onSubmit">
       <div class="two-columns">
         <TextEntry description="Titolo" v-model:text="newAd.title" />
@@ -51,11 +51,12 @@ button:disabled {
 import TextEntry from "@/components/TextEntry.vue";
 import BackButton from "@/components/BackButton.vue";
 import ErrorBox from "@/components/ErrorBox.vue";
-import { reactive, inject } from "vue";
+import { reactive, inject, ref } from "vue";
 import { useRouter } from "vue-router";
 
 const userInfo = inject("userInfo");
 const router = useRouter();
+const errorBox = ref(null); // definito nel template
 
 const newAd = reactive({
   title: "",
@@ -63,23 +64,14 @@ const newAd = reactive({
   price: 0.0,
 });
 
-const errorBox = reactive({
-  isVisible: false,
-  text: "Errore",
-  showText: (text) => {
-    errorBox.text = text;
-    errorBox.isVisible = true;
-  },
-});
-
 const onSubmit = async () => {
   switch (true) {
     case newAd.title == "":
     case newAd.description == "":
-      errorBox.showText("Whops, alcuni campi risultano vuoti.");
+      errorBox.value.showText("Whops, alcuni campi risultano vuoti.");
       return;
     case newAd.price <= 0:
-      errorBox.showText("Il prezzo che hai inserito è troppo basso.");
+      errorBox.value.showText("Il prezzo che hai inserito è troppo basso.");
       return;
   }
 
@@ -101,7 +93,7 @@ const onSubmit = async () => {
   });
 
   if (!submitResult?.ok) {
-    errorBox.showText("Errore nella creazione dell'annuncio.");
+    errorBox.value.showText("Errore nella creazione dell'annuncio.");
     console.log(submitResult.text);
     return;
   }
