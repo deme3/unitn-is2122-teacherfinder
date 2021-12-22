@@ -68,12 +68,12 @@ const submitLogin = async () => {
   let respObj = {};
 
   if (resp.ok) {
-    console.log("La registrazione è andata a buon fine!");
+    console.log("Il login è andato a buon fine!");
     respObj = await resp.json();
     console.log(respObj);
   } else {
     console.log(
-      `[${resp.status}] Errore nella registrazione!\n`,
+      `[${resp.status}] Errore durante il login!\n`,
       await resp.text()
     );
     errorBox.value.show();
