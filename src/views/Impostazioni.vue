@@ -190,7 +190,7 @@ const saveEdits = async () => {
         errorBox.value.showText(
           "Il nickname che hai inserito non è disponibile."
         );
-    } finally {
+    } catch (e) {
       errorBox.value.showText("Errore nel salvataggio delle impostazioni.");
       console.log(saveResults.text);
     }
