@@ -65,9 +65,13 @@ const props = defineProps({
     default: false,
   },
 });
+const emit = defineEmits(["update:rating"]);
 
 let rating = ref(props.rating);
-let defrating = ref(props.rating);
+let value = computed({
+  get: () => props.rating,
+  set: (value) => emit("update:rating", value)
+});
 let hovering = ref(false);
 
 const ratingClass = computed(() => {
@@ -75,7 +79,7 @@ const ratingClass = computed(() => {
     return `star-rating star-${props.rating}`;
   } else {
     if (hovering.value) return `star-rating star-${rating.value} interactive`;
-    else return `star-rating star-${defrating.value} interactive`;
+    else return `star-rating star-${value.value} interactive`;
   }
 });
 
@@ -95,7 +99,7 @@ const starOnMouseOver = function (n) {
 
 const starOnClick = function (n) {
   if (props.interactive) {
-    defrating.value = n;
+    value.value = n;
   }
 };
 </script>
