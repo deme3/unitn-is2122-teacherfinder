@@ -19,11 +19,7 @@
             </div>
           </div>
           <div class="action-bar">
-            <RatingStars
-              class="rating-stars"
-              :interactive="true"
-              v-model:rating="review.rating"
-            />
+            <RatingStars :interactive="true" v-model:rating="review.rating" />
             <input type="submit" value="Pubblica" />
           </div>
         </div>
@@ -48,7 +44,8 @@
   gap: 1.5em;
   flex-wrap: wrap;
   justify-content: right;
-  align-content: top;
+  align-content: center;
+  align-items: center;
 }
 
 .action-bar > * {
@@ -58,10 +55,6 @@
 .user-info-label,
 .user-contact {
   font-style: italic;
-}
-
-.rating-stars {
-  white-space: nowrap;
 }
 </style>
 
