@@ -100,6 +100,12 @@ const onSubmit = async () => {
     }),
   });
 
+  if (!submitResult?.ok) {
+    errorBox.showText("Errore nella creazione dell'annuncio.");
+    console.log(submitResult.text);
+    return;
+  }
+
   let dbResult = await submitResult.json();
   if (typeof dbResult._id !== "undefined") {
     router.push({ name: "Annuncio", params: { id: dbResult._id } });

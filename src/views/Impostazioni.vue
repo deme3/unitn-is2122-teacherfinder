@@ -186,7 +186,7 @@ const saveEdits = async () => {
       console.log(res);
       if (res.error === "DUPLICATE_ENTRY")
         errorBox.showText("Il nickname che hai inserito non è disponibile.");
-    } catch (e) {
+    } finally {
       errorBox.showText("Errore nel salvataggio delle impostazioni.");
       console.log(saveResults.text);
     }
