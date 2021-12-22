@@ -73,7 +73,7 @@ const nicknameChain = (name = "nickname") =>
     .toLowerCase()
     .isLength({ min: 3, max: 50 })
     .escape()
-    .matches("[a-z0-9_]");
+    .matches("^[a-z0-9_]+$");
 
 const passwordChain = () => body("password").not().isEmpty();
 const emailChain = () => body("email").trim().isEmail().normalizeEmail();
