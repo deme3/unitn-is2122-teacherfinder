@@ -141,14 +141,20 @@ const logout = async () => {
     method: "DELETE",
   });
 
-  if (logoutResult.ok) {
-    let logoutJSON = await logoutResult.json();
+  if (!logoutResult.ok) {
+    console.log("Errore durante il logout", await logoutResult.text());
 
-    if (logoutJSON.deletedCount.deletedCount == 1) {
-      document.cookie =
-        "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
-      window.location.replace("/");
-    }
+    // Probabilmente non l'utente si è sloggato in un'altra sessione
+    if (logoutResult.status == 404) window.location.replace("/");
+    return;
+  }
+
+  let logoutJSON = await logoutResult.json();
+
+  if (logoutJSON.deletedCount.deletedCount == 1) {
+    document.cookie =
+      "sessionToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=Strict";
+    window.location.replace("/");
   }
 };
 
