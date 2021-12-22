@@ -92,7 +92,7 @@ const titleChain = () =>
 const descriptionChain = () =>
   body("description").trim().stripLow().isLength({ min: 1, max: 50 }).escape();
 
-const priceChain = () => body("price").isNumeric({ min: 1, max: 500 });
+const priceChain = () => body("price").isFloat({ min: 1, max: 500 });
 const typeChain = () => body("type").exists();
 const latChain = () => body("lat").exists();
 const lonChain = () => body("lon").exists();
