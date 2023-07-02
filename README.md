@@ -1,5 +1,15 @@
 # unitn-is2122-teacherfinder
+
 Progetto d'esame Ingegneria del Software del secondo anno del C.d.S. di Informatica all'Università di Trento.
+
+## Anteprime dell'applicazione
+
+<p style="text-align: center" align="center">
+  <img src="screenshots/RicercaHome.png" width="24%" />
+  <img src="screenshots/MieiAnnunci.png" width="24%" />
+  <img src="screenshots/DettaglioAnnuncio.png" width="24%" />
+  <img src="screenshots/Impostazioni.png" width="24%" />
+</p>
 
 ## Deployment
 
@@ -13,9 +23,10 @@ npm install
 
 1. Segui questa [guida](https://attacomsian.com/blog/install-mongodb-macos).
 2. Avvia MongoDB
-  ```bash
-  brew services run mongodb-community
-  ```
+
+```bash
+brew services run mongodb-community
+```
 
 ### Building
 
@@ -30,6 +41,7 @@ npm run server
 ```
 
 ### Testing API
+
 ```bash
 npm test
 ```
@@ -42,8 +54,8 @@ npm test
 npm run dev
 ```
 
-  **Note**: You have to start MongoDB.  
-  You also have to have `tmux` installed.
+**Note**: You have to start MongoDB.  
+ You also have to have `tmux` installed.
 
 ### Runs Express server with Vue Router support (ExpressJS)
 
@@ -51,9 +63,8 @@ npm run dev
 npm run server
 ```
 
-  **Note**: You have to compile before launching the command.  
-  You also have to start MongoDB.  
-  
+**Note**: You have to compile before launching the command.  
+ You also have to start MongoDB.
 
 ### Compiles and hot-reloads frontend only (Vue CLI)
 
@@ -68,10 +79,13 @@ npm run build
 ```
 
 ### Lints and fixes files (Vue CLI)
+
 ```bash
 npm run lint
 ```
+
 ## Contributors
-* [Demetrio Battaglia](https://www.github.com/deme3)
-* [Riccardo Lussana](https://www.github.com/riklus)
-* [Francesca Mancini](https://www.github.com/framcesca)
+
+- [Demetrio Battaglia](https://www.github.com/deme3)
+- [Riccardo Lussana](https://www.github.com/riklus)
+- [Francesca Mancini](https://www.github.com/framcesca)
